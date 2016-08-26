@@ -44,6 +44,8 @@ class NameTest {
     assertEquals("A", Name.name("A").canonical());
     assertEquals("", Name.name("A").packageName());
     assertEquals("A", Name.name("A").lastName());
+    assertEquals(1, Name.name("A").size());
+    assertEquals(1, Name.name("A").identifiers().size());
 
     assertEquals("a", Name.name("a").canonical());
     assertEquals("a", Name.name("a").packageName());
@@ -56,14 +58,22 @@ class NameTest {
     assertEquals("a.b.C", Name.name("a", "b", "C").canonical());
     assertEquals("a.b", Name.name("a", "b", "C").packageName());
     assertEquals("C", Name.name("a", "b", "C").lastName());
+    assertEquals(3, Name.name("a", "b", "C").size());
+    assertEquals(3, Name.name("a", "b", "C").identifiers().size());
 
     assertEquals("java.lang.Object", Name.name(Object.class).canonical());
     assertEquals("java.lang", Name.name(Object.class).packageName());
     assertEquals("Object", Name.name(Object.class).lastName());
+    assertEquals("Object", Name.name(Object.class).topLevelName());
+    assertTrue(Name.name(Object.class).isJavaLangObject());
 
     assertEquals("java.lang.Thread.State.NEW", Name.name(Thread.State.NEW).canonical());
     assertEquals("java.lang", Name.name(Thread.State.NEW).packageName());
     assertEquals("NEW", Name.name(Thread.State.NEW).lastName());
+    assertEquals("Thread", Name.name(Thread.State.NEW).topLevelName());
+    assertFalse(Name.name(Thread.State.NEW).isJavaLangObject());
+    assertEquals(5, Name.name(Thread.State.NEW).size());
+    assertEquals(5, Name.name(Thread.State.NEW).identifiers().size());
   }
 
   @Test

@@ -17,12 +17,13 @@ import javax.lang.model.element.PackageElement;
 /**
  * Names are used to refer to entities declared in a program.
  *
- * <p>A declared entity is a package, class type (normal or enum), interface type (normal or
- * annotation type), member (class, interface, field, or method) of a reference type, type parameter
- * (of a class, interface, method or constructor), parameter (to a method, constructor, or exception
+ * <p>
+ * A declared entity is a package, class type (normal or enum), interface type (normal or annotation
+ * type), member (class, interface, field, or method) of a reference type, type parameter (of a
+ * class, interface, method or constructor), parameter (to a method, constructor, or exception
  * handler), or local variable.
  *
- * @see https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
  */
 public final class Name {
 
@@ -57,10 +58,8 @@ public final class Name {
 
   /** Create name instance for the given class instance. */
   public static Name name(Class<?> type) {
-    // java[.]lang[.]Thread$State
-    String[] packageNames = DOT.split(type.getName());
-    // java[.]lang[.]Thread[.]State
-    String[] identifiers = DOT.split(type.getCanonicalName());
+    String[] packageNames = DOT.split(type.getName()); // java[.]lang[.]Thread$State
+    String[] identifiers = DOT.split(type.getCanonicalName()); // java[.]lang[.]Thread[.]State
     return new Name(packageNames.length - 1, Arrays.asList(identifiers));
   }
 
@@ -95,7 +94,8 @@ public final class Name {
   /**
    * Create name instance for the identifiers.
    *
-   * <p>The fully qualified class name {@code abc.xyz.Alphabet} can be created by:
+   * <p>
+   * The fully qualified class name {@code abc.xyz.Alphabet} can be created by:
    *
    * <pre>
    * name(2, "abc", "xyz", "Alphabet")
@@ -113,7 +113,8 @@ public final class Name {
   /**
    * Create name instance for the identifiers by delegating to {@link #name(int, List)}.
    *
-   * <p>The package level is determined by the first capital name of the list.
+   * <p>
+   * The package level is determined by the first capital name of the list.
    */
   public static Name name(List<String> names) {
     int size = names.size();
@@ -170,9 +171,9 @@ public final class Name {
     if (!isEnclosed()) {
       throw new IllegalStateException(String.format("not enclosed: '%s'", this));
     }
-    int shrinkedByOne = size - 1;
-    int newPackageLevel = Math.min(packageLevel, shrinkedByOne);
-    return new Name(newPackageLevel, identifiers.subList(0, shrinkedByOne));
+    int shrunkByOne = size - 1;
+    int newPackageLevel = Math.min(packageLevel, shrunkByOne);
+    return new Name(newPackageLevel, identifiers.subList(0, shrunkByOne));
   }
 
   @Override
