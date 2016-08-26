@@ -129,7 +129,9 @@ class NameTest {
     Name integer = Name.name(int.class);
     assertEquals(integer, integer);
     // falsify
+    // noinspection ObjectEqualsNull
     assertFalse(Name.name(byte.class).equals(null));
+    // noinspection EqualsBetweenInconvertibleTypes
     assertFalse(Name.name(byte.class).equals(byte.class));
     assertFalse(Name.name(byte.class).equals(new Name(0, asList("some", "byte"))));
   }
