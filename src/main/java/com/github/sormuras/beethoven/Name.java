@@ -78,6 +78,9 @@ public final class Name {
     for (Element e = element; true; e = e.getEnclosingElement()) {
       if (e.getKind() == ElementKind.PACKAGE) {
         PackageElement casted = (PackageElement) e;
+        if (casted.isUnnamed()) {
+          return new Name(0, simpleNames);
+        }
         String[] packageNames = DOT.split(casted.getQualifiedName().toString());
         simpleNames.addAll(0, Arrays.asList(packageNames));
         return new Name(packageNames.length, simpleNames);
@@ -155,7 +158,7 @@ public final class Name {
   private final String packageName;
   private final int size;
 
-  private Name(int packageLevel, List<String> identifiers) {
+  Name(int packageLevel, List<String> identifiers) {
     this.packageLevel = packageLevel;
     this.identifiers = Collections.unmodifiableList(identifiers);
     this.canonical = String.join(".", identifiers);

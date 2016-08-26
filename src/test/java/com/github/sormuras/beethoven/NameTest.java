@@ -1,17 +1,87 @@
 package com.github.sormuras.beethoven;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
+import javax.tools.JavaFileObject;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.expectThrows;
+
 class NameTest {
+
+  @SupportedAnnotationTypes({"X", "x.X"})
+  @SupportedSourceVersion(SourceVersion.RELEASE_8)
+  static class ElementNameProcessor extends AbstractProcessor {
+    public List<Name> all = new ArrayList<>();
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+      TypeElement tex = processingEnv.getElementUtils().getTypeElement("X");
+      if (tex != null) {
+        roundEnv.getElementsAnnotatedWith(tex).forEach(e -> all.add(Name.name(e)));
+      }
+      tex = processingEnv.getElementUtils().getTypeElement("x.X");
+      if (tex != null) {
+        roundEnv.getElementsAnnotatedWith(tex).forEach(e -> all.add(Name.name(e)));
+      }
+      return false;
+    }
+  }
 
   @Test
   void array() {
     assertEquals("int[][]", Name.name(int[][].class).canonical());
+  }
+
+  @Test
+  void cast() throws Exception {
+    Name name = Name.reflect(Objects.class, "hash");
+    assertNull(Name.cast(null));
+    assertSame(name, Name.cast(name));
+    assertEquals(Name.name(Object.class), Name.cast(Object.class));
+    assertEquals(Name.name(Thread.State.BLOCKED), Name.cast(Thread.State.BLOCKED));
+    assertEquals(Name.name("abc", "X"), Name.cast(new String[] {"abc", "X"}));
+    assertEquals(Name.name("abc", "X"), Name.cast(Arrays.asList(new String[] {"abc", "X"})));
+    assertEquals(Name.name(Math.class.getField("PI")), Name.cast(Math.class.getField("PI")));
+    expectThrows(IllegalArgumentException.class, () -> Name.cast(BigInteger.ZERO));
+  }
+
+  @Test
+  void elementInUnnamedPackage() {
+    JavaFileObject a = Compilation.source("A", "@X class A {}");
+    JavaFileObject x = Compilation.source("X", "@interface X {}");
+    ElementNameProcessor p = new ElementNameProcessor();
+    Compilation.compile(null, Collections.emptyList(), Arrays.asList(p), Arrays.asList(a, x));
+    assertEquals(1, p.all.size());
+    assertEquals(Name.name("A"), p.all.get(0));
+  }
+
+  @Test
+  void elementInNamedPackage() {
+    JavaFileObject a = Compilation.source("x.A", "package x; @x.X class A {}");
+    JavaFileObject x = Compilation.source("x.X", "package x; @interface X {}");
+    ElementNameProcessor p = new ElementNameProcessor();
+    Compilation.compile(null, Collections.emptyList(), Arrays.asList(p), Arrays.asList(a, x));
+    assertEquals(1, p.all.size());
+    assertEquals(Name.name("x", "A"), p.all.get(0));
   }
 
   @Test
@@ -37,6 +107,29 @@ class NameTest {
     assertFalse(java.isEnclosed());
     assertFalse(java.isJavaLangPackage());
     assertThrows(IllegalStateException.class, java::enclosing);
+  }
+
+  @Test
+  void field() {
+    assertEquals("java.lang.Math.PI", Name.reflect(Math.class, "PI").canonical());
+    expectThrows(Error.class, () -> Name.reflect(Object.class, "PI"));
+    expectThrows(Error.class, () -> Name.reflect(Class.class, "PO"));
+  }
+
+  @Test
+  void equalsAndHashcode() {
+    assertEquals(Name.name(byte.class), new Name(0, Arrays.asList("byte")));
+    assertEquals(Name.name(Object.class), Name.name("java", "lang", "Object"));
+    assertEquals(Name.name(Objects.class), Name.name("java", "util", "Objects"));
+    assertEquals(Name.name(Thread.class), Name.name("java", "lang", "Thread"));
+    assertEquals(Name.name(Thread.State.class), Name.name("java", "lang", "Thread", "State"));
+    // same instance
+    Name integer = Name.name(int.class);
+    assertEquals(integer, integer);
+    // falsify
+    assertFalse(Name.name(byte.class).equals(null));
+    assertFalse(Name.name(byte.class).equals(byte.class));
+    assertFalse(Name.name(byte.class).equals(new Name(0, Arrays.asList("some", "byte"))));
   }
 
   @Test
