@@ -180,9 +180,9 @@ public interface Compilation {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     Objects.requireNonNull(compiler, "no system java compiler available - JDK is required!");
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    StandardJavaFileManager sjfm =
+    StandardJavaFileManager standardFileManager =
         compiler.getStandardFileManager(diagnostics, Locale.getDefault(), StandardCharsets.UTF_8);
-    Manager manager = new Manager(sjfm, parent);
+    Manager manager = new Manager(standardFileManager, parent);
     CompilationTask task = compiler.getTask(null, manager, diagnostics, options, null, units);
     if (!processors.isEmpty()) {
       task.setProcessors(processors);

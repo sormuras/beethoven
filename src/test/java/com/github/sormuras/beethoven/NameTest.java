@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -18,6 +16,9 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,7 +32,7 @@ class NameTest {
   @SupportedAnnotationTypes({"X", "x.X"})
   @SupportedSourceVersion(SourceVersion.RELEASE_8)
   static class ElementNameProcessor extends AbstractProcessor {
-    public List<Name> all = new ArrayList<>();
+    public final List<Name> all = new ArrayList<>();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -60,7 +61,7 @@ class NameTest {
     assertEquals(Name.name(Object.class), Name.cast(Object.class));
     assertEquals(Name.name(Thread.State.BLOCKED), Name.cast(Thread.State.BLOCKED));
     assertEquals(Name.name("abc", "X"), Name.cast(new String[] {"abc", "X"}));
-    assertEquals(Name.name("abc", "X"), Name.cast(Arrays.asList(new String[] {"abc", "X"})));
+    assertEquals(Name.name("abc", "X"), Name.cast(asList("abc", "X")));
     assertEquals(Name.name(Math.class.getField("PI")), Name.cast(Math.class.getField("PI")));
     expectThrows(IllegalArgumentException.class, () -> Name.cast(BigInteger.ZERO));
   }
@@ -70,7 +71,7 @@ class NameTest {
     JavaFileObject a = Compilation.source("A", "@X class A {}");
     JavaFileObject x = Compilation.source("X", "@interface X {}");
     ElementNameProcessor p = new ElementNameProcessor();
-    Compilation.compile(null, Collections.emptyList(), Arrays.asList(p), Arrays.asList(a, x));
+    Compilation.compile(null, emptyList(), singletonList(p), asList(a, x));
     assertEquals(1, p.all.size());
     assertEquals(Name.name("A"), p.all.get(0));
   }
@@ -80,7 +81,7 @@ class NameTest {
     JavaFileObject a = Compilation.source("x.A", "package x; @x.X class A {}");
     JavaFileObject x = Compilation.source("x.X", "package x; @interface X {}");
     ElementNameProcessor p = new ElementNameProcessor();
-    Compilation.compile(null, Collections.emptyList(), Arrays.asList(p), Arrays.asList(a, x));
+    Compilation.compile(null, emptyList(), singletonList(p), asList(a, x));
     assertEquals(1, p.all.size());
     assertEquals(Name.name("x", "A"), p.all.get(0));
   }
@@ -119,7 +120,7 @@ class NameTest {
 
   @Test
   void equalsAndHashcode() {
-    assertEquals(Name.name(byte.class), new Name(0, Arrays.asList("byte")));
+    assertEquals(Name.name(byte.class), new Name(0, singletonList("byte")));
     assertEquals(Name.name(Object.class), Name.name("java", "lang", "Object"));
     assertEquals(Name.name(Objects.class), Name.name("java", "util", "Objects"));
     assertEquals(Name.name(Thread.class), Name.name("java", "lang", "Thread"));
@@ -130,7 +131,7 @@ class NameTest {
     // falsify
     assertFalse(Name.name(byte.class).equals(null));
     assertFalse(Name.name(byte.class).equals(byte.class));
-    assertFalse(Name.name(byte.class).equals(new Name(0, Arrays.asList("some", "byte"))));
+    assertFalse(Name.name(byte.class).equals(new Name(0, asList("some", "byte"))));
   }
 
   @Test
