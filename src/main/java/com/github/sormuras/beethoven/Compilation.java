@@ -173,10 +173,10 @@ public interface Compilation {
 
   /** Convenient {@link JavaCompiler} facade returning a ClassLoader with all compiled units. */
   static ClassLoader compile(
-          ClassLoader parent,
-          List<String> options,
-          List<Processor> processors,
-          List<JavaFileObject> units) {
+      ClassLoader parent,
+      List<String> options,
+      List<Processor> processors,
+      List<JavaFileObject> units) {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     Objects.requireNonNull(compiler, "no system java compiler available - JDK is required!");
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();

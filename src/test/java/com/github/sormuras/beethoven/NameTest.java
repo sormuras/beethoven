@@ -32,6 +32,7 @@ class NameTest {
   @SupportedSourceVersion(SourceVersion.RELEASE_8)
   static class ElementNameProcessor extends AbstractProcessor {
     public List<Name> all = new ArrayList<>();
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
       TypeElement tex = processingEnv.getElementUtils().getTypeElement("X");
