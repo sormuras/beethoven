@@ -23,7 +23,14 @@ public class Listing {
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private final StringBuilder currentLine = new StringBuilder(256);
-  private int indentationDepth = 0;
+  private int currentIndentationDepth = 0;
+  private final String[] indentationTable = new String[20];
+
+  public Listing() {
+    indentationTable[0] = "";
+    IntStream.range(1, indentationTable.length)
+        .forEach(i -> indentationTable[i] = indentationTable[i - 1] + getIndentationString());
+  }
 
   public Listing add(char character) {
     currentLine.append(character);
@@ -68,8 +75,8 @@ public class Listing {
     return "  ";
   }
 
-  public int getIndentationDepth() {
-    return indentationDepth;
+  public int getCurrentIndentationDepth() {
+    return currentIndentationDepth;
   }
 
   public String getLineSeparator() {
@@ -81,9 +88,9 @@ public class Listing {
   }
 
   public Listing indent(int times) {
-    indentationDepth += times;
-    if (indentationDepth < 0) {
-      indentationDepth = 0;
+    currentIndentationDepth += times;
+    if (currentIndentationDepth < 0) {
+      currentIndentationDepth = 0;
     }
     return this;
   }
@@ -111,17 +118,12 @@ public class Listing {
       return this;
     }
     // trivial case: no indentation, just add the line
-    if (indentationDepth == 0) {
+    if (currentIndentationDepth == 0) {
       collectedLines.add(newline);
       return this;
     }
-    // "insert" indentation pattern in front of the new line
-    String indentationString = getIndentationString();
-    int capacity = indentationDepth * indentationString.length() + newline.length();
-    StringBuilder indentedLine = new StringBuilder(capacity);
-    IntStream.range(0, indentationDepth).forEach(i -> indentedLine.append(indentationString));
-    indentedLine.append(newline);
-    collectedLines.add(indentedLine.toString());
+    // prepend indentation pattern in front of the new line
+    collectedLines.add(indentationTable[currentIndentationDepth] + newline);
     return this;
   }
 

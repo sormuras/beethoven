@@ -2,8 +2,6 @@ package com.github.sormuras.beethoven;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -78,10 +76,10 @@ class ListingTest {
     listing.add("BEGIN").newline();
     listing.indent(1).add("writeln('Hello, world.')").newline().indent(-1);
     listing.add("END.").newline();
-    assertEquals(0, listing.getIndentationDepth());
+    assertEquals(0, listing.getCurrentIndentationDepth());
     assertEquals("BEGIN\n  writeln('Hello, world.')\nEND.\n", listing.toString());
     listing.indent(-100);
-    assertEquals(0, listing.getIndentationDepth());
+    assertEquals(0, listing.getCurrentIndentationDepth());
   }
 
   @Test
