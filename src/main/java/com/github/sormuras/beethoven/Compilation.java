@@ -51,7 +51,7 @@ public interface Compilation {
     private ByteArrayOutputStream stream;
 
     public ByteArrayFileObject(String canonical, Kind kind) {
-      super(URI.create("listing:///" + canonical.replace('.', '/') + kind.extension), kind);
+      super(URI.create("beethoven:///" + canonical.replace('.', '/') + kind.extension), kind);
     }
 
     public byte[] getBytes() {
@@ -151,7 +151,7 @@ public interface Compilation {
     Pattern namePattern = Pattern.compile(".*(class|interface|enum)\\s+(\\w*)\\s+.*");
     Matcher nameMatcher = namePattern.matcher(charContent);
     if (!nameMatcher.find()) {
-      throw new IllegalArgumentException("Expected Java type source, but got: " + charContent);
+      throw new IllegalArgumentException("Expected java compilation unit, but got: " + charContent);
     }
     String className = nameMatcher.group(2);
     return compile(packageName + className, charContent);
@@ -163,7 +163,7 @@ public interface Compilation {
     try {
       return loader.loadClass(className);
     } catch (ClassNotFoundException exception) {
-      throw new RuntimeException("Class '" + className + "' not found?!", exception);
+      throw new RuntimeException("Class or interface '" + className + "' not found?!", exception);
     }
   }
 
@@ -178,7 +178,7 @@ public interface Compilation {
       List<Processor> processors,
       List<JavaFileObject> units) {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    Objects.requireNonNull(compiler, "no system java compiler available - JDK is required!");
+    Objects.requireNonNull(compiler, "No system java compiler available - JDK is required!");
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     StandardJavaFileManager standardFileManager =
         compiler.getStandardFileManager(diagnostics, Locale.getDefault(), StandardCharsets.UTF_8);
@@ -189,7 +189,7 @@ public interface Compilation {
     }
     boolean success = task.call();
     if (!success) {
-      throw new RuntimeException("compilation failed! " + diagnostics.getDiagnostics());
+      throw new RuntimeException("Compilation failed! " + diagnostics.getDiagnostics());
     }
     return manager.getClassLoader(StandardLocation.CLASS_PATH);
   }

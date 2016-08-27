@@ -67,7 +67,7 @@ public final class Name {
     if (any instanceof List<?>) {
       return name(((List<?>) any).stream().map(Object::toString).collect(Collectors.toList()));
     }
-    throw new IllegalArgumentException("can't cast/convert instance of " + any.getClass());
+    throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
   }
 
   /** Create name instance for the given class instance. */
@@ -121,9 +121,9 @@ public final class Name {
    * @throws AssertionError if any identifier is not a syntactically valid qualified name.
    */
   public static Name name(int packageLevel, List<String> names) {
-    assert packageLevel >= 0 : "package level must not be < 0, but is " + packageLevel;
-    assert packageLevel <= names.size() : "package level " + packageLevel + " too high: " + names;
-    assert names.stream().allMatch(SourceVersion::isName) : "non-name in " + names;
+    assert packageLevel >= 0 : "Package level must not be < 0, but is " + packageLevel;
+    assert packageLevel <= names.size() : "Package level " + packageLevel + " too high: " + names;
+    assert names.stream().allMatch(SourceVersion::isName) : "Non-name in " + names;
     return new Name(packageLevel, names);
   }
 
@@ -151,19 +151,19 @@ public final class Name {
   }
 
   /** Create new Name based on the class type and declared member name. */
-  public static Name reflect(Class<?> type, String declaredMemberName) {
+  public static Name reflect(Class<?> type, String declaredName) {
     try {
-      Member field = type.getDeclaredField(declaredMemberName);
+      Member field = type.getDeclaredField(declaredName);
       return name(field);
     } catch (Exception expected) {
       // fall-through
     }
     for (Member method : type.getDeclaredMethods()) {
-      if (method.getName().equals(declaredMemberName)) {
+      if (method.getName().equals(declaredName)) {
         return name(method);
       }
     }
-    throw new AssertionError("Member '" + declaredMemberName + "' of " + type + " lookup failed!");
+    throw new AssertionError(String.format("Member '%s' of %s not found!", declaredName, type));
   }
 
   private final String canonical;
@@ -186,7 +186,7 @@ public final class Name {
 
   public Name enclosing() {
     if (!isEnclosed()) {
-      throw new IllegalStateException(String.format("not enclosed: '%s'", this));
+      throw new IllegalStateException(String.format("Not enclosed: '%s'", this));
     }
     int shrunkByOne = size - 1;
     int newPackageLevel = Math.min(packageLevel, shrunkByOne);
