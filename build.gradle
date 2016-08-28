@@ -23,6 +23,7 @@ apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'com.github.sherter.google-java-format'
 apply plugin: 'net.ltgt.errorprone'
+apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
@@ -39,6 +40,12 @@ dependencies {
 
 googleJavaFormat {
     toolVersion '1.0' // '1.1-SNAPSHOT'
+}
+
+checkstyle {
+    toolVersion = 7.1
+    configFile = rootProject.file('src/checkstyle-config-google.xml')
+    sourceSets = [ sourceSets.main ]
 }
 
 afterEvaluate {

@@ -184,6 +184,7 @@ public final class Name {
     return canonical;
   }
 
+  /** Create new enclosing {@link Name} instance based on this identifiers. */
   public Name enclosing() {
     if (!isEnclosed()) {
       throw new IllegalStateException(String.format("Not enclosed: '%s'", this));
