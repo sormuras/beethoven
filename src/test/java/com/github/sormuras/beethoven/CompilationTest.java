@@ -33,7 +33,7 @@ class CompilationTest {
     JavaFileObject file = source("Hi.java", code);
     ClassLoader loader = compile(file);
     Class<?> hiClass = loader.loadClass("Hi");
-    Object hiInstance = hiClass.newInstance();
+    Object hiInstance = hiClass.getConstructor().newInstance();
     Method greetMethod = hiClass.getMethod("greet", String.class);
     assertEquals("Hi world", greetMethod.invoke(hiInstance, "world"));
     assertThrows(ClassNotFoundException.class, () -> loader.loadClass("Hello"));

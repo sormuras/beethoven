@@ -131,8 +131,8 @@ class NameTest {
     // falsify
     // noinspection ObjectEqualsNull
     assertFalse(Name.name(byte.class).equals(null));
-    // noinspection EqualsBetweenInconvertibleTypes
-    assertFalse(Name.name(byte.class).equals(byte.class));
+    Object byteClass = byte.class; // bypass EqualsBetweenInconvertibleTypes "error"
+    assertFalse(Name.name(byte.class).equals(byteClass));
     assertFalse(Name.name(byte.class).equals(new Name(0, asList("some", "byte"))));
   }
 
