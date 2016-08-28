@@ -25,6 +25,12 @@ apply plugin: 'com.github.sherter.google-java-format'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'checkstyle'
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    sourceCompatibility  = 1.8
+    targetCompatibility  = 1.8
+}
+
 repositories {
     mavenCentral()
     maven {

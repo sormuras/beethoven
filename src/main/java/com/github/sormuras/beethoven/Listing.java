@@ -26,8 +26,11 @@ import java.util.stream.IntStream;
 
 public class Listing {
 
+  /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
   public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
-  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{.+?\\}");
+
+  /** Used to find placeholders framed by curly braces. */
+  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{[^{^}]+?\\}");
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private final StringBuilder currentLine = new StringBuilder(256);
@@ -73,8 +76,11 @@ public class Listing {
 
   /**
    * Parse source string and replace placeholders with {@link #add}-calls to this {@link Listing}
-   * instance. TODO Enumerate supported placeholders. TODO Introduce extension points allowing
-   * custom placeholder (handling).
+   * instance.
+   * <ul>
+   * <li>TODO Enumerate supported placeholders.</li>
+   * <li>TODO Introduce extension points allowing custom placeholder (handling).</li>
+   * </ul>
    */
   public Listing add(String source, Object... args) {
     Matcher matcher = PLACEHOLDER_PATTERN.matcher(source);
@@ -90,10 +96,7 @@ public class Listing {
       String placeholder = matcher.group(0);
       if (placeholder.equals("{S}")) {
         String string = args[argumentIndex++].toString();
-        // TODO add(Tool.escape(string));
-        add('"');
-        add(string);
-        add('"');
+        add(Listable.escape(string));
         continue;
       }
       if (placeholder.equals("{N}")) {
@@ -192,7 +195,7 @@ public class Listing {
 
   /** Carriage return and line feed. */
   public Listing newline() {
-    String newline = currentLine.toString(); // Tool.trimRight(currentLine.toString());
+    String newline = currentLine.toString().replaceFirst("\\s+$", "");
     currentLine.setLength(0);
     // trivial case: empty line (only add it if last line is not empty)
     if (newline.isEmpty()) {

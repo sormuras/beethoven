@@ -42,6 +42,68 @@ public interface Listable extends UnaryOperator<Listing> {
     }
   }
 
+  /**
+   * Escape Sequences for Character and String Literals.
+   *
+   * <p>
+   * The character and string escape sequences allow for the representation of some nongraphic
+   * characters without using Unicode escapes, as well as the single quote, double quote, and
+   * backslash characters, in character literals (§3.10.4) and string literals (§3.10.5).
+   *
+   * <p>
+   * https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6
+   */
+  static String escape(char character) {
+    switch (character) {
+      case '\b': /* \u0008: backspace (BS) */
+        return "\\b";
+      case '\t': /* \u0009: horizontal tab (HT) */
+        return "\\t";
+      case '\n': /* \u000a: linefeed (LF) */
+        return "\\n";
+      case '\f': /* \u000c: form feed (FF) */
+        return "\\f";
+      case '\r': /* \u000d: carriage return (CR) */
+        return "\\r";
+      case '\"': /* \u0022: double quote (") */
+        return "\"";
+      case '\'': /* \u0027: single quote (') */
+        return "\\'";
+      case '\\': /* \u005c: backslash (\) */
+        return "\\\\";
+      default:
+        return Character.isISOControl(character)
+            ? String.format("\\u%04x", (int) character)
+            : Character.toString(character);
+    }
+  }
+
+  /** Returns the string literal representing {@code value}, including wrapping double quotes. */
+  static String escape(String value) {
+    if (value == null) {
+      return "null";
+    }
+    StringBuilder result = new StringBuilder(value.length() + 2);
+    result.append('"');
+    for (int i = 0; i < value.length(); i++) {
+      char character = value.charAt(i);
+      // trivial case: single quote must not be escaped
+      if (character == '\'') {
+        result.append("'");
+        continue;
+      }
+      // trivial case: double quotes must be escaped
+      if (character == '\"') {
+        result.append("\\\"");
+        continue;
+      }
+      // default case: just let character escaper do its work
+      result.append(escape(character));
+    }
+    result.append('"');
+    return result.toString();
+  }
+
   Listable IDENTITY = new Identity();
 
   Listable NEWLINE = Listing::newline;
