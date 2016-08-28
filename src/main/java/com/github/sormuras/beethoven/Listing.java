@@ -16,10 +16,18 @@ package com.github.sormuras.beethoven;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Scanner;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class Listing {
+
+  public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
+  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{.+?\\}");
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private final StringBuilder currentLine = new StringBuilder(256);
@@ -61,6 +69,82 @@ public class Listing {
       return add(String.join(".", name.simpleNames()));
     }
     return add(name.canonical());
+  }
+
+  /**
+   * Parse source string and replace placeholders with {@link #add}-calls to this {@link Listing}
+   * instance. TODO Enumerate supported placeholders. TODO Introduce extension points allowing
+   * custom placeholder (handling).
+   */
+  public Listing add(String source, Object... args) {
+    Matcher matcher = PLACEHOLDER_PATTERN.matcher(source);
+
+    int argumentIndex = 0;
+    int sourceIndex = 0;
+    while (matcher.find()) {
+      if (sourceIndex < matcher.start()) {
+        add(source.substring(sourceIndex, matcher.start()));
+      }
+      sourceIndex = matcher.end();
+      // handle simple placeholder
+      String placeholder = matcher.group(0);
+      if (placeholder.equals("{S}")) {
+        String string = args[argumentIndex++].toString();
+        // TODO add(Tool.escape(string));
+        add('"');
+        add(string);
+        add('"');
+        continue;
+      }
+      if (placeholder.equals("{N}")) {
+        add(Name.cast(args[argumentIndex++]));
+        continue;
+      }
+      if (placeholder.equals("{L}")) {
+        add((Listable) args[argumentIndex++]);
+        continue;
+      }
+      // convert unknown placeholder to chained method call sequence
+      Object argument = args[argumentIndex++];
+      Scanner scanner = new Scanner(placeholder);
+      try {
+        scanner.useDelimiter(METHODCHAIN_PATTERN);
+        Object result = argument;
+        while (scanner.hasNext()) {
+          result = result.getClass().getMethod(scanner.next()).invoke(result);
+        }
+        if (result instanceof Optional) {
+          Optional<?> optional = (Optional<?>) result;
+          if (!optional.isPresent()) {
+            continue;
+          }
+          result = optional.get();
+        }
+        if (result instanceof Name) {
+          add((Name) result);
+          continue;
+        }
+        if (result instanceof Listable) {
+          add((Listable) result);
+          continue;
+        }
+        add(String.valueOf(result));
+        scanner.close();
+      } catch (Exception exception) {
+        throw new IllegalArgumentException(
+            "Error parsing: '" + placeholder + "' source='" + source + "'", exception);
+      }
+    }
+    add(source.substring(sourceIndex));
+    return this;
+  }
+
+  public Listing fmt(Locale locale, String format, Object... args) {
+    return add(args.length == 0 ? format : String.format(locale, format, args));
+  }
+
+  public Listing fmt(String format, Object... args) {
+    return add(args.length == 0 ? format : String.format(format, args));
   }
 
   public Deque<String> getCollectedLines() {

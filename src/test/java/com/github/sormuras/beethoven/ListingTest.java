@@ -3,6 +3,7 @@ package com.github.sormuras.beethoven;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.script.Invocable;
@@ -10,9 +11,24 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static java.util.Locale.GERMAN;
+import static java.lang.Math.PI;
 
 class ListingTest {
+
+  static class Face {
+    @SuppressWarnings("unused")
+    public Optional<?> empty() {
+      return Optional.empty();
+    }
+
+    @SuppressWarnings("unused")
+    public Optional<Listable> smile() {
+      return Optional.of(listing -> listing.add("(:"));
+    }
+  }
 
   static class Omitting extends Listing {
     @Override
@@ -49,6 +65,14 @@ class ListingTest {
   }
 
   @Test
+  void addFormattedString() {
+    assertEquals("abc", new Listing().fmt("a%sc", "b").toString());
+    assertEquals("abc", new Listing().fmt("abc", new Object[0]).toString());
+    assertEquals("3,14159", new Listing().fmt(GERMAN, "%.5f", PI).toString());
+    assertEquals("3,14159", new Listing().fmt(GERMAN, "3,14159").toString());
+  }
+
+  @Test
   void addListable() {
     assertEquals("", new Listing().add(Listable.IDENTITY).toString());
     assertEquals("", new Listing().add((Listable) null).toString());
@@ -68,6 +92,19 @@ class ListingTest {
     assertEquals("Object", new Importing().add(object).toString());
     assertEquals("Map", new Importing().add(map).toString());
     assertEquals("Entry", new Importing().add(entry).toString());
+  }
+
+  @Test
+  void addTemplate() {
+    String expected = "java.lang.System.out.println(\"123\"); // 0 String";
+    String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName}";
+    assertEquals(expected, new Listing().add(source, System.class, "123", "", "$").toString());
+    assertEquals(" ", new Listing().add("{L}", Listable.SPACE).toString());
+    assertEquals("x.Y", new Listing().add("{enclosing}", Name.name("x", "Y", "Z")).toString());
+    assertEquals("(:", new Listing().add("{smile}", new Face()).toString());
+    assertEquals("[]", new Listing().add("[{empty}]", new Face()).toString());
+    assertThrows(Exception.class, () -> new Listing().add("{xxx}", ""));
+    assertThrows(Exception.class, () -> new Listing().add("{toString.toString.xxx}", ""));
   }
 
   @Test

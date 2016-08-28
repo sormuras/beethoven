@@ -44,6 +44,10 @@ public interface Listable extends UnaryOperator<Listing> {
 
   Listable IDENTITY = new Identity();
 
+  Listable NEWLINE = Listing::newline;
+
+  Listable SPACE = listing -> listing.add(' ');
+
   default boolean isEmpty() {
     return list().isEmpty();
   }

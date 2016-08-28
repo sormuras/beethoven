@@ -17,6 +17,20 @@ class ListableTest {
   }
 
   @Test
+  void empty() {
+    assertTrue(Listable.IDENTITY.isEmpty());
+    assertTrue(Listable.NEWLINE.isEmpty());
+    assertFalse(Listable.SPACE.isEmpty());
+  }
+
+  @Test
+  void list() {
+    assertEquals("", Listable.IDENTITY.list());
+    assertEquals("", Listable.NEWLINE.list()); // initial new line is ignored
+    assertEquals(" ", Listable.SPACE.list());
+  }
+
+  @Test
   void simple() {
     Listable a = listing -> listing.add('a');
     assertEquals("a", a.list());
