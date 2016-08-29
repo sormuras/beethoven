@@ -16,6 +16,9 @@ package com.github.sormuras.beethoven.type;
 
 import static java.util.Arrays.stream;
 
+import com.github.sormuras.beethoven.Annotated;
+import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -26,10 +29,6 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.github.sormuras.beethoven.Annotated;
-import com.github.sormuras.beethoven.JavaAnnotation;
-import com.github.sormuras.beethoven.Name;
 
 /**
  * The Java programming language is a statically typed language, which means that every variable and
@@ -45,7 +44,7 @@ import com.github.sormuras.beethoven.Name;
  * objects. All objects, including arrays, support the methods of class Object (§4.3.2). String
  * literals are represented by String objects (§4.3.3).
  *
- * @see https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html">JLS 4</a>
  */
 public abstract class JavaType extends Annotated {
 
@@ -122,16 +121,17 @@ public abstract class JavaType extends Annotated {
   /** Create {@link JavaType} based on {@link java.lang.reflect.WildcardType} instance. */
   public static JavaType type(java.lang.reflect.WildcardType type) {
     // ? super lower bound
-    for (java.lang.reflect.Type lowerBound : type.getLowerBounds()) {
-      return WildcardType.supertypeOf(lowerBound);
+    java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
+    if (lowerBounds.length > 0) {
+      return WildcardType.supertypeOf(lowerBounds[0]);
     }
     // ? extends upper bound
     java.lang.reflect.Type[] upperBounds = type.getUpperBounds();
     if (upperBounds.length == 1 && upperBounds[0].equals(Object.class)) {
       return new WildcardType();
     }
-    for (java.lang.reflect.Type upperBound : upperBounds) {
-      return WildcardType.subtypeOf(upperBound);
+    if (upperBounds.length > 0) {
+      return WildcardType.subtypeOf(upperBounds[0]);
     }
     return new WildcardType();
   }
