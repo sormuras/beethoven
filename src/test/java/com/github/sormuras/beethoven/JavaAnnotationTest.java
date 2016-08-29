@@ -12,6 +12,9 @@ import java.lang.annotation.Target;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Generated;
 import org.junit.jupiter.api.Test;
 
@@ -26,11 +29,18 @@ import org.junit.jupiter.api.Test;
   q = @Transient,
   r = {Float.class, Double.class}
 )
-class AnnoTest {
+@Generated("not generated, not visible at runtime")
+class JavaAnnotationTest {
 
   @Test
-  void annos() {
-    assertEquals(1, Anno.annos(AnnoTest.class).size());
+  void annotations() {
+    List<JavaAnnotation> annotations = JavaAnnotation.annotations(JavaAnnotationTest.class);
+    assertEquals(1, annotations.size());
+    assertEquals(All.class.getCanonicalName(), annotations.get(0).getTypeName().canonical());
+    Map<String, List<Listable>> members = annotations.get(0).getMembers();
+    assertEquals("1701", members.get("p").get(0).list());
+    assertEquals("1701", JavaAnnotation.values(members.get("p")).list());
+    assertEquals("{9, 8, 1}", JavaAnnotation.values(members.get("m")).list());
   }
 
   @Test
@@ -47,7 +57,7 @@ class AnnoTest {
               }
               throw new AssertionError("IllegalAnnotation");
             });
-    Error error = expectThrows(AssertionError.class, () -> Anno.anno(illegal));
+    Error error = expectThrows(AssertionError.class, () -> JavaAnnotation.annotation(illegal));
     assertTrue(error.getMessage().startsWith("Reflecting IllegalAnnotation failed:"));
   }
 
@@ -66,7 +76,7 @@ class AnnoTest {
             + "q = @java.beans.Transient, "
             + "r = {java.lang.Float.class, java.lang.Double.class}"
             + ")",
-        Anno.anno(AnnoTest.class, All.class).list());
+        JavaAnnotation.annotation(JavaAnnotationTest.class, All.class).list());
   }
 
   @Test
@@ -94,12 +104,12 @@ class AnnoTest {
             + "q = @java.beans.Transient(true), "
             + "r = {java.lang.Float.class, java.lang.Double.class}"
             + ")",
-        Anno.anno(getClass().getAnnotation(All.class), true).list());
+        JavaAnnotation.annotation(getClass().getAnnotation(All.class), true).list());
   }
 
   @Test
   void simpleMarkerAnnotation() {
-    Anno marker = Anno.anno(Test.class);
+    JavaAnnotation marker = JavaAnnotation.annotation(Test.class);
     assertEquals("@" + Test.class.getCanonicalName(), marker.list());
     assertEquals("Anno{Name{org.junit.jupiter.api/Test}, members={}}", marker.toString());
   }
@@ -107,15 +117,15 @@ class AnnoTest {
   @Test
   void singleElementAnnotation() {
     Class<Generated> type = Generated.class;
-    Anno tag = Anno.anno(type, "(-:");
+    JavaAnnotation tag = JavaAnnotation.annotation(type, "(-:");
     assertEquals("@" + type.getCanonicalName() + "(\"(-:\")", tag.list());
-    Anno tags = Anno.anno(type, "(", "-", ":");
+    JavaAnnotation tags = JavaAnnotation.annotation(type, "(", "-", ":");
     assertEquals("@" + type.getCanonicalName() + "({\"(\", \"-\", \":\"})", tags.list());
   }
 
   @Test
   void singleElementAnnotationUsingEnumValues() {
-    Anno target = Anno.anno(Target.class, ElementType.TYPE);
+    JavaAnnotation target = JavaAnnotation.annotation(Target.class, ElementType.TYPE);
     String t = Target.class.getCanonicalName();
     String et = ElementType.class.getCanonicalName();
     assertEquals("@" + t + "(" + et + ".TYPE)", target.list());
@@ -125,33 +135,33 @@ class AnnoTest {
 
   @Test
   void singleElementNotNamedValue() {
-    Anno a = new Anno(Name.name("a", "A"));
-    a.addMember("a", Anno.value("zzz"));
+    JavaAnnotation a = new JavaAnnotation(Name.name("a", "A"));
+    a.addMember("a", JavaAnnotation.value("zzz"));
     assertEquals("@a.A(a = \"zzz\")", a.list());
-    a.addMember("b", Anno.value(4711));
+    a.addMember("b", JavaAnnotation.value(4711));
     assertEquals("@a.A(a = \"zzz\", b = 4711)", a.list());
   }
 
   @Test
   void value() {
-    assertEquals("int.class", Anno.value(int.class).list());
-    assertEquals("java.lang.Thread.State.class", Anno.value(Thread.State.class).list());
-    assertEquals("java.lang.Thread.State.NEW", Anno.value(Thread.State.NEW).list());
-    assertEquals("\"a\"", Anno.value("a").list());
-    assertEquals("2.718282F", Anno.value((float) Math.E).list());
-    assertEquals("2.718281828459045", Anno.value(Math.E).list());
-    assertEquals("9223372036854775807L", Anno.value(Long.MAX_VALUE).list());
-    assertEquals("'!'", Anno.value('!').list());
-    assertEquals("null", Anno.value(null).list());
-    assertEquals("0", Anno.value(BigInteger.ZERO).list());
-    assertEquals(" ", Anno.value(Listable.SPACE).list());
+    assertEquals("int.class", JavaAnnotation.value(int.class).list());
+    assertEquals("java.lang.Thread.State.class", JavaAnnotation.value(Thread.State.class).list());
+    assertEquals("java.lang.Thread.State.NEW", JavaAnnotation.value(Thread.State.NEW).list());
+    assertEquals("\"a\"", JavaAnnotation.value("a").list());
+    assertEquals("2.718282F", JavaAnnotation.value((float) Math.E).list());
+    assertEquals("2.718281828459045", JavaAnnotation.value(Math.E).list());
+    assertEquals("9223372036854775807L", JavaAnnotation.value(Long.MAX_VALUE).list());
+    assertEquals("'!'", JavaAnnotation.value('!').list());
+    assertEquals("null", JavaAnnotation.value(null).list());
+    assertEquals("0", JavaAnnotation.value(BigInteger.ZERO).list());
+    assertEquals(" ", JavaAnnotation.value(Listable.SPACE).list());
   }
 
   @Test
   void values() {
     Listable x = listing -> listing.add('x');
-    assertSame(Listable.IDENTITY, Anno.values(Collections.emptyList()));
-    assertEquals("x", Anno.values(Collections.singletonList(x)).list());
-    assertEquals("{x, x}", Anno.values(Arrays.asList(x, x)).list());
+    assertSame(Listable.IDENTITY, JavaAnnotation.values(Collections.emptyList()));
+    assertEquals("x", JavaAnnotation.values(Collections.singletonList(x)).list());
+    assertEquals("{x, x}", JavaAnnotation.values(Arrays.asList(x, x)).list());
   }
 }

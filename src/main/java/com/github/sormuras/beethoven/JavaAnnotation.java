@@ -36,26 +36,28 @@ import java.util.stream.Collectors;
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.7">JLS 9.7</a>
  */
-public class Anno implements Listable {
+public class JavaAnnotation implements Listable {
 
   /**
-   * Create new {@link Anno} instance by reflecting on the annotation found on given annotated
-   * element calling {@link AnnotatedElement#getAnnotation(Class)}.
+   * Create new {@link JavaAnnotation} instance by reflecting on the annotation found on given
+   * annotated element calling {@link AnnotatedElement#getAnnotation(Class)}.
    */
-  public static Anno anno(AnnotatedElement element, Class<? extends Annotation> annotationClass) {
-    return anno(element.getAnnotation(annotationClass));
+  public static JavaAnnotation annotation(
+      AnnotatedElement element, Class<? extends Annotation> annotationClass) {
+    return annotation(element.getAnnotation(annotationClass));
   }
 
   /**
-   * Create new {@link Anno} instance by reflecting on the given annotation omitting default values.
+   * Create new {@link JavaAnnotation} instance by reflecting on the given annotation omitting
+   * default values.
    */
-  public static Anno anno(Annotation annotation) {
-    return anno(annotation, false);
+  public static JavaAnnotation annotation(Annotation annotation) {
+    return annotation(annotation, false);
   }
 
-  /** Create new {@link Anno} instance by reflecting on the given annotation. */
-  public static Anno anno(Annotation annotation, boolean includeDefaultValues) {
-    Anno result = anno(annotation.annotationType());
+  /** Create new {@link JavaAnnotation} instance by reflecting on the given annotation. */
+  public static JavaAnnotation annotation(Annotation annotation, boolean includeDefaultValues) {
+    JavaAnnotation result = annotation(annotation.annotationType());
     try {
       Method[] methods = annotation.annotationType().getDeclaredMethods();
       Arrays.sort(methods, (m1, m2) -> m1.getName().compareTo(m2.getName()));
@@ -73,7 +75,7 @@ public class Anno implements Listable {
           continue;
         }
         if (value instanceof Annotation) {
-          result.addMember(method.getName(), anno((Annotation) value, includeDefaultValues));
+          result.addMember(method.getName(), annotation((Annotation) value, includeDefaultValues));
           continue;
         }
         result.addObject(method.getName(), value);
@@ -85,12 +87,12 @@ public class Anno implements Listable {
     return result;
   }
 
-  public static Anno anno(Class<? extends Annotation> type, Object... values) {
-    return anno(Name.name(type), values);
+  public static JavaAnnotation annotation(Class<? extends Annotation> type, Object... values) {
+    return annotation(Name.name(type), values);
   }
 
-  public static Anno anno(Name name, Object... values) {
-    Anno anno = new Anno(name);
+  public static JavaAnnotation annotation(Name name, Object... values) {
+    JavaAnnotation anno = new JavaAnnotation(name);
     for (int i = 0; i < values.length; i++) {
       anno.addValue(values[i]);
     }
@@ -98,16 +100,20 @@ public class Anno implements Listable {
   }
 
   /**
-   * Create list of {@link Anno} instances by reflecting on all annotations found on the annotated
-   * element using {@link AnnotatedElement#getAnnotations()}.
+   * Create list of {@link JavaAnnotation} instances by reflecting on all annotations found on the
+   * annotated element using {@link AnnotatedElement#getAnnotations()}.
    */
-  public static List<Anno> annos(AnnotatedElement element) {
-    return annos(element.getAnnotations());
+  public static List<JavaAnnotation> annotations(AnnotatedElement element) {
+    Annotation[] annotations = element.getAnnotations();
+    if (annotations.length == 0) {
+      return Collections.emptyList();
+    }
+    return annotations(annotations);
   }
 
-  /** Create list of {@link Anno} instances by reflecting given all annotations. */
-  public static List<Anno> annos(Annotation... annotations) {
-    return Arrays.stream(annotations).map(Anno::anno).collect(Collectors.toList());
+  /** Create list of {@link JavaAnnotation} instances by reflecting given all annotations. */
+  public static List<JavaAnnotation> annotations(Annotation... annotations) {
+    return Arrays.stream(annotations).map(JavaAnnotation::annotation).collect(Collectors.toList());
   }
 
   /** Convert an object to a representation usable as an annotation value literal. */
@@ -147,11 +153,12 @@ public class Anno implements Listable {
     return listing -> listing.add('{').add(values, ", ").add('}');
   }
 
-  private Map<String, List<Listable>> members = Collections.emptyMap();
+  private Map<String, List<Listable>> members;
   private final Name name;
 
-  Anno(Name name) {
+  JavaAnnotation(Name name) {
     this.name = Objects.requireNonNull(name, "name");
+    this.members = Collections.emptyMap();
   }
 
   /** Add the listable to the member specified by its name. */
