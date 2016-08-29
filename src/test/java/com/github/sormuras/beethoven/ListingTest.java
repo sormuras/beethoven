@@ -19,12 +19,10 @@ import static java.lang.Math.PI;
 class ListingTest {
 
   static class Face {
-    @SuppressWarnings("unused")
     public Optional<?> empty() {
       return Optional.empty();
     }
 
-    @SuppressWarnings("unused")
     public Optional<Listable> smile() {
       return Optional.of(listing -> listing.add("(:"));
     }
