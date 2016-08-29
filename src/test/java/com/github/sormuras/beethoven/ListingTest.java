@@ -2,6 +2,8 @@ package com.github.sormuras.beethoven;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -74,6 +76,17 @@ class ListingTest {
   void addListable() {
     assertEquals("", new Listing().add(Listable.IDENTITY).toString());
     assertEquals("", new Listing().add((Listable) null).toString());
+  }
+
+  @Test
+  void addListOfListables() {
+    List<Listable> list = new ArrayList<>();
+    assertEquals("", new Listing().add(list).toString());
+    list.add(Anno.value('a'));
+    assertEquals("'a'", new Listing().add(list).toString());
+    list.add(Anno.value('z'));
+    assertEquals("'a'\n'z'", new Listing().add(list).toString());
+    assertEquals("'a'-'z'", new Listing().add(list, "-").toString());
   }
 
   @Test

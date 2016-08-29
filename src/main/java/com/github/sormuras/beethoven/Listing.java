@@ -16,9 +16,11 @@ package com.github.sormuras.beethoven;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Spliterator;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +53,36 @@ public class Listing {
   public Listing add(CharSequence text) {
     currentLine.append(text);
     return this;
+  }
+
+  /** Add list of listables using newline separator. */
+  public Listing add(List<? extends Listable> listables) {
+    return add(listables, Listable.NEWLINE);
+  }
+
+  /** Add list of listables using given listable separator. */
+  public Listing add(List<? extends Listable> listables, Listable separator) {
+    if (listables.isEmpty()) {
+      return this;
+    }
+    if (listables.size() == 1) {
+      add(listables.get(0));
+      return this;
+    }
+    Spliterator<? extends Listable> spliterator = listables.spliterator();
+    spliterator.tryAdvance(this::add);
+    spliterator.forEachRemaining(listable -> separator.apply(this).add(listable));
+    return this;
+  }
+
+  /**
+   * Add list of listables using given textual separator inline.
+   *
+   * <p>
+   * For example: {@code "a, b, c"}, {@code "a & b & c"} or {@code "[][][]"}
+   */
+  public Listing add(List<? extends Listable> listables, CharSequence separator) {
+    return add(listables, listing -> listing.add(separator));
   }
 
   /** Applies the passed listable instance to this listing. */
