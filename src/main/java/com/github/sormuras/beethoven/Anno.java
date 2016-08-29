@@ -79,7 +79,7 @@ public class Anno implements Listable {
         result.addObject(method.getName(), value);
       }
     } catch (Exception exception) {
-      String message = "Reflecting " + annotation + " failed: " + exception.getCause();
+      String message = "Reflecting " + annotation + " failed: " + exception;
       throw new AssertionError(message, exception);
     }
     return result;

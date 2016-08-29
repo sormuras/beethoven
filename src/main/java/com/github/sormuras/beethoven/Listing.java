@@ -215,10 +215,7 @@ public class Listing {
   }
 
   public boolean isLastLineEmpty() {
-    if (collectedLines.isEmpty()) {
-      return true;
-    }
-    return collectedLines.getLast().isEmpty();
+    return collectedLines.isEmpty() || collectedLines.getLast().isEmpty();
   }
 
   public boolean isOmitJavaLangPackage() {

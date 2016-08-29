@@ -26,18 +26,26 @@ import org.junit.jupiter.api.Test;
 class AnnoTest {
 
   @Test
+  void annos() {
+    assertEquals(1, Anno.annos(AnnoTest.class.getAnnotations()).size());
+  }
+
+  @Test
   void illegalAnnotationFails() {
     java.lang.annotation.Annotation illegal =
         Tests.proxy(
             java.lang.annotation.Annotation.class,
             (proxy, method, args) -> {
               if (method.getName().equals("annotationType")) {
-                return java.lang.annotation.Annotation.class;
+                return Generated.class;
+              }
+              if (method.getName().equals("toString")) {
+                return "IllegalAnnotation";
               }
               throw new AssertionError("IllegalAnnotation");
             });
     Error error = expectThrows(AssertionError.class, () -> Anno.anno(illegal));
-    assertTrue(error.getMessage().contains("IllegalAnnotation"));
+    assertTrue(error.getMessage().startsWith("Reflecting IllegalAnnotation failed:"));
   }
 
   @Test
@@ -133,5 +141,6 @@ class AnnoTest {
     assertEquals("'!'", Anno.value('!').list());
     assertEquals("null", Anno.value(null).list());
     assertEquals("0", Anno.value(BigInteger.ZERO).list());
+    assertEquals(" ", Anno.value(Listable.SPACE).list());
   }
 }
