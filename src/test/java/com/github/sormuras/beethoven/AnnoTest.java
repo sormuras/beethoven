@@ -1,6 +1,7 @@
 package com.github.sormuras.beethoven;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.expectThrows;
 
@@ -9,6 +10,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
 import javax.annotation.Generated;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +30,7 @@ class AnnoTest {
 
   @Test
   void annos() {
-    assertEquals(1, Anno.annos(AnnoTest.class.getAnnotations()).size());
+    assertEquals(1, Anno.annos(AnnoTest.class).size());
   }
 
   @Test
@@ -142,5 +145,13 @@ class AnnoTest {
     assertEquals("null", Anno.value(null).list());
     assertEquals("0", Anno.value(BigInteger.ZERO).list());
     assertEquals(" ", Anno.value(Listable.SPACE).list());
+  }
+
+  @Test
+  void values() {
+    Listable x = listing -> listing.add('x');
+    assertSame(Listable.IDENTITY, Anno.values(Collections.emptyList()));
+    assertEquals("x", Anno.values(Collections.singletonList(x)).list());
+    assertEquals("{x, x}", Anno.values(Arrays.asList(x, x)).list());
   }
 }

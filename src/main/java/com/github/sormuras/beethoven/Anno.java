@@ -97,11 +97,20 @@ public class Anno implements Listable {
     return anno;
   }
 
+  /**
+   * Create list of {@link Anno} instances by reflecting on all annotations found on the annotated
+   * element using {@link AnnotatedElement#getAnnotations()}.
+   */
+  public static List<Anno> annos(AnnotatedElement element) {
+    return annos(element.getAnnotations());
+  }
+
+  /** Create list of {@link Anno} instances by reflecting given all annotations. */
   public static List<Anno> annos(Annotation... annotations) {
     return Arrays.stream(annotations).map(Anno::anno).collect(Collectors.toList());
   }
 
-  /** Converts an object to a listable representation usable as an annotation value literal. */
+  /** Convert an object to a representation usable as an annotation value literal. */
   public static Listable value(Object object) {
     if (object instanceof Class) {
       return listing -> listing.add(Name.cast(object)).add(".class");
@@ -125,6 +134,17 @@ public class Anno implements Listable {
       return listing -> listing.add((Listable) object);
     }
     return listing -> listing.add(Objects.toString(object));
+  }
+
+  /** Annotation array-aware value(s) appender. */
+  public static Listable values(List<Listable> values) {
+    if (values.size() == 0) {
+      return Listable.IDENTITY;
+    }
+    if (values.size() == 1) {
+      return values.get(0);
+    }
+    return listing -> listing.add('{').add(values, ", ").add('}');
   }
 
   private Map<String, List<Listable>> members = Collections.emptyMap();
@@ -192,15 +212,5 @@ public class Anno implements Listable {
   @Override
   public String toString() {
     return "Anno{" + getTypeName() + ", members=" + members + "}";
-  }
-
-  /** Annotation array-aware value(s) appender. */
-  private Listable values(List<Listable> values) {
-    return (listing) -> {
-      if (values.size() == 1) {
-        return listing.add(values.get(0));
-      }
-      return listing.add('{').add(values, ", ").add('}');
-    };
   }
 }
