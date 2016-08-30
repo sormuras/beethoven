@@ -124,7 +124,7 @@ public class ClassType extends ReferenceType {
     if (!getPackageName().isEmpty()) {
       builder.append(getPackageName()).append('.');
     }
-    builder.append(getNames().stream().map(n -> n.getName()).collect(joining("$")));
+    builder.append(getNames().stream().map(ClassName::getName).collect(joining("$")));
     return builder.toString();
   }
 }
