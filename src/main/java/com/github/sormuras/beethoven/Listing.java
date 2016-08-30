@@ -24,7 +24,6 @@ import java.util.Spliterator;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 public class Listing {
 
@@ -41,8 +40,9 @@ public class Listing {
 
   public Listing() {
     indentationTable[0] = "";
-    IntStream.range(1, indentationTable.length)
-        .forEach(i -> indentationTable[i] = indentationTable[i - 1] + getIndentationString());
+    for (int i = 1; i < indentationTable.length; i++) {
+      indentationTable[i] = indentationTable[i - 1] + getIndentationString();
+    }
   }
 
   public Listing add(char character) {
@@ -93,13 +93,25 @@ public class Listing {
     return listable.apply(this);
   }
 
-  /** Add name respecting name predicate result. */
+  /** TODO Add name respecting name predicate result. */
   public Listing add(Name name) {
-    // imported name only emits its last name
+    // single (type and static) imports only emit last name, like:
+    //   "import java.util.Objects"                 -> "Objects"
+    //   "import static java.util.Collections.sort" -> "sort"
+    // on-demand _static_ import, like:
+    //   "import static java.lang.Thread.State.*"
+    //     name("java.lang.Thread.State.BLOCKED")   -> "BLOCKED"
+    //     name("java.lang.Thread.State.NEW")       -> "NEW"
+    //     name("java.lang.Thread.State.WAITING")   -> "WAITING"
     if (getImportNamePredicate().test(name)) {
       return add(name.lastName());
     }
-    // handle "java.lang" member
+    // on-demand _package_ imports only emit simple names, like:
+    //   "import java.lang.*"
+    //     name("java.lang.Object")                 -> "Object"
+    //     name("java.lang.Thread")                 -> "Thread"
+    //     name("java.lang.Thread.State")           -> "Thread.State"
+    //     name("java.lang.Thread.State.RUNNABLE")  -> "Thread.State.RUNNABLE"
     if (isOmitJavaLangPackage() && name.isJavaLangPackage()) {
       return add(String.join(".", name.simpleNames()));
     }
@@ -218,6 +230,13 @@ public class Listing {
     return collectedLines.isEmpty() || collectedLines.getLast().isEmpty();
   }
 
+  /**
+   * A compilation unit automatically has access to all types declared in its package and also
+   * automatically imports all of the public types declared in the predefined package
+   * {@code java.lang}.
+   *
+   * @return {@code false}
+   */
   public boolean isOmitJavaLangPackage() {
     return false;
   }
