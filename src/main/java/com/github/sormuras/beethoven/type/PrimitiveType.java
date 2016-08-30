@@ -19,11 +19,11 @@ import com.github.sormuras.beethoven.Listing;
 /**
  * A primitive type is predefined by the Java language and named by its reserved keyword.
  *
- * @see https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
  */
 public abstract class PrimitiveType extends JavaType {
 
-  static class BooleanType extends PrimitiveType {
+  public static class BooleanType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return boolean.class;
@@ -35,42 +35,42 @@ public abstract class PrimitiveType extends JavaType {
     }
   }
 
-  static class ByteType extends PrimitiveType {
+  public static class ByteType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return byte.class;
     }
   }
 
-  static class CharType extends PrimitiveType {
+  public static class CharType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return char.class;
     }
   }
 
-  static class DoubleType extends PrimitiveType {
+  public static class DoubleType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return double.class;
     }
   }
 
-  static class FloatType extends PrimitiveType {
+  public static class FloatType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return float.class;
     }
   }
 
-  static class IntType extends PrimitiveType {
+  public static class IntType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return int.class;
     }
   }
 
-  static class LongType extends PrimitiveType {
+  public static class LongType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return long.class;
@@ -82,7 +82,7 @@ public abstract class PrimitiveType extends JavaType {
     }
   }
 
-  static class ShortType extends PrimitiveType {
+  public static class ShortType extends PrimitiveType {
     @Override
     public Class<?> getType() {
       return short.class;

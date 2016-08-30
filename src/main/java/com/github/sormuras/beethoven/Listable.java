@@ -14,10 +14,11 @@
 
 package com.github.sormuras.beethoven;
 
+import java.io.Serializable;
 import java.util.function.UnaryOperator;
 
 @FunctionalInterface
-public interface Listable extends UnaryOperator<Listing> {
+public interface Listable extends UnaryOperator<Listing>, Serializable {
 
   class Identity implements Listable {
 
