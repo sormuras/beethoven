@@ -44,7 +44,7 @@ public abstract class Annotated implements Listable {
       annotation = JavaAnnotation.annotation((Name) object, values);
     }
     if (annotation == null) {
-      throw new IllegalArgumentException("Can't cast/convert " + object + " to JavaAnnotation!");
+      throw new AssertionError("Can't cast/convert " + object + " to JavaAnnotation!");
     }
     getAnnotations().add(annotation);
   }
@@ -55,13 +55,6 @@ public abstract class Annotated implements Listable {
       return;
     }
     getAnnotations().addAll(annotations);
-  }
-
-  @Override
-  public Listing apply(Listing listing) {
-    listing.add(toAnnotationsListable());
-    listing.add(getClass().getSimpleName());
-    return listing;
   }
 
   @Override

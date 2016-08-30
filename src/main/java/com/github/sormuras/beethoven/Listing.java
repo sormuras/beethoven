@@ -144,16 +144,15 @@ public class Listing {
 
   /** TODO Add name respecting name predicate result. */
   public Listing add(Name name) {
-    switch (getNameModeFunction().apply(name)) {
-      case CANONICAL:
-        return add(name.canonical());
-      case LAST:
-        return add(name.lastName());
-      case SIMPLE:
-        return add(name.getSimpleNames());
-      default:
-        throw new AssertionError("Unknown name mode?!");
+    NameMode mode = getNameModeFunction().apply(name);
+    if (mode == NameMode.LAST) {
+      return add(name.lastName());
     }
+    if (mode == NameMode.SIMPLE) {
+      return add(name.getSimpleNames());
+    }
+    assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
+    return add(name.canonical());
   }
 
   /**

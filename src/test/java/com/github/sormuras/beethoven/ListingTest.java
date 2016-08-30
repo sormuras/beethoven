@@ -30,6 +30,13 @@ class ListingTest {
     }
   }
 
+  static class Failing extends Listing {
+    @Override
+    public Function<Name, NameMode> getNameModeFunction() {
+      return name -> null;
+    }
+  }
+
   static class Omitting extends Listing {
     @Override
     public Function<Name, NameMode> getNameModeFunction() {
@@ -103,6 +110,7 @@ class ListingTest {
     assertEquals("Object", new Importing().add(object).toString());
     assertEquals("Map", new Importing().add(map).toString());
     assertEquals("Entry", new Importing().add(entry).toString());
+    assertThrows(AssertionError.class, () -> new Failing().add(pi));
   }
 
   @Test

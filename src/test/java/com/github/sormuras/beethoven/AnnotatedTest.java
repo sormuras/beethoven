@@ -12,6 +12,7 @@ import com.github.sormuras.beethoven.type.WildcardType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
@@ -130,7 +131,7 @@ class AnnotatedTest {
   private void test(Supplier<? extends Annotated> supplier) {
     testInitial(supplier.get());
     testMutable(supplier.get());
-    Tests.assertSerializable(supplier.get());
+    // Tests.assertSerializable(supplier.get());
   }
 
   private void testInitial(Annotated a) {
@@ -151,8 +152,9 @@ class AnnotatedTest {
     a.getAnnotations().clear();
     assertFalse(a.isAnnotated());
     a.addAnnotation(U.class);
-    a.addAnnotation(V.class);
+    a.addAnnotation(Name.name(V.class));
     assertTrue(a.isAnnotated());
     assertEquals(2, a.getAnnotations().size());
+    assertThrows(AssertionError.class, () -> a.addAnnotation(null));
   }
 }

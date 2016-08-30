@@ -20,6 +20,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Listing;
+import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,16 +64,15 @@ public class ClassType extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
-    switch (listing.getNameModeFunction().apply(getName())) {
-      case CANONICAL:
-        return listing.add(getPackageName()).add('.').add(getNames(), ".");
-      case LAST:
-        return listing.add(getLastClassName());
-      case SIMPLE:
-        return listing.add(getNames(), ".");
-      default:
-        throw new AssertionError("Unknown name mode?!");
+    NameMode mode = listing.getNameModeFunction().apply(getName());
+    if (mode == NameMode.LAST) {
+      return listing.add(getLastClassName());
     }
+    if (mode == NameMode.SIMPLE) {
+      return listing.add(getNames(), ".");
+    }
+    assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
+    return listing.add(getPackageName()).add('.').add(getNames(), ".");
   }
 
   @Override

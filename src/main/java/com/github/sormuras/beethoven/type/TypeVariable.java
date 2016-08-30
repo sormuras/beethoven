@@ -21,7 +21,7 @@ import java.lang.annotation.ElementType;
  * A type variable is an unqualified identifier used as a type in class, interface, method, and
  * constructor bodies.
  *
- * @see https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS 4.4</a>
  */
 public class TypeVariable extends ReferenceType {
 
@@ -48,9 +48,6 @@ public class TypeVariable extends ReferenceType {
   }
 
   public void setName(String name) {
-    if (name.isEmpty()) {
-      throw new IllegalArgumentException("TypeVariable name must not be empty!");
-    }
     this.name = name;
   }
 }

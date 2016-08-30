@@ -241,7 +241,7 @@ public final class Name {
   }
 
   public List<String> simpleNames() {
-    if (size < packageLevel) {
+    if (packageLevel >= size) {
       return Collections.emptyList();
     }
     return identifiers.subList(packageLevel, size);
