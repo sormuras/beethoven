@@ -170,14 +170,16 @@ public final class Name {
   private final List<String> identifiers;
   private final int packageLevel;
   private final String packageName;
+  private final String simpleNames;
   private final int size;
 
   Name(int packageLevel, List<String> identifiers) {
     this.packageLevel = packageLevel;
     this.identifiers = Collections.unmodifiableList(identifiers);
+    this.size = identifiers.size();
     this.canonical = String.join(".", identifiers);
     this.packageName = String.join(".", identifiers.subList(0, packageLevel));
-    this.size = identifiers.size();
+    this.simpleNames = String.join(".", simpleNames());
   }
 
   public String canonical() {
@@ -203,6 +205,10 @@ public final class Name {
       return false;
     }
     return hashCode() == other.hashCode();
+  }
+
+  public String getSimpleNames() {
+    return simpleNames;
   }
 
   @Override
@@ -235,6 +241,9 @@ public final class Name {
   }
 
   public List<String> simpleNames() {
+    if (size < packageLevel) {
+      return Collections.emptyList();
+    }
     return identifiers.subList(packageLevel, size);
   }
 

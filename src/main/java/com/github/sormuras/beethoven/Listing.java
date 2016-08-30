@@ -21,11 +21,60 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Spliterator;
-import java.util.function.Predicate;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Listing {
+
+  /**
+   * Name emission mode.
+   *
+   * <p>
+   * {@link NameMode#CANONICAL}: Canonical, like:
+   *
+   * <pre>
+   *    "java.util.Objects"
+   *    "java.lang.Thread.State.NEW"
+   *    "java.util.Collections.sort"
+   * </pre>
+   *
+   * {@link NameMode#LAST}: Single (type and static) imports only emit last name, like:
+   *
+   * <pre>
+   *    import java.util.Objects                 -> "Objects"
+   *    import static java.util.Collections.sort -> "sort"
+   * </pre>
+   *
+   * {@link NameMode#LAST}: On-demand _static_ import, like:
+   *
+   * <pre>
+   *   import static java.lang.Thread.State.*
+   *     name("java.lang.Thread.State.BLOCKED")   -> "BLOCKED"
+   *     name("java.lang.Thread.State.NEW")       -> "NEW"
+   *     name("java.lang.Thread.State.WAITING")   -> "WAITING"
+   * </pre>
+   *
+   * {@link NameMode#SIMPLE} On-demand _package_ imports only emit all simple names, like:
+   *
+   * <pre>
+   *   import java.lang.*
+   *     name("java.lang.Object")                 -> "Object"
+   *     name("java.lang.Thread")                 -> "Thread"
+   *     name("java.lang.Thread.State")           -> "Thread.State"
+   *     name("java.lang.Thread.State.RUNNABLE")  -> "Thread.State.RUNNABLE"
+   * </pre>
+   */
+  public enum NameMode {
+    /** Emit canonical name, like {@code java.lang.Thread.State.BLOCKED}. */
+    CANONICAL,
+
+    /** Emit last name only, like {@code BLOCKED}. */
+    LAST,
+
+    /** Emit all simples names, like {@code Thread.State.BLOCKED}. */
+    SIMPLE
+  }
 
   /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
   public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
@@ -95,27 +144,16 @@ public class Listing {
 
   /** TODO Add name respecting name predicate result. */
   public Listing add(Name name) {
-    // single (type and static) imports only emit last name, like:
-    //   "import java.util.Objects"                 -> "Objects"
-    //   "import static java.util.Collections.sort" -> "sort"
-    // on-demand _static_ import, like:
-    //   "import static java.lang.Thread.State.*"
-    //     name("java.lang.Thread.State.BLOCKED")   -> "BLOCKED"
-    //     name("java.lang.Thread.State.NEW")       -> "NEW"
-    //     name("java.lang.Thread.State.WAITING")   -> "WAITING"
-    if (getImportNamePredicate().test(name)) {
-      return add(name.lastName());
+    switch (getNameModeFunction().apply(name)) {
+      case CANONICAL:
+        return add(name.canonical());
+      case LAST:
+        return add(name.lastName());
+      case SIMPLE:
+        return add(name.getSimpleNames());
+      default:
+        throw new AssertionError("Unknown name mode?!");
     }
-    // on-demand _package_ imports only emit simple names, like:
-    //   "import java.lang.*"
-    //     name("java.lang.Object")                 -> "Object"
-    //     name("java.lang.Thread")                 -> "Thread"
-    //     name("java.lang.Thread.State")           -> "Thread.State"
-    //     name("java.lang.Thread.State.RUNNABLE")  -> "Thread.State.RUNNABLE"
-    if (isOmitJavaLangPackage() && name.isJavaLangPackage()) {
-      return add(String.join(".", name.simpleNames()));
-    }
-    return add(name.canonical());
   }
 
   /**
@@ -214,8 +252,8 @@ public class Listing {
     return "\n";
   }
 
-  public Predicate<Name> getImportNamePredicate() {
-    return name -> false;
+  public Function<Name, NameMode> getNameModeFunction() {
+    return name -> NameMode.CANONICAL;
   }
 
   public Listing indent(int times) {
@@ -228,17 +266,6 @@ public class Listing {
 
   public boolean isLastLineEmpty() {
     return collectedLines.isEmpty() || collectedLines.getLast().isEmpty();
-  }
-
-  /**
-   * A compilation unit automatically has access to all types declared in its package and also
-   * automatically imports all of the public types declared in the predefined package
-   * {@code java.lang}.
-   *
-   * @return {@code false}
-   */
-  public boolean isOmitJavaLangPackage() {
-    return false;
   }
 
   /** Carriage return and line feed. */

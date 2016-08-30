@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -32,15 +32,15 @@ class ListingTest {
 
   static class Omitting extends Listing {
     @Override
-    public boolean isOmitJavaLangPackage() {
-      return true;
+    public Function<Name, NameMode> getNameModeFunction() {
+      return name -> name.isJavaLangPackage() ? NameMode.SIMPLE : NameMode.CANONICAL;
     }
   }
 
   static class Importing extends Omitting {
     @Override
-    public Predicate<Name> getImportNamePredicate() {
-      return name -> true;
+    public Function<Name, NameMode> getNameModeFunction() {
+      return name -> NameMode.LAST;
     }
   }
 

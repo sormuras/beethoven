@@ -63,19 +63,21 @@ public class ClassType extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
-    Name name = getName();
-    boolean skipPackageName = getPackageName().isEmpty();
-    skipPackageName |= listing.getImportNamePredicate().test(name);
-    skipPackageName |= listing.isOmitJavaLangPackage() && name.isJavaLangPackage();
-    if (!skipPackageName) {
-      listing.add(getPackageName()).add('.');
+    switch (listing.getNameModeFunction().apply(getName())) {
+      case CANONICAL:
+        return listing.add(getPackageName()).add('.').add(getNames(), ".");
+      case LAST:
+        return listing.add(getLastClassName());
+      case SIMPLE:
+        return listing.add(getNames(), ".");
+      default:
+        throw new AssertionError("Unknown name mode?!");
     }
-    return listing.add(getNames(), ".");
   }
 
   @Override
   public List<JavaAnnotation> getAnnotations() {
-    return names.get(names.size() - 1).getAnnotations();
+    return getLastClassName().getAnnotations();
   }
 
   public Optional<ClassType> getEnclosingClassType() {
@@ -83,6 +85,10 @@ public class ClassType extends ReferenceType {
       return Optional.empty();
     }
     return Optional.of(of(getName().enclosing()));
+  }
+
+  public ClassName getLastClassName() {
+    return names.get(names.size() - 1);
   }
 
   public Name getName() {
@@ -101,12 +107,12 @@ public class ClassType extends ReferenceType {
   }
 
   public List<TypeArgument> getTypeArguments() {
-    return names.get(names.size() - 1).getTypeArguments();
+    return getLastClassName().getTypeArguments();
   }
 
   @Override
   public boolean isAnnotated() {
-    return names.get(names.size() - 1).isAnnotated();
+    return getLastClassName().isAnnotated();
   }
 
   @Override
