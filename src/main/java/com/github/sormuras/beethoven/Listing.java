@@ -142,7 +142,7 @@ public class Listing {
     return listable.apply(this);
   }
 
-  /** TODO Add name respecting name predicate result. */
+  /** Add name respecting name mode function result. */
   public Listing add(Name name) {
     NameMode mode = getNameModeFunction().apply(name);
     if (mode == NameMode.LAST) {
@@ -158,10 +158,24 @@ public class Listing {
   /**
    * Parse source string and replace placeholders with {@link #add}-calls to this {@link Listing}
    * instance.
+   * <p>
+   * Simple placeholders:
    * <ul>
-   * <li>TODO Enumerate supported placeholders.</li>
-   * <li>TODO Introduce extension points allowing custom placeholder (handling).</li>
+   * <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}</li>
+   * <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}</li>
+   * <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}</li>
    * </ul>
+   * Every unknown placeholder is treated as a method chain call. Example:
+   *
+   * <pre>
+   * String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}"
+   * new Listing().add(source, System.class, "123", "", "$").toString()
+   * </pre>
+   * produces:
+   *
+   * <pre>
+   * java.lang.System.out.println(\"123\"); // 0 String"
+   * </pre>
    */
   public Listing add(String source, Object... args) {
     Matcher matcher = PLACEHOLDER_PATTERN.matcher(source);
