@@ -1,8 +1,6 @@
 package com.github.sormuras.beethoven;
 
-import com.github.sormuras.beethoven.type.ArrayDimension;
 import com.github.sormuras.beethoven.type.ArrayType;
-import com.github.sormuras.beethoven.type.ClassName;
 import com.github.sormuras.beethoven.type.ClassType;
 import com.github.sormuras.beethoven.type.PrimitiveType;
 import com.github.sormuras.beethoven.type.TypeVariable;
@@ -22,82 +20,82 @@ import org.junit.jupiter.api.Test;
 class AnnotatedTest {
 
   //  @Test
-  //  void annotatableAnnotationDeclaration() {
+  //  void annotatedAnnotationDeclaration() {
   //    test(AnnotationDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatableAnnotationElement() {
+  //  void annotatedAnnotationElement() {
   //    test(AnnotationElement::new);
   //  }
 
   @Test
-  void annotatableArrayDimension() {
-    test(ArrayDimension::new);
+  void annotatedArrayDimension() {
+    test(ArrayType.Dimension::new);
   }
 
   @Test
-  void annotatableArrayType() {
+  void annotatedArrayType() {
     test(() -> ArrayType.array(int.class, 1));
   }
 
   @Test
-  void annotatableClassName() {
-    test(ClassName::new);
+  void annotatedClassName() {
+    test(ClassType.SimpleName::new);
   }
 
   @Test
-  void annotatableClassType() {
+  void annotatedClassType() {
     test(() -> ClassType.of("pack.age", "ClassType"));
   }
 
   //  @Test
-  //  void annotatableConstantDeclaration() {
+  //  void annotatedConstantDeclaration() {
   //    test(ConstantDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatableEnumConstant() {
+  //  void annotatedEnumConstant() {
   //    test(EnumConstant::new);
   //  }
 
   //  @Test
-  //  void annotatableEnumDeclaration() {
+  //  void annotatedEnumDeclaration() {
   //    test(EnumDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatableFieldDeclaration() {
+  //  void annotatedFieldDeclaration() {
   //    test(FieldDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatableInterfaceDeclaration() {
+  //  void annotatedInterfaceDeclaration() {
   //    test(InterfaceDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatableMethodDeclaration() {
+  //  void annotatedMethodDeclaration() {
   //    test(MethodDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatableMethodParameter() {
+  //  void annotatedMethodParameter() {
   //    test(MethodParameter::new);
   //  }
 
   //  @Test
-  //  void annotatableNormalClassDeclaration() {
+  //  void annotatedNormalClassDeclaration() {
   //    test(NormalClassDeclaration::new);
   //  }
 
   //  @Test
-  //  void annotatablePackageDeclaration() {
+  //  void annotatedPackageDeclaration() {
   //    test(PackageDeclaration::new);
   //  }
 
   @Test
-  void annotatablePrimitiveTypes() {
+  void annotatedPrimitiveTypes() {
     test(PrimitiveType.BooleanType::new);
     test(PrimitiveType.ByteType::new);
     test(PrimitiveType.CharType::new);
@@ -109,22 +107,22 @@ class AnnotatedTest {
   }
 
   //  @Test
-  //  void annotatableTypeParameter() {
+  //  void annotatedTypeParameter() {
   //    test(TypeParameter::new);
   //  }
 
   @Test
-  void annotatableTypeVariable() {
+  void annotatedTypeVariable() {
     test(TypeVariable::new);
   }
 
   @Test
-  void annotatableVoidType() {
+  void annotatedVoidType() {
     testInitial(new VoidType());
   }
 
   @Test
-  void annotatableWildcardType() {
+  void annotatedWildcardType() {
     test(WildcardType::new);
   }
 

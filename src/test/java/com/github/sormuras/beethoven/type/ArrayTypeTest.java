@@ -36,12 +36,12 @@ class ArrayTypeTest {
     assertEquals(false, array.isAnnotated());
     assertEquals(true, array.getAnnotations().isEmpty());
     assertEquals(true, array.getDimensions().isEmpty());
-    array.getDimensions().add(new ArrayDimension());
+    array.getDimensions().add(new ArrayType.Dimension());
     assertEquals(false, array.getDimensions().isEmpty());
     assertEquals(1, array.getDimensions().size());
     array.setComponentType(new PrimitiveType.IntType());
     assertEquals("int[]", array.list());
-    array.addAnnotation(JavaAnnotation.annotation(Name.name("test", "T")));
+    array.addAnnotation(Name.name("test", "T"));
     assertEquals(1, array.getAnnotations().size());
     assertEquals("int@test.T []", array.list());
   }

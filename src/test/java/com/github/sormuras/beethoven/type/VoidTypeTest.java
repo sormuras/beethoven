@@ -6,11 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-
-import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Listable;
 import com.github.sormuras.beethoven.Name;
+import org.junit.jupiter.api.Test;
 
 class VoidTypeTest {
 
@@ -24,8 +22,7 @@ class VoidTypeTest {
   void annotationsAreImmutable() {
     assertTrue(new VoidType().getAnnotations().isEmpty());
     assertThrows(
-        UnsupportedOperationException.class,
-        () -> new VoidType().addAnnotation(JavaAnnotation.annotation(Name.name("Fail"))));
+        UnsupportedOperationException.class, () -> new VoidType().addAnnotation(Name.name("Fail")));
   }
 
   @Test

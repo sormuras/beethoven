@@ -19,6 +19,7 @@ import static java.util.Arrays.stream;
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Name;
+import com.github.sormuras.beethoven.type.ArrayType.Dimension;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -50,10 +51,10 @@ public abstract class JavaType extends Annotated {
 
   /** Create {@link JavaType} based on {@link AnnotatedArrayType} instance. */
   public static JavaType type(AnnotatedArrayType annotatedType) {
-    List<ArrayDimension> dimensions = new ArrayList<>();
+    List<Dimension> dimensions = new ArrayList<>();
     AnnotatedType component = annotatedType;
     while (component instanceof AnnotatedArrayType) {
-      ArrayDimension dimension = new ArrayDimension();
+      Dimension dimension = new Dimension();
       stream(component.getAnnotations()).forEach(a -> dimension.addAnnotation(a));
       dimensions.add(dimension);
       component = ((AnnotatedArrayType) component).getAnnotatedGenericComponentType();
@@ -103,10 +104,10 @@ public abstract class JavaType extends Annotated {
 
   /** Create {@link JavaType} based on {@link AnnotatedWildcardType} instance. */
   public static JavaType type(GenericArrayType type) {
-    List<ArrayDimension> dimensions = new ArrayList<>();
+    List<Dimension> dimensions = new ArrayList<>();
     java.lang.reflect.Type component = type;
     while (component instanceof GenericArrayType) {
-      ArrayDimension dimension = new ArrayDimension();
+      Dimension dimension = new Dimension();
       dimensions.add(dimension);
       component = ((GenericArrayType) component).getGenericComponentType();
     }

@@ -3,9 +3,12 @@ package com.github.sormuras.beethoven.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.sormuras.beethoven.Importing;
+import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Name;
 import com.github.sormuras.beethoven.Omitting;
 import com.github.sormuras.beethoven.U;
+import com.github.sormuras.beethoven.V;
+
 import java.lang.annotation.ElementType;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -49,6 +52,17 @@ class ClassTypeTest {
     assertEquals("java.lang.Thread.State", state.list());
     assertEquals("Thread.State", state.list(new Omitting()));
     assertEquals("State", state.list(new Importing()));
+  }
+
+  @Test
+  void simple() throws Exception {
+    ClassType.SimpleName name = new ClassType.SimpleName();
+    name.setName("Name");
+    assertEquals("Name", name.list());
+    name.addAnnotation(Name.name("UUU"));
+    assertEquals("@UUU Name", name.list());
+    name.addAnnotation(V.class);
+    assertEquals("@UUU " + V.USE + " Name", name.list());
   }
 
   @Test

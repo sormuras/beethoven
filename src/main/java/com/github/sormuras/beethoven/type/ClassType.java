@@ -18,10 +18,13 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
+import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
+
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +32,49 @@ import java.util.List;
 import java.util.Optional;
 
 public class ClassType extends ReferenceType {
+
+  /** Simple and(!) annotatable and(!) typed class or interface name. */
+  public static class SimpleName extends Annotated {
+
+    public static SimpleName of(String name) {
+      SimpleName simpleName = new SimpleName();
+      simpleName.setName(name);
+      return simpleName;
+    }
+
+    private String name;
+    private List<TypeArgument> typeArguments = Collections.emptyList();
+
+    @Override
+    public Listing apply(Listing listing) {
+      listing.add(toAnnotationsListable());
+      if (typeArguments.isEmpty()) {
+        return listing.add(getName());
+      }
+      listing.add(getName()).add('<').add(getTypeArguments(), ", ").add('>');
+      return listing;
+    }
+
+    @Override
+    public ElementType getAnnotationTarget() {
+      return ElementType.TYPE_USE;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public List<TypeArgument> getTypeArguments() {
+      if (typeArguments == Collections.EMPTY_LIST) {
+        typeArguments = new ArrayList<>();
+      }
+      return typeArguments;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+  }
 
   public static ClassType of(Class<?> type) {
     return of(Name.name(type));
@@ -43,7 +89,7 @@ public class ClassType extends ReferenceType {
   public static ClassType of(Name name, TypeArgument... typeArguments) {
     ClassType classType = new ClassType();
     classType.setPackageName(name.packageName());
-    classType.getNames().addAll(name.simpleNames().stream().map(ClassName::of).collect(toList()));
+    classType.getNames().addAll(name.simpleNames().stream().map(SimpleName::of).collect(toList()));
     Collections.addAll(classType.getTypeArguments(), typeArguments);
     return classType;
   }
@@ -52,7 +98,7 @@ public class ClassType extends ReferenceType {
     return of(Name.name(names));
   }
 
-  private final List<ClassName> names = new ArrayList<>();
+  private final List<SimpleName> names = new ArrayList<>();
   private String packageName = "";
 
   @Override
@@ -83,7 +129,7 @@ public class ClassType extends ReferenceType {
     return Optional.of(of(getName().enclosing()));
   }
 
-  public ClassName getLastClassName() {
+  public SimpleName getLastClassName() {
     return names.get(names.size() - 1);
   }
 
@@ -97,7 +143,7 @@ public class ClassType extends ReferenceType {
     return Name.name(simpleNames);
   }
 
-  public List<ClassName> getNames() {
+  public List<SimpleName> getNames() {
     return names;
   }
 
@@ -129,7 +175,7 @@ public class ClassType extends ReferenceType {
     if (!getPackageName().isEmpty()) {
       builder.append(getPackageName()).append('.');
     }
-    builder.append(getNames().stream().map(ClassName::getName).collect(joining("$")));
+    builder.append(getNames().stream().map(SimpleName::getName).collect(joining("$")));
     return builder.toString();
   }
 }

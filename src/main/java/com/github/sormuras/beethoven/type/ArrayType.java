@@ -14,9 +14,12 @@
 
 package com.github.sormuras.beethoven.type;
 
+import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Listable;
 import com.github.sormuras.beethoven.Listing;
+
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,9 +28,22 @@ import java.util.stream.IntStream;
 
 public class ArrayType extends ReferenceType {
 
-  public static List<ArrayDimension> createArrayDimensions(int size) {
-    List<ArrayDimension> dimensions = new ArrayList<>();
-    IntStream.range(0, size).forEach(i -> dimensions.add(new ArrayDimension()));
+  public static class Dimension extends Annotated {
+
+    @Override
+    public Listing apply(Listing listing) {
+      return listing.add(toAnnotationsListable()).add("[]");
+    }
+
+    @Override
+    public ElementType getAnnotationTarget() {
+      return ElementType.TYPE_USE;
+    }
+  }
+
+  public static List<Dimension> createArrayDimensions(int size) {
+    List<Dimension> dimensions = new ArrayList<>();
+    IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension()));
     return dimensions;
   }
 
@@ -39,7 +55,7 @@ public class ArrayType extends ReferenceType {
     return array(componentType, createArrayDimensions(size));
   }
 
-  public static ArrayType array(JavaType componentType, List<ArrayDimension> dimensions) {
+  public static ArrayType array(JavaType componentType, List<Dimension> dimensions) {
     ArrayType array = new ArrayType();
     array.setComponentType(componentType);
     array.setDimensions(dimensions);
@@ -47,7 +63,7 @@ public class ArrayType extends ReferenceType {
   }
 
   private JavaType componentType;
-  private List<ArrayDimension> dimensions = Collections.emptyList();
+  private List<Dimension> dimensions = Collections.emptyList();
 
   public void addAnnotations(int index, JavaAnnotation... annotations) {
     dimensions.get(index).getAnnotations().addAll(Arrays.asList(annotations));
@@ -70,7 +86,7 @@ public class ArrayType extends ReferenceType {
     return componentType;
   }
 
-  public List<ArrayDimension> getDimensions() {
+  public List<Dimension> getDimensions() {
     if (dimensions == Collections.EMPTY_LIST) {
       dimensions = new ArrayList<>();
     }
@@ -94,7 +110,7 @@ public class ArrayType extends ReferenceType {
     this.componentType = componentType;
   }
 
-  public void setDimensions(List<ArrayDimension> dimensions) {
+  public void setDimensions(List<Dimension> dimensions) {
     this.dimensions = dimensions;
   }
 
