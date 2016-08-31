@@ -1,11 +1,11 @@
 package com.github.sormuras.beethoven.type;
 
-import com.github.sormuras.beethoven.Name;
-import com.github.sormuras.beethoven.U;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.github.sormuras.beethoven.Importing;
+import com.github.sormuras.beethoven.Name;
+import com.github.sormuras.beethoven.Omitting;
+import com.github.sormuras.beethoven.U;
 import java.lang.annotation.ElementType;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -41,6 +41,14 @@ class ClassTypeTest {
     assertEquals("java.lang.Thread.State", state.list());
     assertEquals(ClassType.of(Thread.class), state.getEnclosingClassType().get());
     assertEquals(Optional.empty(), ClassType.of(Thread.class).getEnclosingClassType());
+  }
+
+  @Test
+  void imports() {
+    ClassType state = ClassType.of(Thread.State.class);
+    assertEquals("java.lang.Thread.State", state.list());
+    assertEquals("Thread.State", state.list(new Omitting()));
+    assertEquals("State", state.list(new Importing()));
   }
 
   @Test

@@ -52,13 +52,6 @@ public class ClassType extends ReferenceType {
     return of(Name.name(names));
   }
 
-  public static ClassType of(String packageName, ClassName... names) {
-    ClassType classType = new ClassType();
-    classType.setPackageName(packageName);
-    classType.getNames().addAll(Arrays.asList(names));
-    return classType;
-  }
-
   private final List<ClassName> names = new ArrayList<>();
   private String packageName = "";
 

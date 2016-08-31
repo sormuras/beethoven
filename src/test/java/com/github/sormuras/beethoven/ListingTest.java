@@ -37,20 +37,6 @@ class ListingTest {
     }
   }
 
-  static class Omitting extends Listing {
-    @Override
-    public Function<Name, NameMode> getNameModeFunction() {
-      return name -> name.isJavaLangPackage() ? NameMode.SIMPLE : NameMode.CANONICAL;
-    }
-  }
-
-  static class Importing extends Omitting {
-    @Override
-    public Function<Name, NameMode> getNameModeFunction() {
-      return name -> NameMode.LAST;
-    }
-  }
-
   @Test
   void defaults() {
     Listing empty = new Listing();
