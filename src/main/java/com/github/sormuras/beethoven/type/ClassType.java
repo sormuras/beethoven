@@ -72,7 +72,10 @@ public class ClassType extends ReferenceType {
       return listing.add(getNames(), ".");
     }
     assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
-    return listing.add(getPackageName()).add('.').add(getNames(), ".");
+    if (!getPackageName().isEmpty()) {
+      listing.add(getPackageName()).add('.');
+    }
+    return listing.add(getNames(), ".");
   }
 
   @Override
@@ -91,9 +94,12 @@ public class ClassType extends ReferenceType {
     return names.get(names.size() - 1);
   }
 
+  /** Return simple {@link Name} for this {@link ClassType} instance. */
   public Name getName() {
     List<String> simpleNames = new ArrayList<>();
-    Arrays.stream(getPackageName().split("\\.")).forEach(simpleNames::add);
+    if (!getPackageName().isEmpty()) {
+      Arrays.stream(getPackageName().split("\\.")).forEach(simpleNames::add);
+    }
     names.forEach(n -> simpleNames.add(n.getName()));
     return Name.name(simpleNames);
   }
