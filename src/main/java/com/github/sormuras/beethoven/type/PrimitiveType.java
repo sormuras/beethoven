@@ -89,8 +89,8 @@ public abstract class PrimitiveType extends Type {
     }
   }
 
-  /** Creates new instance for passed primitive class <code>type</code>. */
-  public static Type primitive(Class<?> type) {
+  /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
+  public static PrimitiveType primitive(Class<?> type) {
     if (type == boolean.class) {
       return new BooleanType();
     }

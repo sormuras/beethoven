@@ -23,7 +23,6 @@ import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
-
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Arrays;

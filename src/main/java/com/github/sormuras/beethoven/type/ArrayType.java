@@ -18,7 +18,6 @@ import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listable;
 import com.github.sormuras.beethoven.Listing;
-
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,18 +40,12 @@ public class ArrayType extends ReferenceType {
     }
   }
 
-  public static List<Dimension> createArrayDimensions(int size) {
-    List<Dimension> dimensions = new ArrayList<>();
-    IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension()));
-    return dimensions;
-  }
-
   public static ArrayType array(Class<?> componentType, int size) {
     return array(Type.type(componentType), size);
   }
 
   public static ArrayType array(Type componentType, int size) {
-    return array(componentType, createArrayDimensions(size));
+    return array(componentType, dimensions(size));
   }
 
   public static ArrayType array(Type componentType, List<Dimension> dimensions) {
@@ -62,10 +55,19 @@ public class ArrayType extends ReferenceType {
     return array;
   }
 
+  /** Create n array dimension(s). */
+  public static List<Dimension> dimensions(int size) {
+    List<Dimension> dimensions = new ArrayList<>();
+    IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension()));
+    return dimensions;
+  }
   private Type componentType;
   private List<Dimension> dimensions = Collections.emptyList();
 
   public void addAnnotations(int index, Annotation... annotations) {
+    if (annotations.length == 0) {
+      return;
+    }
     dimensions.get(index).getAnnotations().addAll(Arrays.asList(annotations));
   }
 

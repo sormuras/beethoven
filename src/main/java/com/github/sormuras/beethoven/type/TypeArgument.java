@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Type arguments may be either reference types or wildcards.
  *
- * @see https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS 4.5</a>
  */
 public class TypeArgument implements Listable {
 
