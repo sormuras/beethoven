@@ -61,6 +61,7 @@ public class ArrayType extends ReferenceType {
     IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension()));
     return dimensions;
   }
+
   private Type componentType;
   private List<Dimension> dimensions = Collections.emptyList();
 
