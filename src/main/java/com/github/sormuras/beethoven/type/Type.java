@@ -14,10 +14,7 @@
 
 package com.github.sormuras.beethoven.type;
 
-import static java.util.Arrays.stream;
-
 import com.github.sormuras.beethoven.Annotated;
-import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Name;
 import com.github.sormuras.beethoven.type.ArrayType.Dimension;
 import java.lang.annotation.ElementType;
@@ -55,7 +52,7 @@ public abstract class Type extends Annotated {
     AnnotatedType component = annotatedType;
     while (component instanceof AnnotatedArrayType) {
       Dimension dimension = new Dimension();
-      stream(component.getAnnotations()).forEach(a -> dimension.addAnnotation(a));
+      dimension.addAnnotations(component);
       dimensions.add(dimension);
       component = ((AnnotatedArrayType) component).getAnnotatedGenericComponentType();
     }
@@ -85,7 +82,7 @@ public abstract class Type extends Annotated {
     // }
     String name = ((java.lang.reflect.TypeVariable<?>) annotatedType.getType()).getName();
     TypeVariable result = TypeVariable.of(name);
-    result.getAnnotations().addAll(Annotation.annotations(annotatedType.getAnnotations()));
+    result.addAnnotations(annotatedType);
     return result;
   }
 
@@ -98,7 +95,7 @@ public abstract class Type extends Annotated {
     for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
       result.setBoundExtends((ReferenceType) type(bound));
     }
-    result.getAnnotations().addAll(Annotation.annotations(annotatedType.getAnnotations()));
+    result.addAnnotations(annotatedType);
     return result;
   }
 
@@ -137,7 +134,7 @@ public abstract class Type extends Annotated {
     return new WildcardType();
   }
 
-  /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
+  /** Create {@link Type} based on {@link ParameterizedType} instance. */
   public static Type type(ParameterizedType type) {
     List<TypeArgument> arguments = new ArrayList<>();
     for (java.lang.reflect.Type actual : type.getActualTypeArguments()) {
