@@ -25,10 +25,10 @@ import java.util.Optional;
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-Wildcard">JLS
  * 4</a>
  */
-public class WildcardType extends JavaType {
+public class WildcardType extends Type {
 
   /** {@code ? extends java.lang.Runnable}. */
-  public static WildcardType subtypeOf(JavaType upperBound) {
+  public static WildcardType subtypeOf(Type upperBound) {
     WildcardType wildcard = new WildcardType();
     wildcard.setBoundExtends((ReferenceType) upperBound);
     return wildcard;
@@ -36,11 +36,11 @@ public class WildcardType extends JavaType {
 
   /** {@code ? extends java.lang.Runnable}. */
   public static WildcardType subtypeOf(java.lang.reflect.Type upperBound) {
-    return subtypeOf(JavaType.type(upperBound));
+    return subtypeOf(Type.type(upperBound));
   }
 
   /** {@code ? super java.lang.String}. */
-  public static WildcardType supertypeOf(JavaType lowerBound) {
+  public static WildcardType supertypeOf(Type lowerBound) {
     WildcardType wildcard = new WildcardType();
     wildcard.setBoundSuper((ReferenceType) lowerBound);
     return wildcard;
@@ -48,7 +48,7 @@ public class WildcardType extends JavaType {
 
   /** {@code ? super java.lang.String}. */
   public static WildcardType supertypeOf(java.lang.reflect.Type lowerBound) {
-    return supertypeOf(JavaType.type(lowerBound));
+    return supertypeOf(Type.type(lowerBound));
   }
 
   private ReferenceType boundExtends = ClassType.of(Object.class);

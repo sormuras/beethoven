@@ -48,21 +48,21 @@ public class ArrayType extends ReferenceType {
   }
 
   public static ArrayType array(Class<?> componentType, int size) {
-    return array(JavaType.type(componentType), size);
+    return array(Type.type(componentType), size);
   }
 
-  public static ArrayType array(JavaType componentType, int size) {
+  public static ArrayType array(Type componentType, int size) {
     return array(componentType, createArrayDimensions(size));
   }
 
-  public static ArrayType array(JavaType componentType, List<Dimension> dimensions) {
+  public static ArrayType array(Type componentType, List<Dimension> dimensions) {
     ArrayType array = new ArrayType();
     array.setComponentType(componentType);
     array.setDimensions(dimensions);
     return array;
   }
 
-  private JavaType componentType;
+  private Type componentType;
   private List<Dimension> dimensions = Collections.emptyList();
 
   public void addAnnotations(int index, Annotation... annotations) {
@@ -82,7 +82,7 @@ public class ArrayType extends ReferenceType {
     return dimensions.get(0).getAnnotations();
   }
 
-  public JavaType getComponentType() {
+  public Type getComponentType() {
     return componentType;
   }
 
@@ -106,7 +106,7 @@ public class ArrayType extends ReferenceType {
     return dimensions.isEmpty();
   }
 
-  public void setComponentType(JavaType componentType) {
+  public void setComponentType(Type componentType) {
     this.componentType = componentType;
   }
 
@@ -118,7 +118,7 @@ public class ArrayType extends ReferenceType {
   public String toClassName() {
     StringBuilder builder = new StringBuilder();
     IntStream.range(0, getDimensions().size()).forEach(i -> builder.append('['));
-    JavaType componentType = getComponentType();
+    Type componentType = getComponentType();
     if (componentType instanceof PrimitiveType) {
       return builder.append(((PrimitiveType) componentType).toArrayClassNameIndicator()).toString();
     }

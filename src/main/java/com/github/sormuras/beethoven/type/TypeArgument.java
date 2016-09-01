@@ -26,11 +26,11 @@ import java.util.Objects;
 public class TypeArgument implements Listable {
 
   public static TypeArgument of(Class<?> argument) {
-    return of(JavaType.type(argument));
+    return of(Type.type(argument));
   }
 
   /** Initializes this {@link TypeArgument} instance. */
-  public static TypeArgument of(JavaType argument) {
+  public static TypeArgument of(Type argument) {
     Objects.requireNonNull(argument, "argument");
     TypeArgument typeArgument = new TypeArgument();
     if (argument instanceof WildcardType) {

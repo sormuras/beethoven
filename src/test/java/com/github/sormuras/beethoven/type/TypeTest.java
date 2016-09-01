@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unused")
-class JavaTypeTest<T> {
+class TypeTest<T> {
 
   int a = 4;
 
@@ -35,25 +35,25 @@ class JavaTypeTest<T> {
   private String asAnno(String fieldName) throws Exception {
     AnnotatedType annotatedType = getClass().getDeclaredField(fieldName).getAnnotatedType();
     Listing listing = new Listing();
-    return listing.add(JavaType.type(annotatedType)).toString();
+    return listing.add(Type.type(annotatedType)).toString();
   }
 
   private String asGenericType(String fieldName) throws Exception {
     java.lang.reflect.Type type = getClass().getDeclaredField(fieldName).getGenericType();
     Listing listing = new Listing();
-    return listing.add(JavaType.type(type)).toString();
+    return listing.add(Type.type(type)).toString();
   }
 
   @Test
   void voidType() {
-    assertEquals("void", JavaType.type(void.class).list());
+    assertEquals("void", Type.type(void.class).list());
   }
 
   @Test
   void wildcard() {
     assertEquals(
         "?",
-        JavaType.type(
+        Type.type(
                 Tests.proxy(
                     java.lang.reflect.WildcardType.class,
                     (p, m, a) -> {
@@ -96,42 +96,42 @@ class JavaTypeTest<T> {
 
   @Test
   void className() {
-    assertEquals(boolean.class.getName(), JavaType.type(boolean.class).toClassName());
-    assertEquals(byte.class.getName(), JavaType.type(byte.class).toClassName());
-    assertEquals(char.class.getName(), JavaType.type(char.class).toClassName());
-    assertEquals(double.class.getName(), JavaType.type(double.class).toClassName());
-    assertEquals(float.class.getName(), JavaType.type(float.class).toClassName());
-    assertEquals(int.class.getName(), JavaType.type(int.class).toClassName());
-    assertEquals(long.class.getName(), JavaType.type(long.class).toClassName());
-    assertEquals(short.class.getName(), JavaType.type(short.class).toClassName());
-    assertEquals(void.class.getName(), JavaType.type(void.class).toClassName());
-    assertEquals(Object.class.getName(), JavaType.type(Object.class).toClassName());
-    assertEquals(Thread.class.getName(), JavaType.type(Thread.class).toClassName());
-    assertEquals(Thread.State.class.getName(), JavaType.type(Thread.State.class).toClassName());
-    assertEquals(Object[].class.getName(), JavaType.type(Object[].class).toClassName());
-    assertEquals(Object[][].class.getName(), JavaType.type(Object[][].class).toClassName());
-    assertEquals(boolean[][][].class.getName(), JavaType.type(boolean[][][].class).toClassName());
-    assertEquals(byte[][][].class.getName(), JavaType.type(byte[][][].class).toClassName());
-    assertEquals(char[][][].class.getName(), JavaType.type(char[][][].class).toClassName());
-    assertEquals(double[][][].class.getName(), JavaType.type(double[][][].class).toClassName());
-    assertEquals(float[][][].class.getName(), JavaType.type(float[][][].class).toClassName());
-    assertEquals(int[][][].class.getName(), JavaType.type(int[][][].class).toClassName());
-    assertEquals(long[][][].class.getName(), JavaType.type(long[][][].class).toClassName());
-    assertEquals(short[][][].class.getName(), JavaType.type(short[][][].class).toClassName());
+    assertEquals(boolean.class.getName(), Type.type(boolean.class).toClassName());
+    assertEquals(byte.class.getName(), Type.type(byte.class).toClassName());
+    assertEquals(char.class.getName(), Type.type(char.class).toClassName());
+    assertEquals(double.class.getName(), Type.type(double.class).toClassName());
+    assertEquals(float.class.getName(), Type.type(float.class).toClassName());
+    assertEquals(int.class.getName(), Type.type(int.class).toClassName());
+    assertEquals(long.class.getName(), Type.type(long.class).toClassName());
+    assertEquals(short.class.getName(), Type.type(short.class).toClassName());
+    assertEquals(void.class.getName(), Type.type(void.class).toClassName());
+    assertEquals(Object.class.getName(), Type.type(Object.class).toClassName());
+    assertEquals(Thread.class.getName(), Type.type(Thread.class).toClassName());
+    assertEquals(Thread.State.class.getName(), Type.type(Thread.State.class).toClassName());
+    assertEquals(Object[].class.getName(), Type.type(Object[].class).toClassName());
+    assertEquals(Object[][].class.getName(), Type.type(Object[][].class).toClassName());
+    assertEquals(boolean[][][].class.getName(), Type.type(boolean[][][].class).toClassName());
+    assertEquals(byte[][][].class.getName(), Type.type(byte[][][].class).toClassName());
+    assertEquals(char[][][].class.getName(), Type.type(char[][][].class).toClassName());
+    assertEquals(double[][][].class.getName(), Type.type(double[][][].class).toClassName());
+    assertEquals(float[][][].class.getName(), Type.type(float[][][].class).toClassName());
+    assertEquals(int[][][].class.getName(), Type.type(int[][][].class).toClassName());
+    assertEquals(long[][][].class.getName(), Type.type(long[][][].class).toClassName());
+    assertEquals(short[][][].class.getName(), Type.type(short[][][].class).toClassName());
     assertThrows(UnsupportedOperationException.class, () -> new WildcardType().toClassName());
   }
 
   @Test
   void classType() {
-    assertEquals("boolean", JavaType.type(boolean.class).list());
-    assertEquals("byte", JavaType.type(byte.class).list());
-    assertEquals("char", JavaType.type(char.class).list());
-    assertEquals("double", JavaType.type(double.class).list());
-    assertEquals("float", JavaType.type(float.class).list());
-    assertEquals("int", JavaType.type(int.class).list());
-    assertEquals("long", JavaType.type(long.class).list());
-    assertEquals("short", JavaType.type(short.class).list());
-    JavaType uint = JavaType.type(int.class);
+    assertEquals("boolean", Type.type(boolean.class).list());
+    assertEquals("byte", Type.type(byte.class).list());
+    assertEquals("char", Type.type(char.class).list());
+    assertEquals("double", Type.type(double.class).list());
+    assertEquals("float", Type.type(float.class).list());
+    assertEquals("int", Type.type(int.class).list());
+    assertEquals("long", Type.type(long.class).list());
+    assertEquals("short", Type.type(short.class).list());
+    Type uint = Type.type(int.class);
     uint.addAnnotation(U.class);
     assertEquals(U.USE + " int", uint.list());
   }
@@ -140,19 +140,17 @@ class JavaTypeTest<T> {
 
   @Test
   void of() {
-    assertEquals("java.lang.Object", JavaType.type(Object.class).list());
+    assertEquals("java.lang.Object", Type.type(Object.class).list());
   }
 
   @Test
   void type() throws Exception {
     assertEquals(
-        "void",
-        JavaType.type(JavaTypeTest.class.getDeclaredMethod("type").getGenericReturnType()).list());
+        "void", Type.type(TypeTest.class.getDeclaredMethod("type").getGenericReturnType()).list());
     try {
       assertEquals(
           "void",
-          JavaType.type(
-                  JavaTypeTest.class.getDeclaredField("parameterizedFieldType").getGenericType())
+          Type.type(TypeTest.class.getDeclaredField("parameterizedFieldType").getGenericType())
               .list());
     } catch (AssertionError e) {
       // expected

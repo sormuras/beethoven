@@ -21,7 +21,7 @@ import com.github.sormuras.beethoven.Listing;
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
  */
-public abstract class PrimitiveType extends JavaType {
+public abstract class PrimitiveType extends Type {
 
   public static class BooleanType extends PrimitiveType {
     @Override
@@ -90,7 +90,7 @@ public abstract class PrimitiveType extends JavaType {
   }
 
   /** Creates new instance for passed primitive class <code>type</code>. */
-  public static JavaType primitive(Class<?> type) {
+  public static Type primitive(Class<?> type) {
     if (type == boolean.class) {
       return new BooleanType();
     }

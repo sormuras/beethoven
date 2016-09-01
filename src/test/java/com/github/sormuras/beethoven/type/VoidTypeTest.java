@@ -27,9 +27,9 @@ class VoidTypeTest {
 
   @Test
   void equalsAndHashCode() {
-    assertEquals("void", JavaType.type(void.class).list());
-    assertEquals(new VoidType(), JavaType.type(void.class));
-    assertEquals(new VoidType().hashCode(), JavaType.type(void.class).hashCode());
+    assertEquals("void", Type.type(void.class).list());
+    assertEquals(new VoidType(), Type.type(void.class));
+    assertEquals(new VoidType().hashCode(), Type.type(void.class).hashCode());
     assertFalse(new VoidType().equals(null));
     assertFalse(new VoidType().equals(new Object()));
     VoidType v = new VoidType();

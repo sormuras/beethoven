@@ -20,4 +20,4 @@ package com.github.sormuras.beethoven.type;
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS 4.3</a>
  */
-public abstract class ReferenceType extends JavaType {}
+public abstract class ReferenceType extends Type {}

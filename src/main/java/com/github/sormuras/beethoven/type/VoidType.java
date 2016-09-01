@@ -20,7 +20,7 @@ import java.lang.annotation.ElementType;
 import java.util.Collections;
 import java.util.List;
 
-public class VoidType extends JavaType {
+public class VoidType extends Type {
 
   @Override
   public Listing apply(Listing listing) {

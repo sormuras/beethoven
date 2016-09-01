@@ -27,32 +27,32 @@ class PrimitiveTypeTest {
 
   @Test
   void primitiveTypeEqualsAndHashcode() {
-    assertEquals(PrimitiveType.primitive(boolean.class), JavaType.type(boolean.class));
-    assertEquals(PrimitiveType.primitive(byte.class), JavaType.type(byte.class));
-    assertEquals(PrimitiveType.primitive(char.class), JavaType.type(char.class));
-    assertEquals(PrimitiveType.primitive(double.class), JavaType.type(double.class));
-    assertEquals(PrimitiveType.primitive(float.class), JavaType.type(float.class));
-    assertEquals(PrimitiveType.primitive(int.class), JavaType.type(int.class));
-    assertEquals(PrimitiveType.primitive(long.class), JavaType.type(long.class));
-    assertEquals(PrimitiveType.primitive(short.class), JavaType.type(short.class));
-    assertNotEquals(PrimitiveType.primitive(byte.class), JavaType.type(char.class));
-    JavaType intAnnotatedWithU = new PrimitiveType.IntType();
+    assertEquals(PrimitiveType.primitive(boolean.class), Type.type(boolean.class));
+    assertEquals(PrimitiveType.primitive(byte.class), Type.type(byte.class));
+    assertEquals(PrimitiveType.primitive(char.class), Type.type(char.class));
+    assertEquals(PrimitiveType.primitive(double.class), Type.type(double.class));
+    assertEquals(PrimitiveType.primitive(float.class), Type.type(float.class));
+    assertEquals(PrimitiveType.primitive(int.class), Type.type(int.class));
+    assertEquals(PrimitiveType.primitive(long.class), Type.type(long.class));
+    assertEquals(PrimitiveType.primitive(short.class), Type.type(short.class));
+    assertNotEquals(PrimitiveType.primitive(byte.class), Type.type(char.class));
+    Type intAnnotatedWithU = new PrimitiveType.IntType();
     intAnnotatedWithU.addAnnotation(U.class);
-    assertNotEquals(intAnnotatedWithU, JavaType.type(int.class));
+    assertNotEquals(intAnnotatedWithU, Type.type(int.class));
   }
 
   @Test
   void primitiveTypeUseWithAnnotation() throws Exception {
     Annotation u = Annotation.annotation(U.class);
-    JavaType uint = JavaType.type(int.class);
+    Type uint = Type.type(int.class);
     uint.addAnnotation(u);
     assertEquals(U.USE + " int", uint.list());
-    JavaType uvint = PrimitiveType.primitive(int.class);
+    Type uvint = PrimitiveType.primitive(int.class);
     uvint.addAnnotation(U.class);
     uvint.addAnnotation(V.class);
     assertEquals(U.USE + " " + V.USE + " int", uvint.list());
     U reflected = U.class.getDeclaredField("NUMBER").getAnnotatedType().getAnnotation(U.class);
-    JavaType uint2 = JavaType.type(int.class);
+    Type uint2 = Type.type(int.class);
     uint2.addAnnotation(reflected);
     assertEquals(U.USE + " int", uint2.list());
   }

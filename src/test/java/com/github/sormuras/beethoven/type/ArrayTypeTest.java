@@ -11,14 +11,14 @@ class ArrayTypeTest {
 
   @Test
   void arrayType() {
-    assertEquals("byte[]", ArrayType.array(JavaType.type(byte.class), 1).list());
-    assertEquals("byte[][][]", ArrayType.array(JavaType.type(byte.class), 3).list());
-    assertEquals("byte[][][]", JavaType.type(byte[][][].class).list());
+    assertEquals("byte[]", ArrayType.array(Type.type(byte.class), 1).list());
+    assertEquals("byte[][][]", ArrayType.array(Type.type(byte.class), 3).list());
+    assertEquals("byte[][][]", Type.type(byte[][][].class).list());
   }
 
   @Test
   void arrayTypeWithAnnotatedDimensions() {
-    ArrayType actual = ArrayType.array(JavaType.type(byte.class), 3);
+    ArrayType actual = ArrayType.array(Type.type(byte.class), 3);
     actual.addAnnotations(0, Annotation.annotation(Name.name("test", "T")));
     actual.addAnnotations(
         1,
