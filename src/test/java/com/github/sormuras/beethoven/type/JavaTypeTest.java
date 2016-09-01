@@ -7,11 +7,11 @@ import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Tests;
 import com.github.sormuras.beethoven.U;
 import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unused")
 class JavaTypeTest<T> {
 
   int a = 4;
@@ -39,7 +39,7 @@ class JavaTypeTest<T> {
   }
 
   private String asGenericType(String fieldName) throws Exception {
-    Type type = getClass().getDeclaredField(fieldName).getGenericType();
+    java.lang.reflect.Type type = getClass().getDeclaredField(fieldName).getGenericType();
     Listing listing = new Listing();
     return listing.add(JavaType.type(type)).toString();
   }
@@ -58,10 +58,10 @@ class JavaTypeTest<T> {
                     java.lang.reflect.WildcardType.class,
                     (p, m, a) -> {
                       if (m.getName().equals("getLowerBounds")) {
-                        return new Type[0];
+                        return new java.lang.reflect.Type[0];
                       }
                       if (m.getName().equals("getUpperBounds")) {
-                        return new Type[0];
+                        return new java.lang.reflect.Type[0];
                       }
                       return null;
                     }))

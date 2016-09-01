@@ -16,14 +16,14 @@ package com.github.sormuras.beethoven.type;
 
 import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
  * Wildcards are useful in situations where only partial knowledge about the type parameter is
  * required.
  *
- * @see https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-Wildcard
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-Wildcard">JLS
+ * 4</a>
  */
 public class WildcardType extends JavaType {
 
@@ -35,7 +35,7 @@ public class WildcardType extends JavaType {
   }
 
   /** {@code ? extends java.lang.Runnable}. */
-  public static WildcardType subtypeOf(Type upperBound) {
+  public static WildcardType subtypeOf(java.lang.reflect.Type upperBound) {
     return subtypeOf(JavaType.type(upperBound));
   }
 
@@ -47,7 +47,7 @@ public class WildcardType extends JavaType {
   }
 
   /** {@code ? super java.lang.String}. */
-  public static WildcardType supertypeOf(Type lowerBound) {
+  public static WildcardType supertypeOf(java.lang.reflect.Type lowerBound) {
     return supertypeOf(JavaType.type(lowerBound));
   }
 
@@ -61,8 +61,9 @@ public class WildcardType extends JavaType {
     if (!getBoundExtends().isJavaLangObject()) {
       return listing.add(" extends ").add(getBoundExtends());
     }
-    if (getBoundSuper().isPresent()) {
-      return listing.add(" super ").add(getBoundSuper().get());
+    Optional<ReferenceType> bound = getBoundSuper();
+    if (bound.isPresent()) {
+      return listing.add(" super ").add(bound.get());
     }
     return listing;
   }
