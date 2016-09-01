@@ -3,7 +3,7 @@ package com.github.sormuras.beethoven.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Name;
 import org.junit.jupiter.api.Test;
 
@@ -19,12 +19,12 @@ class ArrayTypeTest {
   @Test
   void arrayTypeWithAnnotatedDimensions() {
     ArrayType actual = ArrayType.array(JavaType.type(byte.class), 3);
-    actual.addAnnotations(0, JavaAnnotation.annotation(Name.name("test", "T")));
+    actual.addAnnotations(0, Annotation.annotation(Name.name("test", "T")));
     actual.addAnnotations(
         1,
-        JavaAnnotation.annotation(Name.name("test", "S")),
-        JavaAnnotation.annotation(Name.name("test", "T")));
-    actual.addAnnotations(2, JavaAnnotation.annotation(Name.name("test", "T")));
+        Annotation.annotation(Name.name("test", "S")),
+        Annotation.annotation(Name.name("test", "T")));
+    actual.addAnnotations(2, Annotation.annotation(Name.name("test", "T")));
     assertEquals("byte@test.T []@test.S @test.T []@test.T []", actual.list());
     assertSame(actual.getAnnotations(), actual.getDimensions().get(0).getAnnotations());
   }

@@ -3,7 +3,6 @@ package com.github.sormuras.beethoven.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.sormuras.beethoven.Importing;
-import com.github.sormuras.beethoven.JavaAnnotation;
 import com.github.sormuras.beethoven.Name;
 import com.github.sormuras.beethoven.Omitting;
 import com.github.sormuras.beethoven.U;

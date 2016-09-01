@@ -14,7 +14,6 @@
 
 package com.github.sormuras.beethoven;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -36,28 +35,29 @@ import java.util.stream.Collectors;
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.7">JLS 9.7</a>
  */
-public class JavaAnnotation implements Listable {
+public class Annotation implements Listable {
 
   /**
-   * Create new {@link JavaAnnotation} instance by reflecting on the annotation found on given
-   * annotated element calling {@link AnnotatedElement#getAnnotation(Class)}.
+   * Create new {@link Annotation} instance by reflecting on the annotation found on given annotated
+   * element calling {@link AnnotatedElement#getAnnotation(Class)}.
    */
-  public static JavaAnnotation annotation(
-      AnnotatedElement element, Class<? extends Annotation> annotationClass) {
+  public static Annotation annotation(
+      AnnotatedElement element, Class<? extends java.lang.annotation.Annotation> annotationClass) {
     return annotation(element.getAnnotation(annotationClass));
   }
 
   /**
-   * Create new {@link JavaAnnotation} instance by reflecting on the given annotation omitting
-   * default values.
+   * Create new {@link Annotation} instance by reflecting on the given annotation omitting default
+   * values.
    */
-  public static JavaAnnotation annotation(Annotation annotation) {
+  public static Annotation annotation(java.lang.annotation.Annotation annotation) {
     return annotation(annotation, false);
   }
 
-  /** Create new {@link JavaAnnotation} instance by reflecting on the given annotation. */
-  public static JavaAnnotation annotation(Annotation annotation, boolean includeDefaultValues) {
-    JavaAnnotation result = annotation(annotation.annotationType());
+  /** Create new {@link Annotation} instance by reflecting on the given annotation. */
+  public static Annotation annotation(
+      java.lang.annotation.Annotation annotation, boolean includeDefaultValues) {
+    Annotation result = annotation(annotation.annotationType());
     try {
       Method[] methods = annotation.annotationType().getDeclaredMethods();
       Arrays.sort(methods, (m1, m2) -> m1.getName().compareTo(m2.getName()));
@@ -74,8 +74,9 @@ public class JavaAnnotation implements Listable {
           }
           continue;
         }
-        if (value instanceof Annotation) {
-          result.addMember(method.getName(), annotation((Annotation) value, includeDefaultValues));
+        if (value instanceof java.lang.annotation.Annotation) {
+          java.lang.annotation.Annotation casted = (java.lang.annotation.Annotation) value;
+          result.addMember(method.getName(), annotation(casted, includeDefaultValues));
           continue;
         }
         result.addObject(method.getName(), value);
@@ -87,12 +88,13 @@ public class JavaAnnotation implements Listable {
     return result;
   }
 
-  public static JavaAnnotation annotation(Class<? extends Annotation> type, Object... values) {
+  public static Annotation annotation(
+      Class<? extends java.lang.annotation.Annotation> type, Object... values) {
     return annotation(Name.name(type), values);
   }
 
-  public static JavaAnnotation annotation(Name name, Object... values) {
-    JavaAnnotation anno = new JavaAnnotation(name);
+  public static Annotation annotation(Name name, Object... values) {
+    Annotation anno = new Annotation(name);
     for (int i = 0; i < values.length; i++) {
       anno.addValue(values[i]);
     }
@@ -100,20 +102,38 @@ public class JavaAnnotation implements Listable {
   }
 
   /**
-   * Create list of {@link JavaAnnotation} instances by reflecting on all annotations found on the
+   * Create list of {@link Annotation} instances by reflecting on all annotations found on the
    * annotated element using {@link AnnotatedElement#getAnnotations()}.
    */
-  public static List<JavaAnnotation> annotations(AnnotatedElement element) {
-    Annotation[] annotations = element.getAnnotations();
+  public static List<Annotation> annotations(AnnotatedElement element) {
+    java.lang.annotation.Annotation[] annotations = element.getAnnotations();
     if (annotations.length == 0) {
       return Collections.emptyList();
     }
     return annotations(annotations);
   }
 
-  /** Create list of {@link JavaAnnotation} instances by reflecting given all annotations. */
-  public static List<JavaAnnotation> annotations(Annotation... annotations) {
-    return Arrays.stream(annotations).map(JavaAnnotation::annotation).collect(Collectors.toList());
+  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
+  public static List<Annotation> annotations(java.lang.annotation.Annotation... annotations) {
+    return Arrays.stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
+  }
+
+  /** Not-so type-safe annotation adder. */
+  @SuppressWarnings("unchecked")
+  public static Annotation cast(Object object, Object... values) {
+    if (object instanceof Annotation) {
+      return (Annotation) object;
+    }
+    if (object instanceof java.lang.annotation.Annotation) {
+      return annotation((java.lang.annotation.Annotation) object);
+    }
+    if (object instanceof Class) {
+      return annotation((Class<? extends java.lang.annotation.Annotation>) object, values);
+    }
+    if (object instanceof Name) {
+      return annotation((Name) object, values);
+    }
+    throw new AssertionError("Can't cast/convert " + object + " to Annotation!");
   }
 
   /** Convert an object to a representation usable as an annotation value literal. */
@@ -156,7 +176,7 @@ public class JavaAnnotation implements Listable {
   private Map<String, List<Listable>> members;
   private final Name name;
 
-  JavaAnnotation(Name name) {
+  Annotation(Name name) {
     this.name = Objects.requireNonNull(name, "name");
     this.members = Collections.emptyMap();
   }

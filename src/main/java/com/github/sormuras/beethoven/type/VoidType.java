@@ -14,7 +14,7 @@
 
 package com.github.sormuras.beethoven.type;
 
-import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
 import java.util.Collections;
@@ -28,7 +28,7 @@ public class VoidType extends JavaType {
   }
 
   @Override
-  public List<JavaAnnotation> getAnnotations() {
+  public List<Annotation> getAnnotations() {
     return Collections.emptyList();
   }
 

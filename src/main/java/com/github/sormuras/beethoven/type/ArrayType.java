@@ -15,7 +15,7 @@
 package com.github.sormuras.beethoven.type;
 
 import com.github.sormuras.beethoven.Annotated;
-import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listable;
 import com.github.sormuras.beethoven.Listing;
 
@@ -65,7 +65,7 @@ public class ArrayType extends ReferenceType {
   private JavaType componentType;
   private List<Dimension> dimensions = Collections.emptyList();
 
-  public void addAnnotations(int index, JavaAnnotation... annotations) {
+  public void addAnnotations(int index, Annotation... annotations) {
     dimensions.get(index).getAnnotations().addAll(Arrays.asList(annotations));
   }
 
@@ -75,7 +75,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public List<JavaAnnotation> getAnnotations() {
+  public List<Annotation> getAnnotations() {
     if (isEmpty()) {
       return Collections.emptyList();
     }

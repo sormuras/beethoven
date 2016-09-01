@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class PrimitiveTypeTest {
 
   @Test
   void primitiveTypeUseWithAnnotation() throws Exception {
-    JavaAnnotation u = JavaAnnotation.annotation(U.class);
+    Annotation u = Annotation.annotation(U.class);
     JavaType uint = JavaType.type(int.class);
     uint.addAnnotation(u);
     assertEquals(U.USE + " int", uint.list());

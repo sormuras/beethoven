@@ -75,9 +75,9 @@ class ListingTest {
   void addListOfListables() {
     List<Listable> list = new ArrayList<>();
     assertEquals("", new Listing().add(list).toString());
-    list.add(JavaAnnotation.value('a'));
+    list.add(Annotation.value('a'));
     assertEquals("'a'", new Listing().add(list).toString());
-    list.add(JavaAnnotation.value('z'));
+    list.add(Annotation.value('z'));
     assertEquals("'a'\n'z'", new Listing().add(list).toString());
     assertEquals("'a'-'z'", new Listing().add(list, "-").toString());
   }

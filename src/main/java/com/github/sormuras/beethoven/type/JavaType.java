@@ -17,7 +17,7 @@ package com.github.sormuras.beethoven.type;
 import static java.util.Arrays.stream;
 
 import com.github.sormuras.beethoven.Annotated;
-import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Name;
 import com.github.sormuras.beethoven.type.ArrayType.Dimension;
 import java.lang.annotation.ElementType;
@@ -85,7 +85,7 @@ public abstract class JavaType extends Annotated {
     // }
     String name = ((java.lang.reflect.TypeVariable<?>) annotatedType.getType()).getName();
     TypeVariable result = TypeVariable.of(name);
-    result.getAnnotations().addAll(JavaAnnotation.annotations(annotatedType.getAnnotations()));
+    result.getAnnotations().addAll(Annotation.annotations(annotatedType.getAnnotations()));
     return result;
   }
 
@@ -98,7 +98,7 @@ public abstract class JavaType extends Annotated {
     for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
       result.setBoundExtends((ReferenceType) JavaType.type(bound));
     }
-    result.getAnnotations().addAll(JavaAnnotation.annotations(annotatedType.getAnnotations()));
+    result.getAnnotations().addAll(Annotation.annotations(annotatedType.getAnnotations()));
     return result;
   }
 

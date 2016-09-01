@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
-import com.github.sormuras.beethoven.JavaAnnotation;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
@@ -118,7 +118,7 @@ public class ClassType extends ReferenceType {
   }
 
   @Override
-  public List<JavaAnnotation> getAnnotations() {
+  public List<Annotation> getAnnotations() {
     return getLastClassName().getAnnotations();
   }
 

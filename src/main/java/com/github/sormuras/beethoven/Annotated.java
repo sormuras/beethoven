@@ -14,42 +14,33 @@
 
 package com.github.sormuras.beethoven;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Base {@link JavaAnnotation}-collecting implementation. */
+/** Base {@link Annotation}-collecting implementation. */
 public abstract class Annotated implements Listable {
 
-  private List<JavaAnnotation> annotations = Collections.emptyList();
+  private List<Annotation> annotations = Collections.emptyList();
 
-  /** Not-so type-safe annotation adder. */
-  @SuppressWarnings("unchecked")
+  /**
+   * Add annotation.
+   *
+   * @see Annotation#cast(Object, Object...)
+   */
   public void addAnnotation(Object object, Object... values) {
-    JavaAnnotation annotation = null;
-    if (object instanceof JavaAnnotation) {
-      annotation = (JavaAnnotation) object;
-    }
-    if (object instanceof Annotation) {
-      annotation = JavaAnnotation.annotation((Annotation) object);
-    }
-    if (object instanceof Class) {
-      annotation = JavaAnnotation.annotation((Class<? extends Annotation>) object, values);
-    }
-    if (object instanceof Name) {
-      annotation = JavaAnnotation.annotation((Name) object, values);
-    }
-    if (annotation == null) {
-      throw new AssertionError("Can't cast/convert " + object + " to JavaAnnotation!");
-    }
-    getAnnotations().add(annotation);
+    getAnnotations().add(Annotation.cast(object, values));
   }
 
+  /**
+   * Add all annotations present on the annotated element.
+   *
+   * @param annotatedElement source of annotations
+   */
   public void addAnnotations(AnnotatedElement annotatedElement) {
-    List<JavaAnnotation> annotations = JavaAnnotation.annotations(annotatedElement);
+    List<Annotation> annotations = Annotation.annotations(annotatedElement);
     if (annotations.isEmpty()) {
       return;
     }
@@ -67,7 +58,7 @@ public abstract class Annotated implements Listable {
     return hashCode() == obj.hashCode();
   }
 
-  public List<JavaAnnotation> getAnnotations() {
+  public List<Annotation> getAnnotations() {
     if (annotations == Collections.EMPTY_LIST) {
       annotations = new ArrayList<>();
     }
