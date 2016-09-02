@@ -171,11 +171,7 @@ public class Listing {
    * String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}"
    * new Listing().add(source, System.class, "123", "", "$").toString()
    * </pre>
-   * produces:
-   *
-   * <pre>
-   * java.lang.System.out.println(\"123\"); // 0 String"
-   * </pre>
+   * produces: {@code java.lang.System.out.println(\"123\"); // 0 String}
    */
   public Listing add(String source, Object... args) {
     Matcher matcher = PLACEHOLDER_PATTERN.matcher(source);

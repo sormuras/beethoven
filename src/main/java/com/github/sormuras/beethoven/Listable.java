@@ -16,6 +16,19 @@ package com.github.sormuras.beethoven;
 
 import java.util.function.UnaryOperator;
 
+/**
+ * The functional {@link Listable} interface should be implemented by any class whose instances are
+ * intended to be applied to a {@link Listing} instance.
+ *
+ * <p>
+ * The class must define a method called {@code apply(Listing)}. This interface is designed to
+ * provide a common protocol for objects that wish to contribute source code snippets.
+ *
+ * @see Listing
+ * @see #IDENTITY
+ * @see #NEWLINE
+ * @see #SPACE
+ */
 @FunctionalInterface
 public interface Listable extends UnaryOperator<Listing> {
 
@@ -46,12 +59,14 @@ public interface Listable extends UnaryOperator<Listing> {
    * Escape Sequences for Character and String Literals.
    *
    * <p>
-   * The character and string escape sequences allow for the representation of some nongraphic
+   * The character and string escape sequences allow for the representation of some non-graphic
    * characters without using Unicode escapes, as well as the single quote, double quote, and
    * backslash characters, in character literals (§3.10.4) and string literals (§3.10.5).
    *
    * <p>
-   * https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6
+   *
+   * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6">JLS
+   * 3.10.6</a>
    */
   static String escape(char character) {
     switch (character) {
@@ -97,7 +112,7 @@ public interface Listable extends UnaryOperator<Listing> {
         result.append("\\\"");
         continue;
       }
-      // default case: just let character escaper do its work
+      // default case: just let character escape method do its work
       result.append(escape(character));
     }
     result.append('"');

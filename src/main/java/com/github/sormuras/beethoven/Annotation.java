@@ -216,7 +216,11 @@ public class Annotation implements Listable {
     // normal annotation: emit all "key = value" pairs
     Consumer<Entry<String, List<Listable>>> separate = entry -> listing.add(", ");
     Consumer<Entry<String, List<Listable>>> print =
-        e -> listing.add(e.getKey()).add(" = ").add(values(e.getValue()));
+        entry -> {
+          listing.add(entry.getKey());
+          listing.add(" = ");
+          listing.add(values(entry.getValue()));
+        };
     Spliterator<Entry<String, List<Listable>>> entries = members.entrySet().spliterator();
     listing.add('(');
     entries.tryAdvance(print);
@@ -238,6 +242,6 @@ public class Annotation implements Listable {
 
   @Override
   public String toString() {
-    return "Anno{" + getTypeName() + ", members=" + members + "}";
+    return "Annotation{" + getTypeName() + ", members=" + members + "}";
   }
 }

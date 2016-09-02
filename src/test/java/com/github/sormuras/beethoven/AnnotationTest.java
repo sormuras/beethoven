@@ -111,7 +111,7 @@ class AnnotationTest {
   void simpleMarkerAnnotation() {
     Annotation marker = Annotation.annotation(Test.class);
     assertEquals("@" + Test.class.getCanonicalName(), marker.list());
-    assertEquals("Anno{Name{org.junit.jupiter.api/Test}, members={}}", marker.toString());
+    assertEquals("Annotation{Name{org.junit.jupiter.api/Test}, members={}}", marker.toString());
   }
 
   @Test
