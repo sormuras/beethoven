@@ -16,7 +16,6 @@ package com.github.sormuras.beethoven.type;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
@@ -40,14 +39,14 @@ public class ClassType extends ReferenceType {
   /** Simple and(!) annotatable and(!) typed class or interface name. */
   public static class SimpleName extends Annotated {
 
-    public static SimpleName of(String name) {
-      SimpleName simpleName = new SimpleName();
-      simpleName.setName(name);
-      return simpleName;
-    }
+    private final String name;
+    private final List<TypeArgument> typeArguments;
 
-    private String name;
-    private List<TypeArgument> typeArguments = Collections.emptyList();
+    public SimpleName(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
+      super(annotations);
+      this.name = name;
+      this.typeArguments = typeArguments;
+    }
 
     @Override
     public Listing apply(Listing listing) {
@@ -69,41 +68,18 @@ public class ClassType extends ReferenceType {
     }
 
     public List<TypeArgument> getTypeArguments() {
-      if (typeArguments == Collections.EMPTY_LIST) {
-        typeArguments = new ArrayList<>();
-      }
       return typeArguments;
     }
-
-    public void setName(String name) {
-      this.name = name;
-    }
   }
 
-  public static ClassType of(Class<?> type) {
-    return of(Name.name(type));
-  }
+  private final List<SimpleName> names;
+  private final String packageName;
 
-  public static ClassType of(Class<?> type, Class<?>... arguments) {
-    TypeArgument[] args = stream(arguments).map(TypeArgument::of).toArray(TypeArgument[]::new);
-    return of(Name.name(type), args);
+  public ClassType(String packageName, List<SimpleName> names) {
+    super(Collections.emptyList());
+    this.packageName = packageName;
+    this.names = Collections.unmodifiableList(names);
   }
-
-  /** Create class type for name and optional type arguments. */
-  public static ClassType of(Name name, TypeArgument... typeArguments) {
-    ClassType classType = new ClassType();
-    classType.setPackageName(name.packageName());
-    classType.getNames().addAll(name.simpleNames().stream().map(SimpleName::of).collect(toList()));
-    Collections.addAll(classType.getTypeArguments(), typeArguments);
-    return classType;
-  }
-
-  public static ClassType of(String... names) {
-    return of(Name.name(names));
-  }
-
-  private final List<SimpleName> names = new ArrayList<>();
-  private String packageName = "";
 
   @Override
   public Listing apply(Listing listing) {
@@ -130,7 +106,7 @@ public class ClassType extends ReferenceType {
     if (names.size() == 1) {
       return Optional.empty();
     }
-    return Optional.of(of(getName().enclosing()));
+    return Optional.of(new ClassType(getPackageName(), names.subList(0, names.size() - 1)));
   }
 
   public SimpleName getLastClassName() {
@@ -156,22 +132,14 @@ public class ClassType extends ReferenceType {
     return packageName;
   }
 
-  public List<TypeArgument> getTypeArguments() {
-    return getLastClassName().getTypeArguments();
-  }
-
   @Override
   public boolean isAnnotated() {
-    return getLastClassName().isAnnotated();
+    return names.stream().filter(Annotated::isAnnotated).findAny().isPresent();
   }
 
   @Override
   public boolean isJavaLangObject() {
     return getName().isJavaLangObject();
-  }
-
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
   }
 
   @Override

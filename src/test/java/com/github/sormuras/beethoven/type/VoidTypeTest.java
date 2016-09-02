@@ -14,25 +14,23 @@ class VoidTypeTest {
 
   @Test
   void annotationTargetIsNull() {
-    assertNull(new VoidType().getAnnotationTarget());
-    assertEquals(Listable.NEWLINE, new VoidType().getAnnotationSeparator());
+    assertNull(VoidType.INSTANCE.getAnnotationTarget());
+    assertEquals(Listable.NEWLINE, VoidType.INSTANCE.getAnnotationSeparator());
   }
 
   @Test
   void annotationsAreImmutable() {
-    assertTrue(new VoidType().getAnnotations().isEmpty());
-    assertThrows(
-        UnsupportedOperationException.class, () -> new VoidType().addAnnotation(Name.name("Fail")));
+    assertTrue(VoidType.INSTANCE.getAnnotations().isEmpty());
+    assertThrows(Exception.class, () -> VoidType.INSTANCE.getAnnotations().clear());
   }
 
   @Test
   void equalsAndHashCode() {
     assertEquals("void", Type.type(void.class).list());
-    assertEquals(new VoidType(), Type.type(void.class));
-    assertEquals(new VoidType().hashCode(), Type.type(void.class).hashCode());
-    assertFalse(new VoidType().equals(null));
-    assertFalse(new VoidType().equals(new Object()));
-    VoidType v = new VoidType();
-    assertEquals(v, v);
+    assertEquals(VoidType.INSTANCE, Type.type(void.class));
+    assertEquals(VoidType.INSTANCE.hashCode(), Type.type(void.class).hashCode());
+    assertFalse(VoidType.INSTANCE.equals(null));
+    assertFalse(VoidType.INSTANCE.equals(new Object()));
+    assertEquals(VoidType.INSTANCE, VoidType.INSTANCE);
   }
 }

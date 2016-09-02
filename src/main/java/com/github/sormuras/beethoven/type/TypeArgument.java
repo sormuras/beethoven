@@ -25,34 +25,37 @@ import java.util.Objects;
  */
 public class TypeArgument implements Listable {
 
-  public static TypeArgument of(Class<?> argument) {
-    return of(Type.type(argument));
+  public static TypeArgument argument(Class<?> argument) {
+    return argument(Type.type(argument));
   }
 
   /** Initializes this {@link TypeArgument} instance. */
-  public static TypeArgument of(Type argument) {
+  public static TypeArgument argument(Type argument) {
     Objects.requireNonNull(argument, "argument");
-    TypeArgument typeArgument = new TypeArgument();
     if (argument instanceof WildcardType) {
-      typeArgument.setWildcard((WildcardType) argument);
-      return typeArgument;
+      return new TypeArgument(null, (WildcardType) argument);
     }
     if (argument instanceof ReferenceType) {
-      typeArgument.setReference((ReferenceType) argument);
-      return typeArgument;
+      return new TypeArgument((ReferenceType) argument, null);
     }
-    throw new AssertionError("neither reference nor wildcard: " + argument);
+    throw new AssertionError("Neither reference nor wildcard type: " + argument);
   }
 
-  private ReferenceType reference;
-  private WildcardType wildcard;
+  private final ReferenceType reference;
+  private final WildcardType wildcard;
+
+  TypeArgument(ReferenceType reference, WildcardType wildcard) {
+    this.reference = reference;
+    this.wildcard = wildcard;
+  }
 
   @Override
   public Listing apply(Listing listing) {
-    if (reference == null) {
-      return listing.add(wildcard);
-    }
-    return listing.add(reference);
+    return getArgument().apply(listing);
+  }
+
+  public Type getArgument() {
+    return reference == null ? wildcard : reference;
   }
 
   public ReferenceType getReference() {
@@ -63,13 +66,8 @@ public class TypeArgument implements Listable {
     return wildcard;
   }
 
-  public void setReference(ReferenceType reference) {
-    this.reference = reference;
-    this.wildcard = null;
-  }
-
-  public void setWildcard(WildcardType wildcard) {
-    this.wildcard = wildcard;
-    this.reference = null;
+  @Override
+  public String toString() {
+    return "TypeArgument{" + getArgument() + "}";
   }
 }

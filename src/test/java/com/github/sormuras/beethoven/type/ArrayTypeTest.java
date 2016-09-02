@@ -1,10 +1,10 @@
 package com.github.sormuras.beethoven.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.github.sormuras.beethoven.Annotation;
-import com.github.sormuras.beethoven.Name;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 class ArrayTypeTest {
@@ -18,28 +18,12 @@ class ArrayTypeTest {
 
   @Test
   void arrayTypeWithAnnotatedDimensions() {
-    ArrayType actual = ArrayType.array(Type.type(byte.class), 3);
-    actual.addAnnotations(0, Annotation.cast("A"));
-    actual.addAnnotations(1, Annotation.cast("B"), Annotation.cast("C"));
-    actual.addAnnotations(2, Annotation.cast("D"));
+    ArrayType.Dimension[] dimensions = {
+      new ArrayType.Dimension(Collections.singletonList(Annotation.cast("A"))),
+      new ArrayType.Dimension(Arrays.asList(Annotation.cast("B"), Annotation.cast("C"))),
+      new ArrayType.Dimension(Collections.singletonList(Annotation.cast("D")))
+    };
+    ArrayType actual = ArrayType.array(Type.type(byte.class), Arrays.asList(dimensions));
     assertEquals("byte@A []@B @C []@D []", actual.list());
-    assertSame(actual.getAnnotations(), actual.getDimensions().get(0).getAnnotations());
-  }
-
-  @Test
-  void mutable() {
-    ArrayType array = new ArrayType();
-    assertEquals(true, array.isEmpty());
-    assertEquals(false, array.isAnnotated());
-    assertEquals(true, array.getAnnotations().isEmpty());
-    assertEquals(true, array.getDimensions().isEmpty());
-    array.getDimensions().add(new ArrayType.Dimension());
-    assertEquals(false, array.getDimensions().isEmpty());
-    assertEquals(1, array.getDimensions().size());
-    array.setComponentType(new PrimitiveType.IntType());
-    assertEquals("int[]", array.list());
-    array.addAnnotation(Name.name("test", "T"));
-    assertEquals(1, array.getAnnotations().size());
-    assertEquals("int@test.T []", array.list());
   }
 }

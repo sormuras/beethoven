@@ -9,6 +9,8 @@ import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 class PrimitiveTypeTest {
 
   @Test
@@ -36,24 +38,24 @@ class PrimitiveTypeTest {
     assertEquals(PrimitiveType.primitive(long.class), Type.type(long.class));
     assertEquals(PrimitiveType.primitive(short.class), Type.type(short.class));
     assertNotEquals(PrimitiveType.primitive(byte.class), Type.type(char.class));
-    Type intAnnotatedWithU = new PrimitiveType.IntType();
-    intAnnotatedWithU.addAnnotation(U.class);
+    Type intAnnotatedWithU = PrimitiveType.primitive(U.SINGLETON, int.class);
+    // intAnnotatedWithU.addAnnotation(U.class);
     assertNotEquals(intAnnotatedWithU, Type.type(int.class));
   }
 
   @Test
   void primitiveTypeUseWithAnnotation() throws Exception {
-    Annotation u = Annotation.annotation(U.class);
-    Type uint = Type.type(int.class);
-    uint.addAnnotation(u);
-    assertEquals(U.USE + " int", uint.list());
-    Type uvint = PrimitiveType.primitive(int.class);
-    uvint.addAnnotation(U.class);
-    uvint.addAnnotation(V.class);
+    //    Annotation u = Annotation.annotation(U.class);
+    //    Type uint = Type.type(int.class);
+    //    uint.addAnnotation(u);
+    //    assertEquals(U.USE + " int", uint.list());
+
+    Type uvint = PrimitiveType.primitive(Annotation.annotations(U.class, V.class), int.class);
     assertEquals(U.USE + " " + V.USE + " int", uvint.list());
     U reflected = U.class.getDeclaredField("NUMBER").getAnnotatedType().getAnnotation(U.class);
-    Type uint2 = Type.type(int.class);
-    uint2.addAnnotation(reflected);
+    Type uint2 =
+        PrimitiveType.primitive(
+            Collections.singletonList(Annotation.annotation(reflected)), int.class);
     assertEquals(U.USE + " int", uint2.list());
   }
 }

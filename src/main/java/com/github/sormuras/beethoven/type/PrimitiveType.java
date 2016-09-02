@@ -14,108 +14,60 @@
 
 package com.github.sormuras.beethoven.type;
 
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A primitive type is predefined by the Java language and named by its reserved keyword.
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
  */
-public abstract class PrimitiveType extends Type {
-
-  public static class BooleanType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return boolean.class;
-    }
-
-    @Override
-    public char toArrayClassNameIndicator() {
-      return 'Z';
-    }
-  }
-
-  public static class ByteType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return byte.class;
-    }
-  }
-
-  public static class CharType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return char.class;
-    }
-  }
-
-  public static class DoubleType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return double.class;
-    }
-  }
-
-  public static class FloatType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return float.class;
-    }
-  }
-
-  public static class IntType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return int.class;
-    }
-  }
-
-  public static class LongType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return long.class;
-    }
-
-    @Override
-    public char toArrayClassNameIndicator() {
-      return 'J';
-    }
-  }
-
-  public static class ShortType extends PrimitiveType {
-    @Override
-    public Class<?> getType() {
-      return short.class;
-    }
-  }
+public final class PrimitiveType extends Type {
 
   /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
   public static PrimitiveType primitive(Class<?> type) {
+    return primitive(Collections.emptyList(), type);
+  }
+
+  /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
+  public static PrimitiveType primitive(List<Annotation> annotations, Class<?> type) {
     if (type == boolean.class) {
-      return new BooleanType();
+      return new PrimitiveType(annotations, type, 'Z');
     }
     if (type == byte.class) {
-      return new ByteType();
+      return new PrimitiveType(annotations, type, 'B');
     }
     if (type == char.class) {
-      return new CharType();
+      return new PrimitiveType(annotations, type, 'C');
     }
     if (type == double.class) {
-      return new DoubleType();
+      return new PrimitiveType(annotations, type, 'D');
     }
     if (type == float.class) {
-      return new FloatType();
+      return new PrimitiveType(annotations, type, 'F');
     }
     if (type == int.class) {
-      return new IntType();
+      return new PrimitiveType(annotations, type, 'I');
     }
     if (type == long.class) {
-      return new LongType();
+      return new PrimitiveType(annotations, type, 'J');
     }
     if (type == short.class) {
-      return new ShortType();
+      return new PrimitiveType(annotations, type, 'S');
     }
     throw new AssertionError("expected primitive type, got " + type);
+  }
+
+  private final Class<?> type;
+  private final char typeChar;
+
+  PrimitiveType(List<Annotation> annotations, Class<?> type, char typeChar) {
+    super(annotations);
+    this.type = type;
+    this.typeChar = typeChar;
   }
 
   @Override
@@ -123,10 +75,17 @@ public abstract class PrimitiveType extends Type {
     return listing.add(toAnnotationsListable()).add(toClassName());
   }
 
-  public abstract Class<?> getType();
+  public Class<?> getType() {
+    return type;
+  }
 
-  public char toArrayClassNameIndicator() {
-    return getClass().getSimpleName().substring(0, 1).charAt(0);
+  public char getTypeChar() {
+    return typeChar;
+  }
+
+  @Override
+  public PrimitiveType toAnnotatedType(List<Annotation> annotations) {
+    return new PrimitiveType(annotations, type, typeChar);
   }
 
   @Override

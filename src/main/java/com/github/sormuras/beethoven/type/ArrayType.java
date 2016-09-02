@@ -20,9 +20,9 @@ import com.github.sormuras.beethoven.Listable;
 import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 /**
@@ -33,6 +33,10 @@ import java.util.stream.IntStream;
 public class ArrayType extends ReferenceType {
 
   public static class Dimension extends Annotated {
+
+    public Dimension(List<Annotation> annotations) {
+      super(annotations);
+    }
 
     @Override
     public Listing apply(Listing listing) {
@@ -54,27 +58,27 @@ public class ArrayType extends ReferenceType {
   }
 
   public static ArrayType array(Type componentType, List<Dimension> dimensions) {
-    ArrayType array = new ArrayType();
-    array.setComponentType(componentType);
-    array.setDimensions(dimensions);
-    return array;
+    return new ArrayType(componentType, dimensions);
   }
 
   /** Create n array dimension(s). */
   public static List<Dimension> dimensions(int size) {
+    return dimensions(size, i -> Collections.emptyList());
+  }
+
+  public static List<Dimension> dimensions(int size, IntFunction<List<Annotation>> annotations) {
     List<Dimension> dimensions = new ArrayList<>();
-    IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension()));
+    IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension(annotations.apply(i))));
     return dimensions;
   }
 
-  private Type componentType;
-  private List<Dimension> dimensions = Collections.emptyList();
+  private final Type componentType;
+  private final List<Dimension> dimensions;
 
-  public void addAnnotations(int index, Annotation... annotations) {
-    if (annotations.length == 0) {
-      return;
-    }
-    dimensions.get(index).getAnnotations().addAll(Arrays.asList(annotations));
+  ArrayType(Type componentType, List<Dimension> dimensions) {
+    super(Collections.emptyList());
+    this.componentType = componentType;
+    this.dimensions = dimensions;
   }
 
   @Override
@@ -82,44 +86,31 @@ public class ArrayType extends ReferenceType {
     return listing.add(getComponentType()).add(getDimensions(), Listable.IDENTITY);
   }
 
-  @Override
-  public List<Annotation> getAnnotations() {
-    if (isEmpty()) {
-      return Collections.emptyList();
-    }
-    return dimensions.get(0).getAnnotations();
-  }
-
   public Type getComponentType() {
     return componentType;
   }
 
   public List<Dimension> getDimensions() {
-    if (dimensions == Collections.EMPTY_LIST) {
-      dimensions = new ArrayList<>();
-    }
     return dimensions;
   }
 
   @Override
   public boolean isAnnotated() {
-    if (isEmpty()) {
-      return false;
-    }
-    return dimensions.get(0).isAnnotated();
+    return dimensions.stream().filter(Annotated::isAnnotated).findAny().isPresent();
   }
 
   @Override
   public boolean isEmpty() {
-    return dimensions.isEmpty();
+    return false;
   }
 
-  public void setComponentType(Type componentType) {
-    this.componentType = componentType;
+  public ArrayType toAnnotatedType(IntFunction<List<Annotation>> function) {
+    return new ArrayType(componentType, dimensions(dimensions.size(), function));
   }
 
-  public void setDimensions(List<Dimension> dimensions) {
-    this.dimensions = dimensions;
+  @Override
+  public ArrayType toAnnotatedType(List<Annotation> annotations) {
+    return toAnnotatedType(i -> i == 0 ? annotations : Collections.emptyList());
   }
 
   @Override
@@ -128,7 +119,7 @@ public class ArrayType extends ReferenceType {
     IntStream.range(0, getDimensions().size()).forEach(i -> builder.append('['));
     Type componentType = getComponentType();
     if (componentType instanceof PrimitiveType) {
-      return builder.append(((PrimitiveType) componentType).toArrayClassNameIndicator()).toString();
+      return builder.append(((PrimitiveType) componentType).getTypeChar()).toString();
     }
     return builder.append('L').append(componentType.toClassName()).append(';').toString();
   }

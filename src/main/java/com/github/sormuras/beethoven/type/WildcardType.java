@@ -14,8 +14,11 @@
 
 package com.github.sormuras.beethoven.type;
 
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,31 +31,54 @@ import java.util.Optional;
 public class WildcardType extends Type {
 
   /** {@code ? extends java.lang.Runnable}. */
-  public static WildcardType subtypeOf(Type upperBound) {
-    WildcardType wildcard = new WildcardType();
-    wildcard.setBoundExtends((ReferenceType) upperBound);
-    return wildcard;
+  public static WildcardType subtype(List<Annotation> annotations, ReferenceType upperBound) {
+    return new WildcardType(annotations, upperBound, true);
   }
 
   /** {@code ? extends java.lang.Runnable}. */
-  public static WildcardType subtypeOf(java.lang.reflect.Type upperBound) {
-    return subtypeOf(Type.type(upperBound));
+  public static WildcardType subtype(java.lang.reflect.Type upperBound) {
+    return subtype(Collections.emptyList(), (ReferenceType) Type.type(upperBound));
   }
 
   /** {@code ? super java.lang.String}. */
-  public static WildcardType supertypeOf(Type lowerBound) {
-    WildcardType wildcard = new WildcardType();
-    wildcard.setBoundSuper((ReferenceType) lowerBound);
-    return wildcard;
+  public static WildcardType supertype(List<Annotation> annotations, ReferenceType lowerBound) {
+    return new WildcardType(annotations, lowerBound, false);
   }
 
   /** {@code ? super java.lang.String}. */
-  public static WildcardType supertypeOf(java.lang.reflect.Type lowerBound) {
-    return supertypeOf(Type.type(lowerBound));
+  public static WildcardType supertype(java.lang.reflect.Type lowerBound) {
+    return supertype(Collections.emptyList(), (ReferenceType) Type.type(lowerBound));
   }
 
-  private ReferenceType boundExtends = ClassType.of(Object.class);
-  private ReferenceType boundSuper = null;
+  public static WildcardType wild() {
+    return wild(Collections.emptyList());
+  }
+
+  public static WildcardType wild(List<Annotation> annotations) {
+    return new WildcardType(annotations, null, false);
+  }
+
+  private final ReferenceType boundExtends;
+  private final ReferenceType boundSuper;
+
+  WildcardType(List<Annotation> annotations, ReferenceType bound, boolean upper) {
+    super(annotations);
+    this.boundExtends =
+        upper
+            ? bound
+            : new ClassType(
+                "java.lang",
+                Collections.singletonList(
+                    new ClassType.SimpleName(
+                        Collections.emptyList(), "Object", Collections.emptyList())));
+    this.boundSuper = upper ? null : bound;
+  }
+
+  WildcardType(List<Annotation> annotations, ReferenceType boundExtends, ReferenceType boundSuper) {
+    super(annotations);
+    this.boundExtends = boundExtends;
+    this.boundSuper = boundSuper;
+  }
 
   @Override
   public Listing apply(Listing listing) {
@@ -81,15 +107,8 @@ public class WildcardType extends Type {
     return Optional.ofNullable(boundSuper);
   }
 
-  /** Set upper bound, read {@code extends}, type. */
-  public void setBoundExtends(ReferenceType boundExtends) {
-    this.boundExtends = boundExtends;
-    this.boundSuper = null;
-  }
-
-  /** Set lower bound, read {@code super}, type. */
-  public void setBoundSuper(ReferenceType boundSuper) {
-    this.boundExtends = ClassType.of(Object.class);
-    this.boundSuper = boundSuper;
+  @Override
+  public WildcardType toAnnotatedType(List<Annotation> annotations) {
+    return new WildcardType(annotations, boundExtends, boundSuper);
   }
 }

@@ -22,14 +22,15 @@ import java.util.List;
 
 public class VoidType extends Type {
 
-  @Override
-  public Listing apply(Listing listing) {
-    return listing.add("void");
+  public static final VoidType INSTANCE = new VoidType();
+
+  private VoidType() {
+    super(Collections.emptyList());
   }
 
   @Override
-  public List<Annotation> getAnnotations() {
-    return Collections.emptyList();
+  public Listing apply(Listing listing) {
+    return listing.add("void");
   }
 
   @Override
@@ -40,6 +41,11 @@ public class VoidType extends Type {
   @Override
   public boolean isAnnotated() {
     return false;
+  }
+
+  @Override
+  public VoidType toAnnotatedType(List<Annotation> annotations) {
+    return this;
   }
 
   @Override

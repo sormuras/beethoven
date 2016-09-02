@@ -15,36 +15,16 @@
 package com.github.sormuras.beethoven;
 
 import java.lang.annotation.ElementType;
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /** Base {@link Annotation}-collecting implementation. */
 public abstract class Annotated implements Listable {
 
-  private List<Annotation> annotations = Collections.emptyList();
+  private final List<Annotation> annotations;
 
-  /**
-   * Add annotation.
-   *
-   * @see Annotation#cast(Object, Object...)
-   */
-  public void addAnnotation(Object object, Object... values) {
-    getAnnotations().add(Annotation.cast(object, values));
-  }
-
-  /**
-   * Add all annotations present on the annotated element.
-   *
-   * @param annotatedElement source of annotations
-   */
-  public void addAnnotations(AnnotatedElement annotatedElement) {
-    List<Annotation> annotations = Annotation.annotations(annotatedElement);
-    if (annotations.isEmpty()) {
-      return;
-    }
-    getAnnotations().addAll(annotations);
+  public Annotated(List<Annotation> annotations) {
+    this.annotations = Collections.unmodifiableList(annotations);
   }
 
   @Override
@@ -59,9 +39,6 @@ public abstract class Annotated implements Listable {
   }
 
   public List<Annotation> getAnnotations() {
-    if (annotations == Collections.EMPTY_LIST) {
-      annotations = new ArrayList<>();
-    }
     return annotations;
   }
 
@@ -96,6 +73,6 @@ public abstract class Annotated implements Listable {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{@ " + (isAnnotated() ? getAnnotations().size() : 0) + "}";
+    return getClass().getSimpleName() + "{@" + (isAnnotated() ? getAnnotations().size() : 0) + "}";
   }
 }

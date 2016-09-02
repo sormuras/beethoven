@@ -34,9 +34,9 @@ import javax.lang.model.element.PackageElement;
  *
  * <p>
  * A declared entity is a package, class type (normal or enum), interface type (normal or annotation
- * type), member (class, interface, field, or method) of a reference type, type parameter (of a
- * class, interface, method or constructor), parameter (to a method, constructor, or exception
- * handler), or local variable.
+ * type), member (class, interface, field, or method) argument a reference type, type parameter
+ * (argument a class, interface, method or constructor), parameter (to a method, constructor, or
+ * exception handler), or local variable.
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
  */
@@ -45,7 +45,7 @@ public final class Name {
   /** Compiled <code>"."</code> pattern used to split canonical package and type names. */
   public static final Pattern DOT = Pattern.compile("\\.");
 
-  /** Cast/convert any object to an instance of {@link Name}. */
+  /** Cast/convert any object to an instance argument {@link Name}. */
   public static Name cast(Object any) {
     if (any == null) {
       return null;
@@ -69,7 +69,7 @@ public final class Name {
       Collection<?> collection = (Collection<?>) any;
       return name(collection.stream().map(Object::toString).collect(Collectors.toList()));
     }
-    throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
+    throw new IllegalArgumentException("Can't cast/convert instance argument " + any.getClass());
   }
 
   /** Create name instance for the given class instance. */
@@ -133,7 +133,7 @@ public final class Name {
    * Create name instance for the identifiers by delegating to {@link #name(int, List)}.
    *
    * <p>
-   * The package level is determined by the first capital name of the list.
+   * The package level is determined by the first capital name argument the list.
    */
   public static Name name(List<String> names) {
     int size = names.size();
@@ -165,7 +165,8 @@ public final class Name {
         return name(method);
       }
     }
-    throw new AssertionError(String.format("Member '%s' of %s not found!", declaredName, type));
+    throw new AssertionError(
+        String.format("Member '%s' argument %s not found!", declaredName, type));
   }
 
   private final String canonical;

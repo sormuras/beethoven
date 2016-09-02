@@ -14,8 +14,11 @@
 
 package com.github.sormuras.beethoven.type;
 
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A type variable is an unqualified identifier used as a type in class, interface, method, and
@@ -25,17 +28,24 @@ import java.lang.annotation.ElementType;
  */
 public class TypeVariable extends ReferenceType {
 
-  public static TypeVariable of(String name) {
-    TypeVariable variable = new TypeVariable();
-    variable.setName(name);
-    return variable;
+  public static TypeVariable variable(String identifier) {
+    return variable(Collections.emptyList(), identifier);
   }
 
-  private String name = "T";
+  public static TypeVariable variable(List<Annotation> annotations, String identifier) {
+    return new TypeVariable(annotations, identifier);
+  }
+
+  private final String identifier;
+
+  TypeVariable(List<Annotation> annotations, String identifier) {
+    super(annotations);
+    this.identifier = identifier;
+  }
 
   @Override
   public Listing apply(Listing listing) {
-    return listing.add(toAnnotationsListable()).add(getName());
+    return listing.add(toAnnotationsListable()).add(getIdentifier());
   }
 
   @Override
@@ -43,11 +53,12 @@ public class TypeVariable extends ReferenceType {
     return ElementType.TYPE_PARAMETER;
   }
 
-  public String getName() {
-    return name;
+  public String getIdentifier() {
+    return identifier;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  @Override
+  public TypeVariable toAnnotatedType(List<Annotation> annotations) {
+    return new TypeVariable(annotations, identifier);
   }
 }
