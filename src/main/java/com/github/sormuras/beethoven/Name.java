@@ -17,6 +17,7 @@ package com.github.sormuras.beethoven;
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.IntPredicate;
@@ -64,8 +65,9 @@ public final class Name {
     if (any instanceof String[]) {
       return name((String[]) any);
     }
-    if (any instanceof List<?>) {
-      return name(((List<?>) any).stream().map(Object::toString).collect(Collectors.toList()));
+    if (any instanceof Collection<?>) {
+      Collection<?> collection = (Collection<?>) any;
+      return name(collection.stream().map(Object::toString).collect(Collectors.toList()));
     }
     throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
   }

@@ -94,11 +94,9 @@ public class Annotation implements Listable {
   }
 
   public static Annotation annotation(Name name, Object... values) {
-    Annotation anno = new Annotation(name);
-    for (int i = 0; i < values.length; i++) {
-      anno.addValue(values[i]);
-    }
-    return anno;
+    Annotation annotation = new Annotation(name);
+    Arrays.stream(values).forEach(annotation::addValue);
+    return annotation;
   }
 
   /**
