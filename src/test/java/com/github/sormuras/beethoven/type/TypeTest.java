@@ -80,13 +80,13 @@ class TypeTest<T> {
   void reflectFieldTypeAsAnnotatedType() throws Exception {
     assertEquals("int", asAnno("a"));
     assertEquals(U.USE + " int", asAnno("b"));
-    //    assertEquals("int" + U.USE + " []" + U.USE + " []" + U.USE + " []", asAnno("c"));
+    assertEquals("int" + U.USE + " []" + U.USE + " []" + U.USE + " []", asAnno("c"));
     //    assertEquals("java.util.List<java.lang.String>" + U.USE + " []" + U.USE + " []", asAnno("d"));
     //    assertEquals("java.util." + U.USE + " List<java.lang." + U.USE + " String>", asAnno("los"));
     //    assertEquals("java.util.List<" + U.USE + " T>", asAnno("lot"));
-    //    assertEquals("java.util.List<" + U.USE + " ?>", asAnno("low"));
-    //    assertEquals("java.util.List<" + U.USE + " ? extends T>", asAnno("lowe"));
-    //    assertEquals("java.util.List<" + U.USE + " ? super T>", asAnno("lows"));
+    //assertEquals("java.util.List<" + U.USE + " ?>", asAnno("low"));
+    //assertEquals("java.util.List<" + U.USE + " ? extends T>", asAnno("lowe"));
+    //assertEquals("java.util.List<" + U.USE + " ? super T>", asAnno("lows"));
   }
 
   @Test

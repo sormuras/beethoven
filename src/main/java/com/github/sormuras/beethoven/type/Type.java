@@ -65,12 +65,12 @@ public abstract class Type extends Annotated {
     for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
       arguments.add(TypeArgument.argument(type(actual)));
     }
-    ArrayList<ClassType.SimpleName> simples = new ArrayList<>();
+    ArrayList<ClassType.Simple> simples = new ArrayList<>();
     java.lang.reflect.Type type = annotatedType.getType();
     while (type instanceof java.lang.reflect.ParameterizedType) {
       // TODO result.addAnnotations(annotatedType);
       // TODO result.getTypeArguments().addAll(arguments);
-      // simples.add(0, new ClassType.SimpleName());
+      // simples.add(0, new ClassType.Simple());
       System.err.println(":: " + type.getTypeName() + " " + ((Class<?>) type).getSimpleName());
       type = ((java.lang.reflect.ParameterizedType) type).getOwnerType();
     }
@@ -88,25 +88,19 @@ public abstract class Type extends Annotated {
     // bounds.add(new TypeArgument(argument(bound)));
     // }
     String name = ((java.lang.reflect.TypeVariable<?>) annotatedType.getType()).getName();
-    TypeVariable result = TypeVariable.variable(name);
-    // TODO result.addAnnotations(annotatedType);
-    return result;
+    return TypeVariable.variable(name).toAnnotatedType(Annotation.annotations(annotatedType));
   }
 
   /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
   public static WildcardType type(AnnotatedWildcardType annotatedType) {
-    WildcardType result = WildcardType.wild();
-
-    //for (AnnotatedType bound : annotatedType.getAnnotatedLowerBounds()) { // ? super lower bound
-    // TODO result.setBoundSuper((ReferenceType) type(bound));
-    //}
-
-    //for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
-    // TODO result.setBoundExtends((ReferenceType) type(bound));
-    // }
-
-    // TODO result.addAnnotations(annotatedType);
-    return result;
+    List<Annotation> annotations = Annotation.annotations(annotatedType);
+    for (AnnotatedType bound : annotatedType.getAnnotatedLowerBounds()) { // ? super lower bound
+      return WildcardType.supertype(annotations, (ReferenceType) type(bound));
+    }
+    for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
+      return WildcardType.subtype(annotations, (ReferenceType) type(bound));
+    }
+    return WildcardType.wild(annotations);
   }
 
   /** Create {@link Type} based on {@link java.lang.reflect.GenericArrayType} instance. */
@@ -146,7 +140,7 @@ public abstract class Type extends Annotated {
 
   /** Create {@link Type} based on {@link java.lang.reflect.ParameterizedType} instance. */
   public static ClassType type(java.lang.reflect.ParameterizedType type) {
-    List<ClassType.SimpleName> simples = new ArrayList<>();
+    List<ClassType.Simple> simples = new ArrayList<>();
     java.lang.reflect.ParameterizedType owner = type;
     while (owner != null) {
       List<TypeArgument> arguments = new ArrayList<>();
@@ -154,7 +148,7 @@ public abstract class Type extends Annotated {
         arguments.add(TypeArgument.argument(type(actual)));
       }
       String name = ((Class<?>) owner.getRawType()).getSimpleName();
-      simples.add(0, new ClassType.SimpleName(Collections.emptyList(), name, arguments));
+      simples.add(0, new ClassType.Simple(Collections.emptyList(), name, arguments));
       owner = (java.lang.reflect.ParameterizedType) owner.getOwnerType();
     }
     String packageName = ((Class<?>) type.getRawType()).getPackage().getName();
@@ -215,13 +209,12 @@ public abstract class Type extends Annotated {
       }
     }
     Name name = Name.name(classType);
-    List<ClassType.SimpleName> names =
+    List<ClassType.Simple> names =
         name.simpleNames()
             .stream()
             .map(
                 simple ->
-                    new ClassType.SimpleName(
-                        Collections.emptyList(), simple, Collections.emptyList()))
+                    new ClassType.Simple(Collections.emptyList(), simple, Collections.emptyList()))
             .collect(Collectors.toList());
     return new ClassType(name.packageName(), names);
   }

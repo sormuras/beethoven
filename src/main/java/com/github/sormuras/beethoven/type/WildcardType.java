@@ -69,7 +69,7 @@ public class WildcardType extends Type {
             : new ClassType(
                 "java.lang",
                 Collections.singletonList(
-                    new ClassType.SimpleName(
+                    new ClassType.Simple(
                         Collections.emptyList(), "Object", Collections.emptyList())));
     this.boundSuper = upper ? null : bound;
   }

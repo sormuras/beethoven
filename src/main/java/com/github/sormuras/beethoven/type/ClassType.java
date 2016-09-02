@@ -37,12 +37,12 @@ import java.util.Optional;
 public class ClassType extends ReferenceType {
 
   /** Simple and(!) annotatable and(!) typed class or interface name. */
-  public static class SimpleName extends Annotated {
+  public static class Simple extends Annotated {
 
     private final String name;
     private final List<TypeArgument> typeArguments;
 
-    public SimpleName(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
+    public Simple(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
       super(annotations);
       this.name = name;
       this.typeArguments = typeArguments;
@@ -72,10 +72,10 @@ public class ClassType extends ReferenceType {
     }
   }
 
-  private final List<SimpleName> names;
+  private final List<Simple> names;
   private final String packageName;
 
-  public ClassType(String packageName, List<SimpleName> names) {
+  public ClassType(String packageName, List<Simple> names) {
     super(Collections.emptyList());
     this.packageName = packageName;
     this.names = Collections.unmodifiableList(names);
@@ -109,7 +109,7 @@ public class ClassType extends ReferenceType {
     return Optional.of(new ClassType(getPackageName(), names.subList(0, names.size() - 1)));
   }
 
-  public SimpleName getLastClassName() {
+  public Simple getLastClassName() {
     return names.get(names.size() - 1);
   }
 
@@ -124,7 +124,7 @@ public class ClassType extends ReferenceType {
     return Name.name(packageLevel, simpleNames);
   }
 
-  public List<SimpleName> getNames() {
+  public List<Simple> getNames() {
     return names;
   }
 
@@ -148,7 +148,7 @@ public class ClassType extends ReferenceType {
     if (!getPackageName().isEmpty()) {
       builder.append(getPackageName()).append('.');
     }
-    builder.append(getNames().stream().map(SimpleName::getName).collect(joining("$")));
+    builder.append(getNames().stream().map(Simple::getName).collect(joining("$")));
     return builder.toString();
   }
 }
