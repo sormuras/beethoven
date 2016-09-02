@@ -19,13 +19,10 @@ class ArrayTypeTest {
   @Test
   void arrayTypeWithAnnotatedDimensions() {
     ArrayType actual = ArrayType.array(Type.type(byte.class), 3);
-    actual.addAnnotations(0, Annotation.annotation(Name.name("test", "T")));
-    actual.addAnnotations(
-        1,
-        Annotation.annotation(Name.name("test", "S")),
-        Annotation.annotation(Name.name("test", "T")));
-    actual.addAnnotations(2, Annotation.annotation(Name.name("test", "T")));
-    assertEquals("byte@test.T []@test.S @test.T []@test.T []", actual.list());
+    actual.addAnnotations(0, Annotation.cast("A"));
+    actual.addAnnotations(1, Annotation.cast("B"), Annotation.cast("C"));
+    actual.addAnnotations(2, Annotation.cast("D"));
+    assertEquals("byte@A []@B @C []@D []", actual.list());
     assertSame(actual.getAnnotations(), actual.getDimensions().get(0).getAnnotations());
   }
 

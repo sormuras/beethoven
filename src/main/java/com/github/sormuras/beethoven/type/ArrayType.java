@@ -25,6 +25,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * Array type.
+ *
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-10.html#jls-10.1">JLS 10</a>
+ */
 public class ArrayType extends ReferenceType {
 
   public static class Dimension extends Annotated {

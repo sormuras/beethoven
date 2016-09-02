@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("unused")
 class TypeTest<T> {
 
   int a = 4;
@@ -139,7 +138,7 @@ class TypeTest<T> {
   public List<String> parameterizedFieldType;
 
   @Test
-  void of() {
+  void object() {
     assertEquals("java.lang.Object", Type.type(Object.class).list());
   }
 

@@ -25,11 +25,16 @@ import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Class or interface type.
+ *
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-ClassType">JLS
+ * ClassType</a>
+ */
 public class ClassType extends ReferenceType {
 
   /** Simple and(!) annotatable and(!) typed class or interface name. */
@@ -136,10 +141,11 @@ public class ClassType extends ReferenceType {
   public Name getName() {
     List<String> simpleNames = new ArrayList<>();
     if (!getPackageName().isEmpty()) {
-      Arrays.stream(getPackageName().split("\\.")).forEach(simpleNames::add);
+      stream(getPackageName().split("\\.")).forEach(simpleNames::add);
     }
+    int packageLevel = simpleNames.size();
     names.forEach(n -> simpleNames.add(n.getName()));
-    return Name.name(simpleNames);
+    return Name.name(packageLevel, simpleNames);
   }
 
   public List<SimpleName> getNames() {

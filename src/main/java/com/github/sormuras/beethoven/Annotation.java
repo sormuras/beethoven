@@ -131,6 +131,9 @@ public class Annotation implements Listable {
     if (object instanceof Name) {
       return annotation((Name) object, values);
     }
+    if (object instanceof String) {
+      return annotation(Name.name((String) object), values);
+    }
     throw new AssertionError("Can't cast/convert " + object + " to Annotation!");
   }
 
