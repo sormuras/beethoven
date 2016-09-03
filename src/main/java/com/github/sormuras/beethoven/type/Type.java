@@ -47,167 +47,156 @@ import java.util.stream.Collectors;
  */
 public abstract class Type extends Annotated {
 
-  /** Create {@link Type} based on {@link AnnotatedArrayType} instance. */
-  public static ArrayType type(AnnotatedArrayType annotatedType) {
-    List<Dimension> dimensions = new ArrayList<>();
-    AnnotatedType component = annotatedType;
-    while (component instanceof AnnotatedArrayType) {
-      Dimension dimension = new Dimension(Annotation.annotations(component));
-      dimensions.add(dimension);
-      component = ((AnnotatedArrayType) component).getAnnotatedGenericComponentType();
-    }
-    return ArrayType.array(type(component), dimensions);
-  }
+  interface Reflect {
 
-  /** Create {@link Type} based on {@link AnnotatedParameterizedType} instance. */
-  public static ClassType type(AnnotatedParameterizedType annotatedType) {
-    List<TypeArgument> arguments = new ArrayList<>();
-    for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
-      arguments.add(TypeArgument.argument(type(actual)));
+    /** Create {@link Type} based on {@link AnnotatedArrayType} instance. */
+    static ArrayType type(AnnotatedArrayType annotatedType) {
+      List<Dimension> dimensions = new ArrayList<>();
+      AnnotatedType component = annotatedType;
+      while (component instanceof AnnotatedArrayType) {
+        Dimension dimension = new Dimension(Annotation.annotations(component));
+        dimensions.add(dimension);
+        component = ((AnnotatedArrayType) component).getAnnotatedGenericComponentType();
+      }
+      return ArrayType.array(Type.type(component), dimensions);
     }
-    ArrayList<ClassType.Simple> simples = new ArrayList<>();
-    java.lang.reflect.Type type = annotatedType.getType();
-    while (type instanceof java.lang.reflect.ParameterizedType) {
-      // TODO result.addAnnotations(annotatedType);
-      // TODO result.getTypeArguments().addAll(arguments);
-      // simples.add(0, new ClassType.Simple());
-      System.err.println(":: " + type.getTypeName() + " " + ((Class<?>) type).getSimpleName());
-      type = ((java.lang.reflect.ParameterizedType) type).getOwnerType();
-    }
-    java.lang.reflect.Type raw = ((java.lang.reflect.ParameterizedType) type).getRawType();
-    ClassType result = new ClassType(raw.getClass().getPackage().getName(), simples);
-    return result;
-  }
 
-  /** Create {@link Type} based on {@link AnnotatedTypeVariable} instance. */
-  public static TypeVariable type(AnnotatedTypeVariable annotatedType) {
-    // TODO consider/ignore bounds at type use location
-    // AnnotatedTypeVariable atv = (AnnotatedTypeVariable) annotatedType;
-    // List<TypeArgument> bounds = new ArrayList<>();
-    // for (AnnotatedType bound : atv.getAnnotatedBounds()) {
-    // bounds.add(new TypeArgument(argument(bound)));
-    // }
-    String name = ((java.lang.reflect.TypeVariable<?>) annotatedType.getType()).getName();
-    return TypeVariable.variable(name).toAnnotatedType(Annotation.annotations(annotatedType));
-  }
-
-  /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
-  public static WildcardType type(AnnotatedWildcardType annotatedType) {
-    List<Annotation> annotations = Annotation.annotations(annotatedType);
-    for (AnnotatedType bound : annotatedType.getAnnotatedLowerBounds()) { // ? super lower bound
-      return WildcardType.supertype(annotations, (ReferenceType) type(bound));
+    /** Create {@link Type} based on {@link AnnotatedParameterizedType} instance. */
+    static ClassType type(AnnotatedParameterizedType annotatedType) {
+      List<TypeArgument> arguments = new ArrayList<>();
+      for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
+        arguments.add(TypeArgument.argument(Type.type(actual)));
+      }
+      ArrayList<ClassType.Simple> simples = new ArrayList<>();
+      java.lang.reflect.Type type = annotatedType.getType();
+      while (type instanceof java.lang.reflect.ParameterizedType) {
+        // TODO result.addAnnotations(annotatedType);
+        // TODO result.getTypeArguments().addAll(arguments);
+        // simples.add(0, new ClassType.Simple());
+        System.err.println(":: " + type.getTypeName() + " " + ((Class<?>) type).getSimpleName());
+        type = ((java.lang.reflect.ParameterizedType) type).getOwnerType();
+      }
+      java.lang.reflect.Type raw = ((java.lang.reflect.ParameterizedType) type).getRawType();
+      ClassType result = new ClassType(raw.getClass().getPackage().getName(), simples);
+      return result;
     }
-    for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
-      return WildcardType.subtype(annotations, (ReferenceType) type(bound));
-    }
-    return WildcardType.wild(annotations);
-  }
 
-  /** Create {@link Type} based on {@link java.lang.reflect.GenericArrayType} instance. */
-  public static ArrayType type(java.lang.reflect.GenericArrayType type) {
-    List<Dimension> dimensions = new ArrayList<>();
-    java.lang.reflect.Type component = type;
-    while (component instanceof java.lang.reflect.GenericArrayType) {
-      Dimension dimension = new Dimension(Collections.emptyList());
-      dimensions.add(dimension);
-      component = ((java.lang.reflect.GenericArrayType) component).getGenericComponentType();
+    /** Create {@link Type} based on {@link AnnotatedTypeVariable} instance. */
+    static TypeVariable type(AnnotatedTypeVariable annotatedType) {
+      // TODO consider/ignore bounds at type use location
+      // AnnotatedTypeVariable atv = (AnnotatedTypeVariable) annotatedType;
+      // List<TypeArgument> bounds = new ArrayList<>();
+      // for (AnnotatedType bound : atv.getAnnotatedBounds()) {
+      // bounds.add(new TypeArgument(argument(bound)));
+      // }
+      String name = ((java.lang.reflect.TypeVariable<?>) annotatedType.getType()).getName();
+      return TypeVariable.variable(name).toAnnotatedType(Annotation.annotations(annotatedType));
     }
-    return ArrayType.array(type(component), dimensions);
-  }
 
-  /** Create {@link Type} based on {@link java.lang.reflect.TypeVariable} instance. */
-  public static TypeVariable type(java.lang.reflect.TypeVariable<?> type) {
-    return TypeVariable.variable(type.getName());
-  }
-
-  /** Create {@link Type} based on {@link java.lang.reflect.WildcardType} instance. */
-  public static WildcardType type(java.lang.reflect.WildcardType type) {
-    // ? super lower bound
-    java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
-    if (lowerBounds.length > 0) {
-      return WildcardType.supertype(lowerBounds[0]);
+    /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
+    static WildcardType type(AnnotatedWildcardType annotatedType) {
+      List<Annotation> annotations = Annotation.annotations(annotatedType);
+      for (AnnotatedType bound : annotatedType.getAnnotatedLowerBounds()) { // ? super lower bound
+        return WildcardType.supertype(annotations, (ReferenceType) Type.type(bound));
+      }
+      for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
+        return WildcardType.subtype(annotations, (ReferenceType) Type.type(bound));
+      }
+      return WildcardType.wild(annotations);
     }
-    // ? extends upper bound
-    java.lang.reflect.Type[] upperBounds = type.getUpperBounds();
-    if (upperBounds.length == 1 && upperBounds[0].equals(Object.class)) {
+
+    /** Create {@link Type} based on {@link java.lang.reflect.GenericArrayType} instance. */
+    static ArrayType type(java.lang.reflect.GenericArrayType type) {
+      List<Dimension> dimensions = new ArrayList<>();
+      java.lang.reflect.Type component = type;
+      while (component instanceof java.lang.reflect.GenericArrayType) {
+        Dimension dimension = new Dimension(Collections.emptyList());
+        dimensions.add(dimension);
+        component = ((java.lang.reflect.GenericArrayType) component).getGenericComponentType();
+      }
+      return ArrayType.array(Type.type(component), dimensions);
+    }
+
+    /** Create {@link Type} based on {@link java.lang.reflect.ParameterizedType} instance. */
+    static ClassType type(java.lang.reflect.ParameterizedType type) {
+      List<ClassType.Simple> simples = new ArrayList<>();
+      java.lang.reflect.ParameterizedType owner = type;
+      while (owner != null) {
+        List<TypeArgument> arguments = new ArrayList<>();
+        for (java.lang.reflect.Type actual : owner.getActualTypeArguments()) {
+          arguments.add(TypeArgument.argument(Type.type(actual)));
+        }
+        String name = ((Class<?>) owner.getRawType()).getSimpleName();
+        simples.add(0, new ClassType.Simple(Collections.emptyList(), name, arguments));
+        owner = (java.lang.reflect.ParameterizedType) owner.getOwnerType();
+      }
+      String packageName = ((Class<?>) type.getRawType()).getPackage().getName();
+      return new ClassType(packageName, simples);
+    }
+
+    /** Create {@link Type} based on {@link java.lang.reflect.TypeVariable} instance. */
+    static TypeVariable type(java.lang.reflect.TypeVariable<?> type) {
+      return TypeVariable.variable(type.getName());
+    }
+
+    /** Create {@link Type} based on {@link java.lang.reflect.WildcardType} instance. */
+    static WildcardType type(java.lang.reflect.WildcardType type) {
+      // ? super lower bound
+      java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
+      if (lowerBounds.length > 0) {
+        return WildcardType.supertype(lowerBounds[0]);
+      }
+      // ? extends upper bound
+      java.lang.reflect.Type[] upperBounds = type.getUpperBounds();
+      if (upperBounds.length == 1 && upperBounds[0].equals(Object.class)) {
+        return WildcardType.wild();
+      }
+      if (upperBounds.length > 0) {
+        return WildcardType.subtype(upperBounds[0]);
+      }
       return WildcardType.wild();
     }
-    if (upperBounds.length > 0) {
-      return WildcardType.subtype(upperBounds[0]);
-    }
-    return WildcardType.wild();
-  }
-
-  /** Create {@link Type} based on {@link java.lang.reflect.ParameterizedType} instance. */
-  public static ClassType type(java.lang.reflect.ParameterizedType type) {
-    List<ClassType.Simple> simples = new ArrayList<>();
-    java.lang.reflect.ParameterizedType owner = type;
-    while (owner != null) {
-      List<TypeArgument> arguments = new ArrayList<>();
-      for (java.lang.reflect.Type actual : owner.getActualTypeArguments()) {
-        arguments.add(TypeArgument.argument(type(actual)));
-      }
-      String name = ((Class<?>) owner.getRawType()).getSimpleName();
-      simples.add(0, new ClassType.Simple(Collections.emptyList(), name, arguments));
-      owner = (java.lang.reflect.ParameterizedType) owner.getOwnerType();
-    }
-    String packageName = ((Class<?>) type.getRawType()).getPackage().getName();
-    return new ClassType(packageName, simples);
   }
 
   /** Create {@link Type} based on {@link AnnotatedType} instance. */
   public static Type type(AnnotatedType annotatedType) {
     if (annotatedType instanceof AnnotatedArrayType) {
-      return type((AnnotatedArrayType) annotatedType);
+      return Reflect.type((AnnotatedArrayType) annotatedType);
     }
     if (annotatedType instanceof AnnotatedParameterizedType) {
-      return type((AnnotatedParameterizedType) annotatedType);
+      return Reflect.type((AnnotatedParameterizedType) annotatedType);
     }
     if (annotatedType instanceof AnnotatedTypeVariable) {
-      return type((AnnotatedTypeVariable) annotatedType);
+      return Reflect.type((AnnotatedTypeVariable) annotatedType);
     }
     if (annotatedType instanceof AnnotatedWildcardType) {
-      return type((AnnotatedWildcardType) annotatedType);
+      return Reflect.type((AnnotatedWildcardType) annotatedType);
     }
-    // default case: use underlying raw type
+    // default case: use underlying type and create potentially annotated version of it.
     return type(annotatedType.getType()).toAnnotatedType(Annotation.annotations(annotatedType));
   }
 
-  /**
-   * Create {@link Type} based on {@link java.lang.reflect.Type} instance.
-   *
-   * @return potentially annotated and generic Type
-   */
-  public static Type type(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.GenericArrayType) {
-      return type((java.lang.reflect.GenericArrayType) type);
-    }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      return type((java.lang.reflect.ParameterizedType) type);
-    }
-    if (type instanceof java.lang.reflect.TypeVariable<?>) {
-      return type((java.lang.reflect.TypeVariable<?>) type);
-    }
-    if (type instanceof java.lang.reflect.WildcardType) {
-      return type((java.lang.reflect.WildcardType) type);
-    }
-    Class<?> classType = (Class<?>) type;
+  /** Create {@link Type} based on {@link Class} instance. */
+  public static Type type(Class<?> classType) {
+    // handle primitive types like: boolean, byte ... short, void included
     if (classType.isPrimitive()) {
       if (classType == void.class) {
         return VoidType.INSTANCE;
       }
       return PrimitiveType.primitive(classType);
     }
+    // handle array type: count dimensions, reflect component type.
     if (classType.isArray()) {
       int dimensions = 1;
       while (true) {
         classType = classType.getComponentType();
         if (!classType.isArray()) {
-          return ArrayType.array(classType, dimensions);
+          return ArrayType.array(type(classType), dimensions);
         }
         dimensions++;
       }
     }
+    // default case: canonical name like java.lang.Thread.State
     Name name = Name.name(classType);
     List<ClassType.Simple> names =
         name.simpleNames()
@@ -219,7 +208,24 @@ public abstract class Type extends Annotated {
     return new ClassType(name.packageName(), names);
   }
 
-  public Type(List<Annotation> annotations) {
+  /** Create {@link Type} based on {@link java.lang.reflect.Type} instance. */
+  public static Type type(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return Reflect.type((java.lang.reflect.GenericArrayType) type);
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      return Reflect.type((java.lang.reflect.ParameterizedType) type);
+    }
+    if (type instanceof java.lang.reflect.TypeVariable<?>) {
+      return Reflect.type((java.lang.reflect.TypeVariable<?>) type);
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      return Reflect.type((java.lang.reflect.WildcardType) type);
+    }
+    return type((Class<?>) type);
+  }
+
+  Type(List<Annotation> annotations) {
     super(annotations);
   }
 
@@ -234,6 +240,10 @@ public abstract class Type extends Annotated {
 
   public Type toAnnotatedType(List<Annotation> annotations) {
     throw new UnsupportedOperationException(getClass() + " does not support toAnnotatedType()");
+  }
+
+  public Type toAnnotationFreeType() {
+    return toAnnotatedType(Collections.emptyList());
   }
 
   /**
