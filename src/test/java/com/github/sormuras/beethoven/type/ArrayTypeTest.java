@@ -11,7 +11,7 @@ class ArrayTypeTest {
 
   @Test
   void arrayType() {
-    assertEquals("byte[]", ArrayType.array(Type.type(byte.class), 1).list());
+    assertEquals("byte[]", ArrayType.array(byte.class, 1).list());
     assertEquals("byte[][][]", ArrayType.array(Type.type(byte.class), 3).list());
     assertEquals("byte[][][]", Type.type(byte[][][].class).list());
   }

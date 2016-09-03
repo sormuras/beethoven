@@ -14,11 +14,10 @@
 
 package com.github.sormuras.beethoven.type;
 
-import static com.github.sormuras.beethoven.type.Type.Reflect.reflect;
+import static com.github.sormuras.beethoven.type.Type.Reflection.reflect;
 
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
-import com.github.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -28,7 +27,6 @@ import java.lang.reflect.AnnotatedWildcardType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The Java programming language is a statically typed language, which means that every variable and
@@ -48,7 +46,7 @@ import java.util.stream.Collectors;
  */
 public abstract class Type extends Annotated {
 
-  interface Reflect {
+  interface Reflection {
 
     /** Create {@link Type} based on {@link AnnotatedArrayType} instance. */
     static ArrayType reflect(AnnotatedArrayType annotatedType) {
@@ -99,11 +97,18 @@ public abstract class Type extends Annotated {
     /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
     static WildcardType reflect(AnnotatedWildcardType annotatedType) {
       List<Annotation> annotations = Annotation.annotations(annotatedType);
-      for (AnnotatedType bound : annotatedType.getAnnotatedLowerBounds()) { // ? super lower bound
-        return WildcardType.supertype(annotations, (ReferenceType) type(bound));
+      // ? super lower bound
+      AnnotatedType[] lowerBounds = annotatedType.getAnnotatedLowerBounds();
+      if (lowerBounds.length > 0) {
+        return WildcardType.supertype(annotations, (ReferenceType) type(lowerBounds[0]));
       }
-      for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
-        return WildcardType.subtype(annotations, (ReferenceType) type(bound));
+      // ? extends upper bound
+      AnnotatedType[] upperBounds = annotatedType.getAnnotatedUpperBounds();
+      if (upperBounds.length == 1 && upperBounds[0].getType().equals(Object.class)) {
+        WildcardType.wild(annotations);
+      }
+      if (upperBounds.length > 0) {
+        return WildcardType.subtype(annotations, (ReferenceType) type(upperBounds[0]));
       }
       return WildcardType.wild(annotations);
     }
@@ -199,15 +204,7 @@ public abstract class Type extends Annotated {
       }
     }
     // default case: canonical name like java.lang.Thread.State
-    Name name = Name.name(classType);
-    List<ClassType.Simple> names =
-        name.simpleNames()
-            .stream()
-            .map(
-                simple ->
-                    new ClassType.Simple(Collections.emptyList(), simple, Collections.emptyList()))
-            .collect(Collectors.toList());
-    return new ClassType(name.packageName(), names);
+    return ClassType.type(classType);
   }
 
   /** Create {@link Type} based on {@link java.lang.reflect.Type} instance. */

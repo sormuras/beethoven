@@ -33,10 +33,10 @@ public class TypeArgument implements Listable {
   public static TypeArgument argument(Type argument) {
     Objects.requireNonNull(argument, "argument");
     if (argument instanceof WildcardType) {
-      return new TypeArgument(null, (WildcardType) argument);
+      return new TypeArgument((WildcardType) argument);
     }
     if (argument instanceof ReferenceType) {
-      return new TypeArgument((ReferenceType) argument, null);
+      return new TypeArgument((ReferenceType) argument);
     }
     throw new AssertionError("Neither reference nor wildcard type: " + argument);
   }
@@ -44,8 +44,13 @@ public class TypeArgument implements Listable {
   private final ReferenceType reference;
   private final WildcardType wildcard;
 
-  TypeArgument(ReferenceType reference, WildcardType wildcard) {
+  TypeArgument(ReferenceType reference) {
     this.reference = reference;
+    this.wildcard = null;
+  }
+
+  TypeArgument(WildcardType wildcard) {
+    this.reference = null;
     this.wildcard = wildcard;
   }
 
@@ -55,7 +60,7 @@ public class TypeArgument implements Listable {
   }
 
   public Type getArgument() {
-    return reference == null ? wildcard : reference;
+    return reference != null ? reference : wildcard;
   }
 
   public ReferenceType getReference() {

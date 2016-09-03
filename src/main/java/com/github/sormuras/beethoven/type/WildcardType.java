@@ -63,14 +63,7 @@ public class WildcardType extends Type {
 
   WildcardType(List<Annotation> annotations, ReferenceType bound, boolean upper) {
     super(annotations);
-    this.boundExtends =
-        upper
-            ? bound
-            : new ClassType(
-                "java.lang",
-                Collections.singletonList(
-                    new ClassType.Simple(
-                        Collections.emptyList(), "Object", Collections.emptyList())));
+    this.boundExtends = upper ? bound : ClassType.type(Object.class);
     this.boundSuper = upper ? null : bound;
   }
 

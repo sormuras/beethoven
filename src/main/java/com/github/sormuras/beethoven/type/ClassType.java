@@ -26,7 +26,6 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Class or interface type.
@@ -36,7 +35,7 @@ import java.util.Optional;
  */
 public class ClassType extends ReferenceType {
 
-  /** Simple and(!) annotatable and(!) typed class or interface name. */
+  /** Single identifier, annotatable and typed class or interface name. */
   public static class Simple extends Annotated {
 
     private final String name;
@@ -45,7 +44,7 @@ public class ClassType extends ReferenceType {
     public Simple(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
       super(annotations);
       this.name = name;
-      this.typeArguments = typeArguments;
+      this.typeArguments = Collections.unmodifiableList(typeArguments);
     }
 
     @Override
@@ -72,10 +71,29 @@ public class ClassType extends ReferenceType {
     }
   }
 
+  public static ClassType type(Class<?> type) {
+    return new ClassType(Name.name(type).packageName(), simples(type));
+  }
+
+  /** Create list of simple names - potentially with annotations and type parameters. */
+  public static List<Simple> simples(Class<?> type) {
+    List<Simple> simples = new ArrayList<>();
+    while (true) {
+      List<Annotation> annotations = Annotation.annotations(type);
+      String identifier = type.getSimpleName();
+      List<TypeArgument> arguments = Collections.emptyList(); // TODO type.getTypeParameters()
+      simples.add(0, new Simple(annotations, identifier, arguments));
+      type = type.getEnclosingClass();
+      if (type == null) {
+        return simples;
+      }
+    }
+  }
+
   private final List<Simple> names;
   private final String packageName;
 
-  public ClassType(String packageName, List<Simple> names) {
+  ClassType(String packageName, List<Simple> names) {
     super(Collections.emptyList());
     this.packageName = packageName;
     this.names = Collections.unmodifiableList(names);
@@ -100,13 +118,6 @@ public class ClassType extends ReferenceType {
   @Override
   public List<Annotation> getAnnotations() {
     return getLastClassName().getAnnotations();
-  }
-
-  public Optional<ClassType> getEnclosingClassType() {
-    if (names.size() == 1) {
-      return Optional.empty();
-    }
-    return Optional.of(new ClassType(getPackageName(), names.subList(0, names.size() - 1)));
   }
 
   public Simple getLastClassName() {
@@ -139,7 +150,9 @@ public class ClassType extends ReferenceType {
 
   @Override
   public boolean isJavaLangObject() {
-    return getName().isJavaLangObject();
+    return packageName.equals("java.lang")
+        && names.size() == 1
+        && names.get(0).getName().equals("Object");
   }
 
   @Override

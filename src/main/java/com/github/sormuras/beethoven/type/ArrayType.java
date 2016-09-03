@@ -61,11 +61,12 @@ public class ArrayType extends ReferenceType {
     return new ArrayType(componentType, dimensions);
   }
 
-  /** Create n array dimension(s). */
+  /** Create n array dimension(s) without annotations. */
   public static List<Dimension> dimensions(int size) {
     return dimensions(size, i -> Collections.emptyList());
   }
 
+  /** Create n array dimension(s) with annotations supplied by the given int-function. */
   public static List<Dimension> dimensions(int size, IntFunction<List<Annotation>> annotations) {
     List<Dimension> dimensions = new ArrayList<>();
     IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension(annotations.apply(i))));

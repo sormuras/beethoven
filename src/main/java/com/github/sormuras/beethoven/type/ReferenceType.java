@@ -26,7 +26,7 @@ import java.util.List;
  */
 public abstract class ReferenceType extends Type {
 
-  public ReferenceType(List<Annotation> annotations) {
+  ReferenceType(List<Annotation> annotations) {
     super(annotations);
   }
 }
