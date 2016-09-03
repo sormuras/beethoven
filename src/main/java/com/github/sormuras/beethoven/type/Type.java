@@ -64,22 +64,24 @@ public abstract class Type extends Annotated {
 
     /** Create {@link Type} based on {@link AnnotatedParameterizedType} instance. */
     static ClassType reflect(AnnotatedParameterizedType annotatedType) {
-      List<TypeArgument> arguments = new ArrayList<>();
-      for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
-        arguments.add(TypeArgument.argument(type(actual)));
+      List<ClassType.Simple> simples = new ArrayList<>();
+      while (true) {
+        List<TypeArgument> arguments = new ArrayList<>();
+        for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
+          arguments.add(TypeArgument.argument(Type.type(actual)));
+        }
+        java.lang.reflect.Type underlying = annotatedType.getType();
+        java.lang.reflect.ParameterizedType type = (java.lang.reflect.ParameterizedType) underlying;
+        ClassType ownerClassType = reflect(type);
+        List<Annotation> annotations = Annotation.annotations(annotatedType);
+        String name = ownerClassType.getLastClassName().getName();
+        simples.add(0, new ClassType.Simple(annotations, name, arguments));
+        annotatedType = (AnnotatedParameterizedType) type.getOwnerType();
+        if (annotatedType == null) {
+          String packageName = ownerClassType.getPackageName();
+          return new ClassType(packageName, simples);
+        }
       }
-      ArrayList<ClassType.Simple> simples = new ArrayList<>();
-      java.lang.reflect.Type type = annotatedType.getType();
-      while (type instanceof java.lang.reflect.ParameterizedType) {
-        // TODO result.addAnnotations(annotatedType);
-        // TODO result.getTypeArguments().addAll(arguments);
-        // simples.add(0, new ClassType.Simple());
-        System.err.println(":: " + type.getTypeName() + " " + ((Class<?>) type).getSimpleName());
-        type = ((java.lang.reflect.ParameterizedType) type).getOwnerType();
-      }
-      java.lang.reflect.Type raw = ((java.lang.reflect.ParameterizedType) type).getRawType();
-      ClassType result = new ClassType(raw.getClass().getPackage().getName(), simples);
-      return result;
     }
 
     /** Create {@link Type} based on {@link AnnotatedTypeVariable} instance. */

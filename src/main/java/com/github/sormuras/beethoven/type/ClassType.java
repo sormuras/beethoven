@@ -143,6 +143,14 @@ public class ClassType extends ReferenceType {
   }
 
   @Override
+  public ClassType toAnnotatedType(List<Annotation> annotations) {
+    Simple last = getLastClassName();
+    List<Simple> simples = new ArrayList<>(names);
+    simples.set(simples.size() - 1, new Simple(annotations, last.name, last.typeArguments));
+    return new ClassType(packageName, simples);
+  }
+
+  @Override
   public String toClassName() {
     StringBuilder builder = new StringBuilder();
     if (!getPackageName().isEmpty()) {

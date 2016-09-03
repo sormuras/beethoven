@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.sormuras.beethoven.Listable;
-import com.github.sormuras.beethoven.Name;
 import org.junit.jupiter.api.Test;
 
 class VoidTypeTest {
