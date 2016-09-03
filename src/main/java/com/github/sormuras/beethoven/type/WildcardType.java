@@ -30,19 +30,19 @@ import java.util.Optional;
  */
 public class WildcardType extends Type {
 
-  /** {@code ? extends java.lang.Runnable}. */
-  public static WildcardType subtype(List<Annotation> annotations, ReferenceType upperBound) {
-    return new WildcardType(annotations, upperBound, true);
+  /** {@code @Tag ? extends java.lang.Runnable}. */
+  public static WildcardType extend(List<Annotation> annotations, ReferenceType upperBound) {
+    return new WildcardType(annotations, upperBound, null);
   }
 
   /** {@code ? extends java.lang.Runnable}. */
-  public static WildcardType subtype(java.lang.reflect.Type upperBound) {
-    return subtype(Collections.emptyList(), (ReferenceType) Type.type(upperBound));
+  public static WildcardType extend(java.lang.reflect.Type upperBound) {
+    return extend(Collections.emptyList(), (ReferenceType) Type.type(upperBound));
   }
 
-  /** {@code ? super java.lang.String}. */
+  /** {@code @Tag ? super java.lang.String}. */
   public static WildcardType supertype(List<Annotation> annotations, ReferenceType lowerBound) {
-    return new WildcardType(annotations, lowerBound, false);
+    return new WildcardType(annotations, ClassType.OBJECT, lowerBound);
   }
 
   /** {@code ? super java.lang.String}. */
@@ -50,22 +50,18 @@ public class WildcardType extends Type {
     return supertype(Collections.emptyList(), (ReferenceType) Type.type(lowerBound));
   }
 
-  public static WildcardType wild() {
-    return wild(Collections.emptyList());
+  /** Unbounded (simple) wildcard, namely the {@code "?"} sign. */
+  public static WildcardType wildcard() {
+    return wildcard(Collections.emptyList());
   }
 
-  public static WildcardType wild(List<Annotation> annotations) {
-    return new WildcardType(annotations, null, false);
+  /** Unbounded (simple) annotated wildcard, like {@code "@Tag ?"}. */
+  public static WildcardType wildcard(List<Annotation> annotations) {
+    return new WildcardType(annotations, ClassType.OBJECT, null);
   }
 
   private final ReferenceType boundExtends;
   private final ReferenceType boundSuper;
-
-  WildcardType(List<Annotation> annotations, ReferenceType bound, boolean upper) {
-    super(annotations);
-    this.boundExtends = upper ? bound : ClassType.type(Object.class);
-    this.boundSuper = upper ? null : bound;
-  }
 
   WildcardType(List<Annotation> annotations, ReferenceType boundExtends, ReferenceType boundSuper) {
     super(annotations);

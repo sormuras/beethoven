@@ -129,7 +129,7 @@ class TypeTest<T> {
     assertEquals(int[][][].class.getName(), Type.type(int[][][].class).toClassName());
     assertEquals(long[][][].class.getName(), Type.type(long[][][].class).toClassName());
     assertEquals(short[][][].class.getName(), Type.type(short[][][].class).toClassName());
-    assertThrows(UnsupportedOperationException.class, () -> WildcardType.wild().toClassName());
+    assertThrows(UnsupportedOperationException.class, () -> WildcardType.wildcard().toClassName());
   }
 
   @Test

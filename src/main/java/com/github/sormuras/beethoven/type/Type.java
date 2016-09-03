@@ -105,12 +105,12 @@ public abstract class Type extends Annotated {
       // ? extends upper bound
       AnnotatedType[] upperBounds = annotatedType.getAnnotatedUpperBounds();
       if (upperBounds.length == 1 && upperBounds[0].getType().equals(Object.class)) {
-        WildcardType.wild(annotations);
+        WildcardType.wildcard(annotations);
       }
       if (upperBounds.length > 0) {
-        return WildcardType.subtype(annotations, (ReferenceType) type(upperBounds[0]));
+        return WildcardType.extend(annotations, (ReferenceType) type(upperBounds[0]));
       }
-      return WildcardType.wild(annotations);
+      return WildcardType.wildcard(annotations);
     }
 
     /** Create {@link Type} based on {@link java.lang.reflect.GenericArrayType} instance. */
@@ -156,12 +156,12 @@ public abstract class Type extends Annotated {
       // ? extends upper bound
       java.lang.reflect.Type[] upperBounds = type.getUpperBounds();
       if (upperBounds.length == 1 && upperBounds[0].equals(Object.class)) {
-        return WildcardType.wild();
+        return WildcardType.wildcard();
       }
       if (upperBounds.length > 0) {
-        return WildcardType.subtype(upperBounds[0]);
+        return WildcardType.extend(upperBounds[0]);
       }
-      return WildcardType.wild();
+      return WildcardType.wildcard();
     }
   }
 
@@ -203,7 +203,7 @@ public abstract class Type extends Annotated {
         dimensions++;
       }
     }
-    // default case: canonical name like java.lang.Thread.State
+    // default case: canonical class type like java.lang.Thread.State
     return ClassType.type(classType);
   }
 

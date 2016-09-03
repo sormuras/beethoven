@@ -3,7 +3,10 @@ package com.github.sormuras.beethoven.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.sormuras.beethoven.Annotation;
+import com.github.sormuras.beethoven.Importing;
 import com.github.sormuras.beethoven.Name;
+import com.github.sormuras.beethoven.Omitting;
+import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
 
 import java.util.ArrayList;
@@ -19,12 +22,14 @@ class ClassTypeTest {
   //    assertEquals(ElementType.TYPE_USE, ClassType.argument(Name.name("Unnamed")).getAnnotationTarget());
   //  }
 
-  //  @Test
-  //  void annotated() {
-  //    String expected = "java.lang." + U.USE + " Comparable<java.lang.String>";
-  //    ClassType type = ClassType.annotated(U.SINGLETON, Comparable.class, String.class);
-  //    assertEquals(expected, type.list());
-  //  }
+  @Test
+  void parameterized() {
+    String expected = "java.lang." + U.USE + " Comparable<java.lang." + V.USE + " String>";
+    ClassType string = ClassType.type(String.class).toAnnotatedType(V.SINGLETON);
+    ClassType comparable = ClassType.type(Comparable.class).toAnnotatedType(U.SINGLETON);
+    ClassType type = comparable.toParameterizedType(i -> Collections.singletonList(string));
+    assertEquals(expected, type.list());
+  }
 
   //  @Test
   //  void constructor() {
@@ -36,21 +41,13 @@ class ClassTypeTest {
   //        ClassType.argument(Comparable.class, String.class).list());
   //  }
 
-  //  @Test
-  //  void enclosingClassType() {
-  //    ClassType state = ClassType.argument(Thread.State.class);
-  //    assertEquals("java.lang.Thread.State", state.list());
-  //    assertEquals(ClassType.argument(Thread.class), state.getEnclosingClassType().get());
-  //    assertEquals(Optional.empty(), ClassType.argument(Thread.class).getEnclosingClassType());
-  //  }
-
-  //  @Test
-  //  void imports() {
-  //    ClassType state = ClassType.argument(Thread.State.class);
-  //    assertEquals("java.lang.Thread.State", state.list());
-  //    assertEquals("Thread.State", state.list(new Omitting()));
-  //    assertEquals("State", state.list(new Importing()));
-  //  }
+  @Test
+  void imports() {
+    ClassType state = ClassType.type(Thread.State.class);
+    assertEquals("java.lang.Thread.State", state.list());
+    assertEquals("Thread.State", state.list(new Omitting()));
+    assertEquals("State", state.list(new Importing()));
+  }
 
   @Test
   void handcrafted() throws Exception {

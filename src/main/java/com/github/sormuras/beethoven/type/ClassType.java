@@ -16,6 +16,7 @@ package com.github.sormuras.beethoven.type;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
@@ -26,6 +27,8 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 /**
  * Class or interface type.
@@ -41,7 +44,7 @@ public class ClassType extends ReferenceType {
     private final String name;
     private final List<TypeArgument> typeArguments;
 
-    public Simple(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
+    Simple(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
       super(annotations);
       this.name = name;
       this.typeArguments = Collections.unmodifiableList(typeArguments);
@@ -70,6 +73,8 @@ public class ClassType extends ReferenceType {
       return typeArguments;
     }
   }
+
+  public static final ClassType OBJECT = ClassType.type(Object.class);
 
   public static ClassType type(Class<?> type) {
     return new ClassType(Name.name(type).packageName(), simples(type));
@@ -101,7 +106,7 @@ public class ClassType extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
-    NameMode mode = listing.getNameModeFunction().apply(getName());
+    NameMode mode = listing.getNameModeFunction().apply(toName());
     if (mode == NameMode.LAST) {
       return listing.add(getLastClassName());
     }
@@ -124,15 +129,15 @@ public class ClassType extends ReferenceType {
     return names.get(names.size() - 1);
   }
 
-  /** Return simple {@link Name} for this {@link ClassType} instance. */
-  public Name getName() {
-    List<String> simpleNames = new ArrayList<>();
+  /** Create simple {@link Name} for this {@link ClassType} instance. */
+  public Name toName() {
+    List<String> identifiers = new ArrayList<>();
     if (!getPackageName().isEmpty()) {
-      stream(getPackageName().split("\\.")).forEach(simpleNames::add);
+      stream(getPackageName().split("\\.")).forEach(identifiers::add);
     }
-    int packageLevel = simpleNames.size();
-    names.forEach(n -> simpleNames.add(n.getName()));
-    return Name.name(packageLevel, simpleNames);
+    int packageLevel = identifiers.size();
+    names.forEach(simple -> identifiers.add(simple.getName()));
+    return Name.name(packageLevel, identifiers);
   }
 
   public List<Simple> getNames() {
@@ -160,6 +165,20 @@ public class ClassType extends ReferenceType {
     Simple last = getLastClassName();
     List<Simple> simples = new ArrayList<>(names);
     simples.set(simples.size() - 1, new Simple(annotations, last.name, last.typeArguments));
+    return new ClassType(packageName, simples);
+  }
+
+  /** Create new {@link ClassType} copied from this instance with supplied type arguments. */
+  public ClassType toParameterizedType(IntFunction<List<Type>> typeArgumentsSupplier) {
+    List<Simple> simples = new ArrayList<>();
+    IntStream.range(0, names.size())
+        .forEach(
+            i -> {
+              Simple source = names.get(i);
+              List<Type> types = typeArgumentsSupplier.apply(i);
+              List<TypeArgument> tas = types.stream().map(TypeArgument::argument).collect(toList());
+              simples.add(new Simple(source.getAnnotations(), source.name, tas));
+            });
     return new ClassType(packageName, simples);
   }
 
