@@ -14,10 +14,11 @@
 
 package com.github.sormuras.beethoven.type;
 
+import static com.github.sormuras.beethoven.type.Type.Reflect.reflect;
+
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Name;
-import com.github.sormuras.beethoven.type.ArrayType.Dimension;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -50,22 +51,22 @@ public abstract class Type extends Annotated {
   interface Reflect {
 
     /** Create {@link Type} based on {@link AnnotatedArrayType} instance. */
-    static ArrayType type(AnnotatedArrayType annotatedType) {
-      List<Dimension> dimensions = new ArrayList<>();
+    static ArrayType reflect(AnnotatedArrayType annotatedType) {
+      List<ArrayType.Dimension> dimensions = new ArrayList<>();
       AnnotatedType component = annotatedType;
       while (component instanceof AnnotatedArrayType) {
-        Dimension dimension = new Dimension(Annotation.annotations(component));
+        ArrayType.Dimension dimension = new ArrayType.Dimension(Annotation.annotations(component));
         dimensions.add(dimension);
         component = ((AnnotatedArrayType) component).getAnnotatedGenericComponentType();
       }
-      return ArrayType.array(Type.type(component), dimensions);
+      return ArrayType.array(type(component), dimensions);
     }
 
     /** Create {@link Type} based on {@link AnnotatedParameterizedType} instance. */
-    static ClassType type(AnnotatedParameterizedType annotatedType) {
+    static ClassType reflect(AnnotatedParameterizedType annotatedType) {
       List<TypeArgument> arguments = new ArrayList<>();
       for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
-        arguments.add(TypeArgument.argument(Type.type(actual)));
+        arguments.add(TypeArgument.argument(type(actual)));
       }
       ArrayList<ClassType.Simple> simples = new ArrayList<>();
       java.lang.reflect.Type type = annotatedType.getType();
@@ -82,7 +83,7 @@ public abstract class Type extends Annotated {
     }
 
     /** Create {@link Type} based on {@link AnnotatedTypeVariable} instance. */
-    static TypeVariable type(AnnotatedTypeVariable annotatedType) {
+    static TypeVariable reflect(AnnotatedTypeVariable annotatedType) {
       // TODO consider/ignore bounds at type use location
       // AnnotatedTypeVariable atv = (AnnotatedTypeVariable) annotatedType;
       // List<TypeArgument> bounds = new ArrayList<>();
@@ -94,31 +95,30 @@ public abstract class Type extends Annotated {
     }
 
     /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
-    static WildcardType type(AnnotatedWildcardType annotatedType) {
+    static WildcardType reflect(AnnotatedWildcardType annotatedType) {
       List<Annotation> annotations = Annotation.annotations(annotatedType);
       for (AnnotatedType bound : annotatedType.getAnnotatedLowerBounds()) { // ? super lower bound
-        return WildcardType.supertype(annotations, (ReferenceType) Type.type(bound));
+        return WildcardType.supertype(annotations, (ReferenceType) type(bound));
       }
       for (AnnotatedType bound : annotatedType.getAnnotatedUpperBounds()) { // ? extends upper bound
-        return WildcardType.subtype(annotations, (ReferenceType) Type.type(bound));
+        return WildcardType.subtype(annotations, (ReferenceType) type(bound));
       }
       return WildcardType.wild(annotations);
     }
 
     /** Create {@link Type} based on {@link java.lang.reflect.GenericArrayType} instance. */
-    static ArrayType type(java.lang.reflect.GenericArrayType type) {
-      List<Dimension> dimensions = new ArrayList<>();
+    static ArrayType reflect(java.lang.reflect.GenericArrayType type) {
+      List<ArrayType.Dimension> dimensions = new ArrayList<>();
       java.lang.reflect.Type component = type;
       while (component instanceof java.lang.reflect.GenericArrayType) {
-        Dimension dimension = new Dimension(Collections.emptyList());
-        dimensions.add(dimension);
+        dimensions.add(new ArrayType.Dimension(Collections.emptyList()));
         component = ((java.lang.reflect.GenericArrayType) component).getGenericComponentType();
       }
       return ArrayType.array(Type.type(component), dimensions);
     }
 
     /** Create {@link Type} based on {@link java.lang.reflect.ParameterizedType} instance. */
-    static ClassType type(java.lang.reflect.ParameterizedType type) {
+    static ClassType reflect(java.lang.reflect.ParameterizedType type) {
       List<ClassType.Simple> simples = new ArrayList<>();
       java.lang.reflect.ParameterizedType owner = type;
       while (owner != null) {
@@ -135,12 +135,12 @@ public abstract class Type extends Annotated {
     }
 
     /** Create {@link Type} based on {@link java.lang.reflect.TypeVariable} instance. */
-    static TypeVariable type(java.lang.reflect.TypeVariable<?> type) {
+    static TypeVariable reflect(java.lang.reflect.TypeVariable<?> type) {
       return TypeVariable.variable(type.getName());
     }
 
     /** Create {@link Type} based on {@link java.lang.reflect.WildcardType} instance. */
-    static WildcardType type(java.lang.reflect.WildcardType type) {
+    static WildcardType reflect(java.lang.reflect.WildcardType type) {
       // ? super lower bound
       java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
       if (lowerBounds.length > 0) {
@@ -161,16 +161,16 @@ public abstract class Type extends Annotated {
   /** Create {@link Type} based on {@link AnnotatedType} instance. */
   public static Type type(AnnotatedType annotatedType) {
     if (annotatedType instanceof AnnotatedArrayType) {
-      return Reflect.type((AnnotatedArrayType) annotatedType);
+      return reflect((AnnotatedArrayType) annotatedType);
     }
     if (annotatedType instanceof AnnotatedParameterizedType) {
-      return Reflect.type((AnnotatedParameterizedType) annotatedType);
+      return reflect((AnnotatedParameterizedType) annotatedType);
     }
     if (annotatedType instanceof AnnotatedTypeVariable) {
-      return Reflect.type((AnnotatedTypeVariable) annotatedType);
+      return reflect((AnnotatedTypeVariable) annotatedType);
     }
     if (annotatedType instanceof AnnotatedWildcardType) {
-      return Reflect.type((AnnotatedWildcardType) annotatedType);
+      return reflect((AnnotatedWildcardType) annotatedType);
     }
     // default case: use underlying type and create potentially annotated version of it.
     return type(annotatedType.getType()).toAnnotatedType(Annotation.annotations(annotatedType));
@@ -211,16 +211,16 @@ public abstract class Type extends Annotated {
   /** Create {@link Type} based on {@link java.lang.reflect.Type} instance. */
   public static Type type(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
-      return Reflect.type((java.lang.reflect.GenericArrayType) type);
+      return reflect((java.lang.reflect.GenericArrayType) type);
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      return Reflect.type((java.lang.reflect.ParameterizedType) type);
+      return reflect((java.lang.reflect.ParameterizedType) type);
     }
     if (type instanceof java.lang.reflect.TypeVariable<?>) {
-      return Reflect.type((java.lang.reflect.TypeVariable<?>) type);
+      return reflect((java.lang.reflect.TypeVariable<?>) type);
     }
     if (type instanceof java.lang.reflect.WildcardType) {
-      return Reflect.type((java.lang.reflect.WildcardType) type);
+      return reflect((java.lang.reflect.WildcardType) type);
     }
     return type((Class<?>) type);
   }
