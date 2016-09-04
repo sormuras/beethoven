@@ -15,6 +15,8 @@
 package com.github.sormuras.beethoven.type;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
@@ -25,7 +27,6 @@ import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -47,7 +48,7 @@ public class ClassType extends ReferenceType {
     Simple(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
       super(annotations);
       this.name = name;
-      this.typeArguments = Collections.unmodifiableList(typeArguments);
+      this.typeArguments = unmodifiableList(typeArguments);
     }
 
     @Override
@@ -76,6 +77,15 @@ public class ClassType extends ReferenceType {
 
   public static final ClassType OBJECT = ClassType.type(Object.class);
 
+  /** Create {@link ClassType} using raw type and attach type arguments to last simple name. */
+  public static ClassType parameterized(Class<?> raw, java.lang.reflect.Type... arguments) {
+    assert raw.getTypeParameters().length == arguments.length;
+    ClassType rawClassType = type(raw);
+    int last = rawClassType.getNames().size() - 1;
+    IntFunction<List<Type>> function = i -> i == last ? Type.types(arguments) : emptyList();
+    return rawClassType.toParameterizedType(function);
+  }
+
   public static ClassType type(Class<?> type) {
     return new ClassType(Name.name(type).packageName(), simples(type));
   }
@@ -86,7 +96,7 @@ public class ClassType extends ReferenceType {
     while (true) {
       List<Annotation> annotations = Annotation.annotations(type);
       String identifier = type.getSimpleName();
-      List<TypeArgument> arguments = Collections.emptyList(); // TODO type.getTypeParameters()
+      List<TypeArgument> arguments = emptyList(); // TODO type.getTypeParameters()
       simples.add(0, new Simple(annotations, identifier, arguments));
       type = type.getEnclosingClass();
       if (type == null) {
@@ -99,9 +109,9 @@ public class ClassType extends ReferenceType {
   private final String packageName;
 
   ClassType(String packageName, List<Simple> names) {
-    super(Collections.emptyList());
+    super(emptyList());
     this.packageName = packageName;
-    this.names = Collections.unmodifiableList(names);
+    this.names = unmodifiableList(names);
   }
 
   @Override

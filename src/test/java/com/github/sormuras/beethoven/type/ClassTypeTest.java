@@ -1,6 +1,7 @@
 package com.github.sormuras.beethoven.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Importing;
@@ -23,12 +24,29 @@ class ClassTypeTest {
   //  }
 
   @Test
-  void parameterized() {
+  void createAnnotated() {
+    String expected = "java.lang." + U.USE + " " + V.USE + " String";
+    List<Annotation> annotations = Annotation.annotations(U.class, V.class);
+    ClassType type = ClassType.type(String.class).toAnnotatedType(annotations);
+    assertEquals(expected, type.list());
+  }
+
+  @Test
+  void createAnnotatedAndParameterized() {
     String expected = "java.lang." + U.USE + " Comparable<java.lang." + V.USE + " String>";
     ClassType string = ClassType.type(String.class).toAnnotatedType(V.SINGLETON);
     ClassType comparable = ClassType.type(Comparable.class).toAnnotatedType(U.SINGLETON);
     ClassType type = comparable.toParameterizedType(i -> Collections.singletonList(string));
     assertEquals(expected, type.list());
+  }
+
+  @Test
+  void createParameterized() {
+    String expected = "java.lang.Comparable<java.lang.String>";
+    ClassType type = ClassType.parameterized(Comparable.class, String.class);
+    assertEquals(expected, type.list());
+    assertThrows(Error.class, () -> ClassType.parameterized(Byte.class, Byte.class));
+    assertThrows(Error.class, () -> ClassType.parameterized(Comparable.class, int.class));
   }
 
   //  @Test

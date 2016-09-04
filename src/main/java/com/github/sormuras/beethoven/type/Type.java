@@ -15,6 +15,8 @@
 package com.github.sormuras.beethoven.type;
 
 import static com.github.sormuras.beethoven.type.Type.Reflection.reflect;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
@@ -222,6 +224,10 @@ public abstract class Type extends Annotated {
       return reflect((java.lang.reflect.WildcardType) type);
     }
     return type((Class<?>) type);
+  }
+
+  public static List<Type> types(java.lang.reflect.Type... types) {
+    return stream(types).map(Type::type).collect(toList());
   }
 
   Type(List<Annotation> annotations) {
