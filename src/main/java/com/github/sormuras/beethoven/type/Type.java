@@ -468,7 +468,7 @@ public abstract class Type extends Annotated {
   }
 
   /** Create {@link Type} based on {@link javax.lang.model.type.TypeMirror} instance. */
-  static Type type(javax.lang.model.type.TypeMirror mirror) {
+  public static Type type(javax.lang.model.type.TypeMirror mirror) {
     Mirrors.TypeVisitor visitor = new Mirrors.TypeVisitor();
     return mirror.accept(visitor, null);
   }
