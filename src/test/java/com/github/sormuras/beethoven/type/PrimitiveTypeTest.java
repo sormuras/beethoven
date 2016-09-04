@@ -45,11 +45,7 @@ class PrimitiveTypeTest {
 
   @Test
   void primitiveTypeUseWithAnnotation() throws Exception {
-    //    Annotation u = Annotation.annotation(U.class);
-    //    Type uint = Type.type(int.class);
-    //    uint.addAnnotation(u);
-    //    assertEquals(U.USE + " int", uint.list());
-
+    assertEquals(U.USE + " int", Type.annotated(Type.type(int.class), U.class).list());
     Type uvint = PrimitiveType.primitive(Annotation.annotations(U.class, V.class), int.class);
     assertEquals(U.USE + " " + V.USE + " int", uvint.list());
     U reflected = U.class.getDeclaredField("NUMBER").getAnnotatedType().getAnnotation(U.class);
