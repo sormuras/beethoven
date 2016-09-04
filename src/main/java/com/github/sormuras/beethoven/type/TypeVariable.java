@@ -34,6 +34,9 @@ public class TypeVariable extends ReferenceType {
   }
 
   public static TypeVariable variable(List<Annotation> annotations, String identifier) {
+    if (identifier.isEmpty()) {
+      throw new IllegalArgumentException("TypeVariable identifier must not be empty!");
+    }
     return new TypeVariable(annotations, identifier);
   }
 
