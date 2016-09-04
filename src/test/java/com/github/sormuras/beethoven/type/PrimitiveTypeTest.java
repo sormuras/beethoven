@@ -40,7 +40,7 @@ class PrimitiveTypeTest {
     assertNotEquals(PrimitiveType.primitive(byte.class), Type.type(char.class));
     Type intAnnotatedWithU = PrimitiveType.primitive(U.SINGLETON, int.class);
     assertNotEquals(Type.type(int.class), intAnnotatedWithU);
-    assertEquals(Type.type(int.class), intAnnotatedWithU.toAnnotationFreeType());
+    assertEquals(Type.type(int.class), Type.annotationless(intAnnotatedWithU));
   }
 
   @Test

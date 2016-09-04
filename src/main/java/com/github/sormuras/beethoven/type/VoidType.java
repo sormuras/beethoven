@@ -14,11 +14,9 @@
 
 package com.github.sormuras.beethoven.type;
 
-import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
 import java.util.Collections;
-import java.util.List;
 
 public class VoidType extends Type {
 
@@ -34,6 +32,11 @@ public class VoidType extends Type {
   }
 
   @Override
+  public String binary() {
+    return "void";
+  }
+
+  @Override
   public ElementType getAnnotationTarget() {
     return null;
   }
@@ -41,15 +44,5 @@ public class VoidType extends Type {
   @Override
   public boolean isAnnotated() {
     return false;
-  }
-
-  @Override
-  public VoidType toAnnotatedType(List<Annotation> annotations) {
-    return this;
-  }
-
-  @Override
-  public String toClassName() {
-    return "void";
   }
 }

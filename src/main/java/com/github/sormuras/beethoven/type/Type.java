@@ -16,6 +16,7 @@ package com.github.sormuras.beethoven.type;
 
 import static com.github.sormuras.beethoven.type.Type.Reflection.reflect;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
@@ -27,8 +28,8 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.AnnotatedWildcardType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
 
 /**
  * The Java programming language is a statically typed language, which means that every variable and
@@ -93,7 +94,7 @@ public abstract class Type extends Annotated {
       // bounds.add(new TypeArgument(argument(bound)));
       // }
       String name = ((java.lang.reflect.TypeVariable<?>) annotatedType.getType()).getName();
-      return TypeVariable.variable(name).toAnnotatedType(Annotation.annotations(annotatedType));
+      return TypeVariable.variable(Annotation.annotations(annotatedType), name);
     }
 
     /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
@@ -120,7 +121,7 @@ public abstract class Type extends Annotated {
       List<ArrayType.Dimension> dimensions = new ArrayList<>();
       java.lang.reflect.Type component = type;
       while (component instanceof java.lang.reflect.GenericArrayType) {
-        dimensions.add(new ArrayType.Dimension(Collections.emptyList()));
+        dimensions.add(new ArrayType.Dimension(emptyList()));
         component = ((java.lang.reflect.GenericArrayType) component).getGenericComponentType();
       }
       return ArrayType.array(Type.type(component), dimensions);
@@ -136,7 +137,7 @@ public abstract class Type extends Annotated {
           arguments.add(TypeArgument.argument(Type.type(actual)));
         }
         String name = ((Class<?>) owner.getRawType()).getSimpleName();
-        simples.add(0, new ClassType.Simple(Collections.emptyList(), name, arguments));
+        simples.add(0, new ClassType.Simple(emptyList(), name, arguments));
         owner = (java.lang.reflect.ParameterizedType) owner.getOwnerType();
       }
       String packageName = ((Class<?>) type.getRawType()).getPackage().getName();
@@ -167,6 +168,21 @@ public abstract class Type extends Annotated {
     }
   }
 
+  @SafeVarargs
+  public static <T extends Type> T annotated(
+      T type, Class<? extends java.lang.annotation.Annotation>... annotations) {
+    return annotated(type, Annotation.annotations(annotations));
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Type> T annotated(T type, List<Annotation> annotations) {
+    return (T) type.annotate(i -> i == type.getAnnotationIndex() ? annotations : emptyList());
+  }
+
+  public static <T extends Type> T annotationless(T type) {
+    return annotated(type, emptyList());
+  }
+
   /** Create {@link Type} based on {@link AnnotatedType} instance. */
   public static Type type(AnnotatedType annotatedType) {
     if (annotatedType instanceof AnnotatedArrayType) {
@@ -182,7 +198,7 @@ public abstract class Type extends Annotated {
       return reflect((AnnotatedWildcardType) annotatedType);
     }
     // default case: use underlying type and create potentially annotated version of it.
-    return type(annotatedType.getType()).toAnnotatedType(Annotation.annotations(annotatedType));
+    return annotated(type(annotatedType.getType()), Annotation.annotations(annotatedType));
   }
 
   /** Create {@link Type} based on {@link Class} instance. */
@@ -234,32 +250,33 @@ public abstract class Type extends Annotated {
     super(annotations);
   }
 
+  /** Create new copy of this instance with supplied annotations attached. */
+  public Type annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+    throw new UnsupportedOperationException(getClass() + " does not support annotate()");
+  }
+
+  /**
+   * Return the binary name of this type (class, interface, array class, primitive type, or void)
+   * represented by this object, as a String.
+   *
+   * @return (binary) class name
+   * @see Class#getName()
+   * @see Class#forName(String)
+   */
+  public String binary() {
+    throw new UnsupportedOperationException(getClass() + " does not support binary()");
+  }
+
   @Override
   public ElementType getAnnotationTarget() {
     return ElementType.TYPE_USE;
   }
 
+  public int getAnnotationIndex() {
+    return 0;
+  }
+
   public boolean isJavaLangObject() {
     return false;
-  }
-
-  public Type toAnnotatedType(List<Annotation> annotations) {
-    throw new UnsupportedOperationException(getClass() + " does not support toAnnotatedType()");
-  }
-
-  public Type toAnnotationFreeType() {
-    return toAnnotatedType(Collections.emptyList());
-  }
-
-  /**
-   * Returns the name argument the type (class, interface, array class, primitive type, or void)
-   * represented by this object, as a String.
-   *
-   * @see Class#getName()
-   * @see Class#forName(String)
-   * @return (binary) class name
-   */
-  public String toClassName() {
-    throw new UnsupportedOperationException(getClass() + " does not support toClassName()");
   }
 }

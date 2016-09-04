@@ -83,8 +83,29 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
+  public ArrayType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+    return new ArrayType(componentType, dimensions(dimensions.size(), annotationsSupplier));
+  }
+
+  @Override
   public Listing apply(Listing listing) {
     return listing.add(getComponentType()).add(getDimensions(), Listable.IDENTITY);
+  }
+
+  @Override
+  public String binary() {
+    StringBuilder builder = new StringBuilder();
+    IntStream.range(0, getDimensions().size()).forEach(i -> builder.append('['));
+    Type componentType = getComponentType();
+    if (componentType instanceof PrimitiveType) {
+      return builder.append(((PrimitiveType) componentType).getTypeChar()).toString();
+    }
+    return builder.append('L').append(componentType.binary()).append(';').toString();
+  }
+
+  @Override
+  public int getAnnotationIndex() {
+    return dimensions.size() - 1;
   }
 
   public Type getComponentType() {
@@ -103,25 +124,5 @@ public class ArrayType extends ReferenceType {
   @Override
   public boolean isEmpty() {
     return false;
-  }
-
-  public ArrayType toAnnotatedType(IntFunction<List<Annotation>> function) {
-    return new ArrayType(componentType, dimensions(dimensions.size(), function));
-  }
-
-  @Override
-  public ArrayType toAnnotatedType(List<Annotation> annotations) {
-    return toAnnotatedType(i -> i == 0 ? annotations : Collections.emptyList());
-  }
-
-  @Override
-  public String toClassName() {
-    StringBuilder builder = new StringBuilder();
-    IntStream.range(0, getDimensions().size()).forEach(i -> builder.append('['));
-    Type componentType = getComponentType();
-    if (componentType instanceof PrimitiveType) {
-      return builder.append(((PrimitiveType) componentType).getTypeChar()).toString();
-    }
-    return builder.append('L').append(componentType.toClassName()).append(';').toString();
   }
 }

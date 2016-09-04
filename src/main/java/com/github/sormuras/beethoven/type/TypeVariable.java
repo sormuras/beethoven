@@ -19,6 +19,7 @@ import com.github.sormuras.beethoven.Listing;
 import java.lang.annotation.ElementType;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
 
 /**
  * A type variable is an unqualified identifier used as a type in class, interface, method, and
@@ -44,6 +45,11 @@ public class TypeVariable extends ReferenceType {
   }
 
   @Override
+  public TypeVariable annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+    return new TypeVariable(annotationsSupplier.apply(0), identifier);
+  }
+
+  @Override
   public Listing apply(Listing listing) {
     return listing.add(toAnnotationsListable()).add(getIdentifier());
   }
@@ -55,10 +61,5 @@ public class TypeVariable extends ReferenceType {
 
   public String getIdentifier() {
     return identifier;
-  }
-
-  @Override
-  public TypeVariable toAnnotatedType(List<Annotation> annotations) {
-    return new TypeVariable(annotations, identifier);
   }
 }

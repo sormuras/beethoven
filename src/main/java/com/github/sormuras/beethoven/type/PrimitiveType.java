@@ -16,9 +16,9 @@ package com.github.sormuras.beethoven.type;
 
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
-
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
 
 /**
  * A primitive type is predefined by the Java language and named by its reserved keyword.
@@ -71,8 +71,18 @@ public final class PrimitiveType extends Type {
   }
 
   @Override
+  public PrimitiveType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+    return new PrimitiveType(annotationsSupplier.apply(0), type, typeChar);
+  }
+
+  @Override
+  public String binary() {
+    return getType().getTypeName();
+  }
+
+  @Override
   public Listing apply(Listing listing) {
-    return listing.add(toAnnotationsListable()).add(toClassName());
+    return listing.add(toAnnotationsListable()).add(binary());
   }
 
   public Class<?> getType() {
@@ -81,15 +91,5 @@ public final class PrimitiveType extends Type {
 
   public char getTypeChar() {
     return typeChar;
-  }
-
-  @Override
-  public PrimitiveType toAnnotatedType(List<Annotation> annotations) {
-    return new PrimitiveType(annotations, type, typeChar);
-  }
-
-  @Override
-  public String toClassName() {
-    return getType().getTypeName();
   }
 }

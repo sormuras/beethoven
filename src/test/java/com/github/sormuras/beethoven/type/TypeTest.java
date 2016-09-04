@@ -107,29 +107,29 @@ class TypeTest<T> {
 
   @Test
   void className() {
-    assertEquals(boolean.class.getName(), Type.type(boolean.class).toClassName());
-    assertEquals(byte.class.getName(), Type.type(byte.class).toClassName());
-    assertEquals(char.class.getName(), Type.type(char.class).toClassName());
-    assertEquals(double.class.getName(), Type.type(double.class).toClassName());
-    assertEquals(float.class.getName(), Type.type(float.class).toClassName());
-    assertEquals(int.class.getName(), Type.type(int.class).toClassName());
-    assertEquals(long.class.getName(), Type.type(long.class).toClassName());
-    assertEquals(short.class.getName(), Type.type(short.class).toClassName());
-    assertEquals(void.class.getName(), Type.type(void.class).toClassName());
-    assertEquals(Object.class.getName(), Type.type(Object.class).toClassName());
-    assertEquals(Thread.class.getName(), Type.type(Thread.class).toClassName());
-    assertEquals(Thread.State.class.getName(), Type.type(Thread.State.class).toClassName());
-    assertEquals(Object[].class.getName(), Type.type(Object[].class).toClassName());
-    assertEquals(Object[][].class.getName(), Type.type(Object[][].class).toClassName());
-    assertEquals(boolean[][][].class.getName(), Type.type(boolean[][][].class).toClassName());
-    assertEquals(byte[][][].class.getName(), Type.type(byte[][][].class).toClassName());
-    assertEquals(char[][][].class.getName(), Type.type(char[][][].class).toClassName());
-    assertEquals(double[][][].class.getName(), Type.type(double[][][].class).toClassName());
-    assertEquals(float[][][].class.getName(), Type.type(float[][][].class).toClassName());
-    assertEquals(int[][][].class.getName(), Type.type(int[][][].class).toClassName());
-    assertEquals(long[][][].class.getName(), Type.type(long[][][].class).toClassName());
-    assertEquals(short[][][].class.getName(), Type.type(short[][][].class).toClassName());
-    assertThrows(UnsupportedOperationException.class, () -> WildcardType.wildcard().toClassName());
+    assertEquals(boolean.class.getName(), Type.type(boolean.class).binary());
+    assertEquals(byte.class.getName(), Type.type(byte.class).binary());
+    assertEquals(char.class.getName(), Type.type(char.class).binary());
+    assertEquals(double.class.getName(), Type.type(double.class).binary());
+    assertEquals(float.class.getName(), Type.type(float.class).binary());
+    assertEquals(int.class.getName(), Type.type(int.class).binary());
+    assertEquals(long.class.getName(), Type.type(long.class).binary());
+    assertEquals(short.class.getName(), Type.type(short.class).binary());
+    assertEquals(void.class.getName(), Type.type(void.class).binary());
+    assertEquals(Object.class.getName(), Type.type(Object.class).binary());
+    assertEquals(Thread.class.getName(), Type.type(Thread.class).binary());
+    assertEquals(Thread.State.class.getName(), Type.type(Thread.State.class).binary());
+    assertEquals(Object[].class.getName(), Type.type(Object[].class).binary());
+    assertEquals(Object[][].class.getName(), Type.type(Object[][].class).binary());
+    assertEquals(boolean[][][].class.getName(), Type.type(boolean[][][].class).binary());
+    assertEquals(byte[][][].class.getName(), Type.type(byte[][][].class).binary());
+    assertEquals(char[][][].class.getName(), Type.type(char[][][].class).binary());
+    assertEquals(double[][][].class.getName(), Type.type(double[][][].class).binary());
+    assertEquals(float[][][].class.getName(), Type.type(float[][][].class).binary());
+    assertEquals(int[][][].class.getName(), Type.type(int[][][].class).binary());
+    assertEquals(long[][][].class.getName(), Type.type(long[][][].class).binary());
+    assertEquals(short[][][].class.getName(), Type.type(short[][][].class).binary());
+    assertThrows(UnsupportedOperationException.class, () -> WildcardType.wildcard().binary());
   }
 
   @Test

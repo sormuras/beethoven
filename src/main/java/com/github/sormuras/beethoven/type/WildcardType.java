@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.IntFunction;
 
 /**
  * Wildcards are useful in situations where only partial knowledge about the type parameter is
@@ -70,6 +71,11 @@ public class WildcardType extends Type {
   }
 
   @Override
+  public WildcardType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+    return new WildcardType(annotationsSupplier.apply(0), boundExtends, boundSuper);
+  }
+
+  @Override
   public Listing apply(Listing listing) {
     listing.add(toAnnotationsListable());
     listing.add('?');
@@ -94,10 +100,5 @@ public class WildcardType extends Type {
 
   public Optional<ReferenceType> getBoundSuper() {
     return Optional.ofNullable(boundSuper);
-  }
-
-  @Override
-  public WildcardType toAnnotatedType(List<Annotation> annotations) {
-    return new WildcardType(annotations, boundExtends, boundSuper);
   }
 }
