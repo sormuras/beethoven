@@ -29,7 +29,6 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntFunction;
-import java.util.stream.IntStream;
 
 /**
  * Class or interface type.
@@ -139,17 +138,6 @@ public class ClassType extends ReferenceType {
     return names.get(names.size() - 1);
   }
 
-  /** Create simple {@link Name} for this {@link ClassType} instance. */
-  public Name toName() {
-    List<String> identifiers = new ArrayList<>();
-    if (!getPackageName().isEmpty()) {
-      stream(getPackageName().split("\\.")).forEach(identifiers::add);
-    }
-    int packageLevel = identifiers.size();
-    names.forEach(simple -> identifiers.add(simple.getName()));
-    return Name.name(packageLevel, identifiers);
-  }
-
   public List<Simple> getNames() {
     return names;
   }
@@ -170,6 +158,17 @@ public class ClassType extends ReferenceType {
         && names.get(0).getName().equals("Object");
   }
 
+  /** Create simple {@link Name} for this {@link ClassType} instance. */
+  public Name toName() {
+    List<String> identifiers = new ArrayList<>();
+    if (!getPackageName().isEmpty()) {
+      stream(getPackageName().split("\\.")).forEach(identifiers::add);
+    }
+    int packageLevel = identifiers.size();
+    names.forEach(simple -> identifiers.add(simple.getName()));
+    return Name.name(packageLevel, identifiers);
+  }
+
   @Override
   public ClassType toAnnotatedType(List<Annotation> annotations) {
     Simple last = getLastClassName();
@@ -181,14 +180,12 @@ public class ClassType extends ReferenceType {
   /** Create new {@link ClassType} copied from this instance with supplied type arguments. */
   public ClassType toParameterizedType(IntFunction<List<Type>> typeArgumentsSupplier) {
     List<Simple> simples = new ArrayList<>();
-    IntStream.range(0, names.size())
-        .forEach(
-            i -> {
-              Simple source = names.get(i);
-              List<Type> types = typeArgumentsSupplier.apply(i);
-              List<TypeArgument> tas = types.stream().map(TypeArgument::argument).collect(toList());
-              simples.add(new Simple(source.getAnnotations(), source.name, tas));
-            });
+    for (int i = 0; i < names.size(); i++) {
+      Simple source = names.get(i);
+      List<Type> types = typeArgumentsSupplier.apply(i);
+      List<TypeArgument> arguments = types.stream().map(TypeArgument::argument).collect(toList());
+      simples.add(new Simple(source.getAnnotations(), source.name, arguments));
+    }
     return new ClassType(packageName, simples);
   }
 
