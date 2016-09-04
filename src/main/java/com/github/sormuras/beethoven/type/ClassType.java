@@ -14,7 +14,7 @@
 
 package com.github.sormuras.beethoven.type;
 
-import static java.util.Arrays.stream;
+import static java.util.Collections.addAll;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.joining;
@@ -76,11 +76,22 @@ public class ClassType extends ReferenceType {
 
   public static final ClassType OBJECT = ClassType.type(Object.class);
 
+  /** Create simple {@link Name} for the given {@link ClassType} instance. */
+  public static Name name(ClassType type) {
+    List<String> identifiers = new ArrayList<>();
+    if (!type.getPackageName().isEmpty()) {
+      addAll(identifiers, type.getPackageName().split("\\."));
+    }
+    int packageLevel = identifiers.size();
+    identifiers.addAll(type.getSimples().stream().map(Simple::getName).collect(toList()));
+    return Name.name(packageLevel, identifiers);
+  }
+
   /** Create {@link ClassType} using raw type and attach type arguments to last simple name. */
   public static ClassType parameterized(Class<?> raw, java.lang.reflect.Type... arguments) {
     assert raw.getTypeParameters().length == arguments.length;
     ClassType rawClassType = type(raw);
-    int last = rawClassType.getNames().size() - 1;
+    int last = rawClassType.getSimples().size() - 1;
     IntFunction<List<Type>> function = i -> i == last ? Type.types(arguments) : emptyList();
     return rawClassType.toParameterizedType(function);
   }
@@ -89,7 +100,7 @@ public class ClassType extends ReferenceType {
     return new ClassType(Name.name(type).packageName(), simples(type));
   }
 
-  /** Create list of simple names - potentially with annotations and type parameters. */
+  /** Create list of simple simples - potentially with annotations and type parameters. */
   public static List<Simple> simples(Class<?> type) {
     List<Simple> simples = new ArrayList<>();
     while (true) {
@@ -104,29 +115,31 @@ public class ClassType extends ReferenceType {
     }
   }
 
-  private final List<Simple> names;
   private final String packageName;
+  private final Name name;
+  private final List<Simple> simples;
 
-  ClassType(String packageName, List<Simple> names) {
+  ClassType(String packageName, List<Simple> simples) {
     super(emptyList());
     this.packageName = packageName;
-    this.names = unmodifiableList(names);
+    this.simples = unmodifiableList(simples);
+    this.name = name(this);
   }
 
   @Override
   public Listing apply(Listing listing) {
-    NameMode mode = listing.getNameModeFunction().apply(toName());
+    NameMode mode = listing.getNameModeFunction().apply(getName());
     if (mode == NameMode.LAST) {
       return listing.add(getLastClassName());
     }
     if (mode == NameMode.SIMPLE) {
-      return listing.add(getNames(), ".");
+      return listing.add(getSimples(), ".");
     }
     assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
     if (!getPackageName().isEmpty()) {
       listing.add(getPackageName()).add('.');
     }
-    return listing.add(getNames(), ".");
+    return listing.add(getSimples(), ".");
   }
 
   @Override
@@ -135,11 +148,15 @@ public class ClassType extends ReferenceType {
   }
 
   public Simple getLastClassName() {
-    return names.get(names.size() - 1);
+    return simples.get(simples.size() - 1);
   }
 
-  public List<Simple> getNames() {
-    return names;
+  public Name getName() {
+    return name;
+  }
+
+  public List<Simple> getSimples() {
+    return simples;
   }
 
   public String getPackageName() {
@@ -148,45 +165,34 @@ public class ClassType extends ReferenceType {
 
   @Override
   public boolean isAnnotated() {
-    return names.stream().filter(Annotated::isAnnotated).findAny().isPresent();
+    return simples.stream().filter(Annotated::isAnnotated).findAny().isPresent();
   }
 
   @Override
   public boolean isJavaLangObject() {
     return packageName.equals("java.lang")
-        && names.size() == 1
-        && names.get(0).getName().equals("Object");
-  }
-
-  /** Create simple {@link Name} for this {@link ClassType} instance. */
-  public Name toName() {
-    List<String> identifiers = new ArrayList<>();
-    if (!getPackageName().isEmpty()) {
-      stream(getPackageName().split("\\.")).forEach(identifiers::add);
-    }
-    int packageLevel = identifiers.size();
-    names.forEach(simple -> identifiers.add(simple.getName()));
-    return Name.name(packageLevel, identifiers);
+        && simples.size() == 1
+        && simples.get(0).getName().equals("Object");
   }
 
   @Override
   public ClassType toAnnotatedType(List<Annotation> annotations) {
     Simple last = getLastClassName();
-    List<Simple> simples = new ArrayList<>(names);
+    List<Simple> simples = new ArrayList<>(this.simples);
     simples.set(simples.size() - 1, new Simple(annotations, last.name, last.typeArguments));
     return new ClassType(packageName, simples);
   }
 
   /** Create new {@link ClassType} copied from this instance with supplied type arguments. */
   public ClassType toParameterizedType(IntFunction<List<Type>> typeArgumentsSupplier) {
-    List<Simple> simples = new ArrayList<>();
-    for (int i = 0; i < names.size(); i++) {
-      Simple source = names.get(i);
+    List<Simple> newSimples = new ArrayList<>();
+    for (int i = 0; i < simples.size(); i++) {
+      Simple source = simples.get(i);
       List<Type> types = typeArgumentsSupplier.apply(i);
       List<TypeArgument> arguments = types.stream().map(TypeArgument::argument).collect(toList());
-      simples.add(new Simple(source.getAnnotations(), source.name, arguments));
+      newSimples.add(new Simple(source.getAnnotations(), source.getName(), arguments));
     }
-    return new ClassType(packageName, simples);
+    return new ClassType(packageName, newSimples);
   }
 
   @Override
@@ -195,7 +201,7 @@ public class ClassType extends ReferenceType {
     if (!getPackageName().isEmpty()) {
       builder.append(getPackageName()).append('.');
     }
-    builder.append(getNames().stream().map(Simple::getName).collect(joining("$")));
+    builder.append(getSimples().stream().map(Simple::getName).collect(joining("$")));
     return builder.toString();
   }
 }
