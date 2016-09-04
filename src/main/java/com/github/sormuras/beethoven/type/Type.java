@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
+import com.github.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -29,7 +30,20 @@ import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.AnnotatedWildcardType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntFunction;
+import javax.lang.model.AnnotatedConstruct;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.SimpleAnnotationValueVisitor8;
+import javax.lang.model.util.SimpleTypeVisitor8;
 
 /**
  * The Java programming language is a statically typed language, which means that every variable and
@@ -48,6 +62,217 @@ import java.util.function.IntFunction;
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html">JLS 4</a>
  */
 public abstract class Type extends Annotated {
+
+  /** Common {@link Type} factory collection parsing {@link javax.lang.model.type.TypeMirror}s. */
+  interface Mirrors {
+
+    /** Annotation value visitor adding members to the {@link Annotation} instance. */
+    class AnnotationVisitor extends SimpleAnnotationValueVisitor8<Annotation, String> {
+      private final Annotation annotation;
+
+      AnnotationVisitor(Annotation annotation) {
+        super(annotation);
+        this.annotation = annotation;
+      }
+
+      @Override
+      protected Annotation defaultAction(Object object, String name) {
+        annotation.addObject(name, object);
+        return annotation;
+      }
+
+      @Override
+      public Annotation visitAnnotation(AnnotationMirror mirror, String name) {
+        annotation.addMember(name, Mirrors.annotation(mirror));
+        return annotation;
+      }
+
+      @Override
+      public Annotation visitArray(List<? extends AnnotationValue> values, String name) {
+        for (AnnotationValue value : values) {
+          value.accept(this, name);
+        }
+        return annotation;
+      }
+
+      @Override
+      public Annotation visitEnumConstant(VariableElement element, String name) {
+        annotation.addMember(name, l -> l.add(Name.name(element)));
+        return annotation;
+      }
+
+      @Override
+      public Annotation visitType(TypeMirror mirror, String name) {
+        annotation.addMember(name, l -> l.add(type(mirror)).add(".class"));
+        return annotation;
+      }
+    }
+
+    class TypeVisitor extends SimpleTypeVisitor8<Type, Void> {
+
+      @Override
+      public Type visitArray(javax.lang.model.type.ArrayType type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+
+      @Override
+      public Type visitDeclared(javax.lang.model.type.DeclaredType type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+
+      @Override
+      public Type visitError(javax.lang.model.type.ErrorType type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+
+      @Override
+      public Type visitNoType(javax.lang.model.type.NoType type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+
+      @Override
+      public Type visitPrimitive(javax.lang.model.type.PrimitiveType type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+
+      @Override
+      public Type visitTypeVariable(javax.lang.model.type.TypeVariable type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+
+      @Override
+      public Type visitWildcard(javax.lang.model.type.WildcardType type, Void tag) {
+        return Mirrors.mirror(type);
+      }
+    }
+
+    static List<Annotation> annotations(AnnotatedConstruct source) {
+      List<? extends AnnotationMirror> mirrors = source.getAnnotationMirrors();
+      if (mirrors.isEmpty()) {
+        return emptyList();
+      }
+      return mirrors.stream().map(Mirrors::annotation).collect(toList());
+    }
+
+    /** Create {@link Annotation} based on {@link AnnotationMirror} instance. */
+    static Annotation annotation(AnnotationMirror mirror) {
+      Element element = mirror.getAnnotationType().asElement();
+      Annotation annotation = Annotation.annotation(Name.name(element));
+      Map<? extends ExecutableElement, ? extends AnnotationValue> values =
+          mirror.getElementValues();
+      if (values.isEmpty()) {
+        return annotation;
+      }
+      AnnotationVisitor visitor = new AnnotationVisitor(annotation);
+      for (ExecutableElement executableElement : values.keySet()) {
+        String name = executableElement.getSimpleName().toString();
+        AnnotationValue value = values.get(executableElement);
+        value.accept(visitor, name);
+      }
+      return annotation;
+    }
+
+    /** Create {@link ArrayType} based on {@link javax.lang.model.type.ArrayType} instance. */
+    static ArrayType mirror(javax.lang.model.type.ArrayType type) {
+      List<ArrayType.Dimension> dimensions = new ArrayList<>();
+      TypeMirror mirror = type;
+      while (mirror instanceof javax.lang.model.type.ArrayType) {
+        ArrayType.Dimension dimension = new ArrayType.Dimension(annotations(mirror));
+        dimensions.add(dimension);
+        mirror = ((javax.lang.model.type.ArrayType) mirror).getComponentType();
+      }
+      return ArrayType.array(type(mirror), dimensions);
+    }
+
+    /** Create {@link ClassType} based on {@link javax.lang.model.type.DeclaredType} instance. */
+    static ClassType mirror(javax.lang.model.type.DeclaredType type) {
+      // extract package name
+      Element packageElement = type.asElement();
+      while (packageElement.getKind() != ElementKind.PACKAGE) {
+        packageElement = packageElement.getEnclosingElement();
+      }
+      PackageElement casted = (PackageElement) packageElement;
+      String packageName = casted.getQualifiedName().toString();
+
+      // extract simple name, annotations and type arguments
+      List<ClassType.Simple> simples = new ArrayList<>();
+      for (Element element = type.asElement();
+          element.getKind().isClass() || element.getKind().isInterface();
+          element = element.getEnclosingElement()) {
+
+        String name = element.getSimpleName().toString();
+        type = (javax.lang.model.type.DeclaredType) element.asType();
+        List<Annotation> annotations = annotations(type);
+        List<TypeArgument> arguments = emptyList();
+        List<? extends TypeMirror> mirrors = type.getTypeArguments();
+        if (!mirrors.isEmpty()) {
+          arguments = mirrors.stream().map(ta -> TypeArgument.argument(type(ta))).collect(toList());
+        }
+        simples.add(0, new ClassType.Simple(annotations, name, arguments));
+      }
+
+      return new ClassType(packageName, simples);
+    }
+
+    /** Create {@link Type} based on {@link javax.lang.model.type.NoType} instance. */
+    static Type mirror(javax.lang.model.type.NoType type) {
+      if (type.getKind() == TypeKind.VOID) {
+        return VoidType.INSTANCE;
+      }
+      throw new AssertionError("Unsupported no type: " + type.getKind());
+    }
+
+    /** Create {@link PrimitiveType} based on {@link javax.lang.model.type.PrimitiveType} type. */
+    static PrimitiveType mirror(javax.lang.model.type.PrimitiveType mirror) {
+      List<Annotation> annotations = annotations(mirror);
+      TypeKind kind = mirror.getKind();
+      if (kind == TypeKind.BOOLEAN) {
+        return PrimitiveType.primitive(annotations, boolean.class);
+      }
+      if (kind == TypeKind.INT) {
+        return PrimitiveType.primitive(annotations, int.class);
+      }
+      if (kind == TypeKind.LONG) {
+        return PrimitiveType.primitive(annotations, long.class);
+      }
+      if (kind == TypeKind.CHAR) {
+        return PrimitiveType.primitive(annotations, char.class);
+      }
+      if (kind == TypeKind.FLOAT) {
+        return PrimitiveType.primitive(annotations, float.class);
+      }
+      if (kind == TypeKind.DOUBLE) {
+        return PrimitiveType.primitive(annotations, double.class);
+      }
+      if (kind == TypeKind.BYTE) {
+        return PrimitiveType.primitive(annotations, byte.class);
+      }
+      if (kind == TypeKind.SHORT) {
+        return PrimitiveType.primitive(annotations, short.class);
+      }
+      throw new AssertionError("Unsupported primitive type: " + mirror.getKind());
+    }
+
+    /** Create {@link TypeVariable} based on {@link javax.lang.model.type.TypeVariable} mirror. */
+    static TypeVariable mirror(javax.lang.model.type.TypeVariable mirror) {
+      List<Annotation> annotations = annotations(mirror);
+      return TypeVariable.variable(annotations, mirror.asElement().getSimpleName().toString());
+    }
+
+    /** Create {@link WildcardType} based on {@link javax.lang.model.type.WildcardType} instance. */
+    static WildcardType mirror(javax.lang.model.type.WildcardType mirror) {
+      List<Annotation> annotations = annotations(mirror);
+      TypeMirror extendsBound = mirror.getExtendsBound();
+      if (extendsBound != null) {
+        return WildcardType.extend(annotations, (ReferenceType) type(extendsBound));
+      }
+      TypeMirror superBound = mirror.getSuperBound();
+      if (superBound != null) {
+        return WildcardType.supertype(annotations, (ReferenceType) type(superBound));
+      }
+      return WildcardType.wildcard(annotations);
+    }
+  }
 
   interface Reflection {
 
@@ -242,22 +467,29 @@ public abstract class Type extends Annotated {
     return type((Class<?>) type);
   }
 
+  /** Create {@link Type} based on {@link javax.lang.model.type.TypeMirror} instance. */
+  static Type type(javax.lang.model.type.TypeMirror mirror) {
+    Mirrors.TypeVisitor visitor = new Mirrors.TypeVisitor();
+    return mirror.accept(visitor, null);
+  }
+
+  /** Create list of types based on variable array of {@link java.lang.reflect.Type}s. */
   public static List<Type> types(java.lang.reflect.Type... types) {
     return stream(types).map(Type::type).collect(toList());
   }
 
+  /** Initialize this {@link Type} instance. */
   Type(List<Annotation> annotations) {
     super(annotations);
   }
 
-  /** Create new copy of this instance with supplied annotations attached. */
+  /** Create new copy of this instance attaching supplied index-based annotations. */
   public Type annotate(IntFunction<List<Annotation>> annotationsSupplier) {
     throw new UnsupportedOperationException(getClass() + " does not support annotate()");
   }
 
   /**
-   * Return the binary name of this type (class, interface, array class, primitive type, or void)
-   * represented by this object, as a String.
+   * Return the binary name of this type as a String.
    *
    * @return (binary) class name
    * @see Class#getName()
