@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
-import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class PrimitiveTypeTest {
@@ -48,9 +48,7 @@ class PrimitiveTypeTest {
     Type uvint = PrimitiveType.primitive(Annotation.annotations(U.class, V.class), int.class);
     assertEquals(U.USE + " " + V.USE + " int", uvint.list());
     U reflected = U.class.getDeclaredField("NUMBER").getAnnotatedType().getAnnotation(U.class);
-    Type uint2 =
-        PrimitiveType.primitive(
-            Collections.singletonList(Annotation.annotation(reflected)), int.class);
+    Type uint2 = PrimitiveType.primitive(List.of(Annotation.annotation(reflected)), int.class);
     assertEquals(U.USE + " int", uint2.list());
   }
 }

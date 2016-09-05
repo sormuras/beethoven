@@ -1,7 +1,5 @@
 package com.github.sormuras.beethoven.type;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,15 +35,15 @@ class TypeTest<T> {
 
   List<String> @U [] @U [] d = null;
 
-  @U List<@U String> los = emptyList();
+  @U List<@U String> los = List.of();
 
-  List<@U T> lot = emptyList();
+  List<@U T> lot = List.of();
 
-  List<@U ?> low = emptyList();
+  List<@U ?> low = List.of();
 
-  List<@U ? extends T> lowe = emptyList();
+  List<@U ? extends T> lowe = List.of();
 
-  List<@U ? super T> lows = emptyList();
+  List<@U ? super T> lows = List.of();
 
   private String asAnnotatedType(String fieldName) throws Exception {
     AnnotatedType annotatedType = getClass().getDeclaredField(fieldName).getAnnotatedType();
@@ -191,7 +189,7 @@ class TypeTest<T> {
     String charContent = Tests.load(TypeTest.class, "primitives");
     JavaFileObject source = Compilation.source(URI.create("test/Primitives.java"), charContent);
     Counter counter = new Counter();
-    Compilation.compile(null, emptyList(), singletonList(counter), singletonList(source));
+    Compilation.compile(null, List.of(), List.of(counter), List.of(source));
     primitives(counter);
   }
 }

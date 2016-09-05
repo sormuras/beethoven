@@ -10,8 +10,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -158,8 +156,8 @@ class AnnotationTest {
   @Test
   void values() {
     Listable x = listing -> listing.add('x');
-    assertSame(Listable.IDENTITY, Annotation.values(Collections.emptyList()));
-    assertEquals("x", Annotation.values(Collections.singletonList(x)).list());
-    assertEquals("{x, x}", Annotation.values(Arrays.asList(x, x)).list());
+    assertSame(Listable.IDENTITY, Annotation.values(List.of()));
+    assertEquals("x", Annotation.values(List.of(x)).list());
+    assertEquals("{x, x}", Annotation.values(List.of(x, x)).list());
   }
 }

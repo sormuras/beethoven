@@ -3,8 +3,7 @@ package com.github.sormuras.beethoven.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.sormuras.beethoven.Annotation;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ArrayTypeTest {
@@ -19,11 +18,11 @@ class ArrayTypeTest {
   @Test
   void arrayTypeWithAnnotatedDimensions() {
     ArrayType.Dimension[] dimensions = {
-      new ArrayType.Dimension(Collections.singletonList(Annotation.cast("A"))),
-      new ArrayType.Dimension(Arrays.asList(Annotation.cast("B"), Annotation.cast("C"))),
-      new ArrayType.Dimension(Collections.singletonList(Annotation.cast("D")))
+      new ArrayType.Dimension(List.of(Annotation.cast("A"))),
+      new ArrayType.Dimension(List.of(Annotation.cast("B"), Annotation.cast("C"))),
+      new ArrayType.Dimension(List.of(Annotation.cast("D")))
     };
-    ArrayType actual = ArrayType.array(Type.type(byte.class), Arrays.asList(dimensions));
+    ArrayType actual = ArrayType.array(Type.type(byte.class), List.of(dimensions));
     assertEquals("byte@A []@B @C []@D []", actual.list());
   }
 }

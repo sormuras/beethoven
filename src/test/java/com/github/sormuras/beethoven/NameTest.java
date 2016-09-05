@@ -1,8 +1,5 @@
 package com.github.sormuras.beethoven;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -59,7 +56,7 @@ class NameTest {
     assertEquals(Name.name(Object.class), Name.cast(Object.class));
     assertEquals(Name.name(Thread.State.BLOCKED), Name.cast(Thread.State.BLOCKED));
     assertEquals(Name.name("abc", "X"), Name.cast(new String[] {"abc", "X"}));
-    assertEquals(Name.name("abc", "X"), Name.cast(asList("abc", "X")));
+    assertEquals(Name.name("abc", "X"), Name.cast(List.of("abc", "X")));
     assertEquals(Name.name(Math.class.getField("PI")), Name.cast(Math.class.getField("PI")));
     expectThrows(IllegalArgumentException.class, () -> Name.cast(BigInteger.ZERO));
   }
@@ -69,7 +66,7 @@ class NameTest {
     JavaFileObject a = Compilation.source("A", "@X class A {}");
     JavaFileObject x = Compilation.source("X", "@interface X {}");
     ElementNameProcessor p = new ElementNameProcessor();
-    Compilation.compile(null, emptyList(), singletonList(p), asList(a, x));
+    Compilation.compile(null, List.of(), List.of(p), List.of(a, x));
     assertEquals(1, p.all.size());
     assertEquals(Name.name("A"), p.all.get(0));
   }
@@ -79,7 +76,7 @@ class NameTest {
     JavaFileObject a = Compilation.source("x.A", "package x; @x.X class A {}");
     JavaFileObject x = Compilation.source("x.X", "package x; @interface X {}");
     ElementNameProcessor p = new ElementNameProcessor();
-    Compilation.compile(null, emptyList(), singletonList(p), asList(a, x));
+    Compilation.compile(null, List.of(), List.of(p), List.of(a, x));
     assertEquals(1, p.all.size());
     assertEquals(Name.name("x", "A"), p.all.get(0));
   }
@@ -118,7 +115,7 @@ class NameTest {
 
   @Test
   void equalsAndHashcode() {
-    assertEquals(Name.name(byte.class), new Name(0, singletonList("byte")));
+    assertEquals(Name.name(byte.class), new Name(0, List.of("byte")));
     assertEquals(Name.name(Object.class), Name.name("java", "lang", "Object"));
     assertEquals(Name.name(Objects.class), Name.name("java", "util", "Objects"));
     assertEquals(Name.name(Thread.class), Name.name("java", "lang", "Thread"));
@@ -131,7 +128,7 @@ class NameTest {
     assertFalse(Name.name(byte.class).equals(null));
     Object byteClass = byte.class; // bypass EqualsBetweenInconvertibleTypes "error"
     assertFalse(Name.name(byte.class).equals(byteClass));
-    assertFalse(Name.name(byte.class).equals(new Name(0, asList("some", "byte"))));
+    assertFalse(Name.name(byte.class).equals(new Name(0, List.of("some", "byte"))));
   }
 
   @Test

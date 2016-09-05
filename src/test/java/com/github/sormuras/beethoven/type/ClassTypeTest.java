@@ -14,7 +14,6 @@ import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +43,7 @@ class ClassTypeTest {
     String expected = "java.lang." + U.USE + " Comparable<java.lang." + V.USE + " String>";
     ClassType string = ClassType.type(String.class).annotated(i -> V.SINGLETON);
     ClassType comparable = ClassType.type(Comparable.class).annotated(i -> U.SINGLETON);
-    ClassType type = comparable.parameterized(i -> Collections.singletonList(string));
+    ClassType type = comparable.parameterized(i -> List.of(string));
     assertEquals(expected, type.list());
     assertTrue(type.isAnnotated());
     assertTrue(type.isGeneric());
@@ -83,7 +82,7 @@ class ClassTypeTest {
     List<Annotation> annotations = new ArrayList<>();
     annotations.add(Annotation.annotation(Name.name("UUU")));
     annotations.add(Annotation.annotation(V.class));
-    ClassType.Simple name = new ClassType.Simple(annotations, "Name", Collections.emptyList());
+    ClassType.Simple name = new ClassType.Simple(annotations, "Name", List.of());
     assertEquals("@UUU " + V.USE + " Name", name.list());
 
     ClassType nested =

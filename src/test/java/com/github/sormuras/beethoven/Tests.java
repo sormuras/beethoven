@@ -14,15 +14,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 
 public interface Tests {
 
   @SafeVarargs
   static <T> Deque<T> asDeque(T... elements) {
-    return new ArrayDeque<>(Arrays.asList(elements));
+    return new ArrayDeque<>(List.of(elements));
   }
 
   static void assertEquals(Class<?> testClass, String testName, Listable listable) {
