@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Importing;
+import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Name;
 import com.github.sormuras.beethoven.Omitting;
 import com.github.sormuras.beethoven.U;
@@ -66,7 +67,7 @@ class ClassTypeTest {
     ClassType state = ClassType.type(Thread.State.class);
     assertEquals("java.lang.Thread.State", state.list());
     assertEquals("Thread.State", state.list(new Omitting()));
-    assertEquals("State", state.list(new Importing()));
+    assertEquals("State", state.list(new Importing(Listing.NameMode.LAST)));
   }
 
   @Test

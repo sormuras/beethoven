@@ -95,7 +95,7 @@ class ListingTest {
     assertEquals("java.util.Map.Entry", new Omitting().add(entry).toString());
     assertEquals("Object", new Importing().add(object).toString());
     assertEquals("Map", new Importing().add(map).toString());
-    assertEquals("Entry", new Importing().add(entry).toString());
+    assertEquals("Entry", new Importing(Listing.NameMode.LAST).add(entry).toString());
     assertThrows(AssertionError.class, () -> new Failing().add(pi));
   }
 

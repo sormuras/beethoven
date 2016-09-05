@@ -1,15 +1,22 @@
 package com.github.sormuras.beethoven.type;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.github.sormuras.beethoven.Compilation;
+import com.github.sormuras.beethoven.Counter;
+import com.github.sormuras.beethoven.Importing;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Tests;
 import com.github.sormuras.beethoven.U;
 import java.lang.reflect.AnnotatedType;
-import java.util.Collections;
+import java.net.URI;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+
+import javax.tools.JavaFileObject;
 
 class TypeTest<T> {
 
@@ -30,25 +37,25 @@ class TypeTest<T> {
 
   List<String> @U [] @U [] d = null;
 
-  @U List<@U String> los = Collections.emptyList();
+  @U List<@U String> los = emptyList();
 
-  List<@U T> lot = Collections.emptyList();
+  List<@U T> lot = emptyList();
 
-  List<@U ?> low = Collections.emptyList();
+  List<@U ?> low = emptyList();
 
-  List<@U ? extends T> lowe = Collections.emptyList();
+  List<@U ? extends T> lowe = emptyList();
 
-  List<@U ? super T> lows = Collections.emptyList();
+  List<@U ? super T> lows = emptyList();
 
-  private String asAnno(String fieldName) throws Exception {
+  private String asAnnotatedType(String fieldName) throws Exception {
     AnnotatedType annotatedType = getClass().getDeclaredField(fieldName).getAnnotatedType();
-    Listing listing = new Listing();
+    Listing listing = new Importing(Listing.NameMode.SIMPLE);
     return listing.add(Type.type(annotatedType)).toString();
   }
 
   private String asGenericType(String fieldName) throws Exception {
     java.lang.reflect.Type type = getClass().getDeclaredField(fieldName).getGenericType();
-    Listing listing = new Listing();
+    Listing listing = new Importing(Listing.NameMode.SIMPLE);
     return listing.add(Type.type(type)).toString();
   }
 
@@ -78,15 +85,16 @@ class TypeTest<T> {
 
   @Test
   void reflectFieldTypeAsAnnotatedType() throws Exception {
-    assertEquals("int", asAnno("a"));
-    assertEquals(U.USE + " int", asAnno("b"));
-    assertEquals("int" + U.USE + " []" + U.USE + " []" + U.USE + " []", asAnno("c"));
-    assertEquals("java.util.List<java.lang.String>" + U.USE + " []" + U.USE + " []", asAnno("d"));
-    assertEquals("java.util." + U.USE + " List<java.lang." + U.USE + " String>", asAnno("los"));
-    assertEquals("java.util.List<" + U.USE + " T>", asAnno("lot"));
-    assertEquals("java.util.List<" + U.USE + " ?>", asAnno("low"));
-    assertEquals("java.util.List<" + U.USE + " ? extends T>", asAnno("lowe"));
-    assertEquals("java.util.List<" + U.USE + " ? super T>", asAnno("lows"));
+    assertEquals("int", asAnnotatedType("a"));
+    assertEquals("@U int", asAnnotatedType("b"));
+    assertEquals("int@U []@U []@U []", asAnnotatedType("c"));
+    assertEquals("List<String>@U []@U []", asAnnotatedType("d"));
+    assertEquals("@U List<@U String>", asAnnotatedType("los"));
+    assertEquals("List<@U T>", asAnnotatedType("lot"));
+    assertEquals("List<@U ?>", asAnnotatedType("low"));
+    assertEquals("List<@U ? extends T>", asAnnotatedType("lowe"));
+    assertEquals("List<@U ? super T>", asAnnotatedType("lows"));
+    // TODO assertEquals(getClass().getSimpleName() + ".W.Y", asAnnotatedType("w"));
   }
 
   @Test
@@ -94,19 +102,17 @@ class TypeTest<T> {
     assertEquals("int", asGenericType("a"));
     assertEquals("int", asGenericType("b"));
     assertEquals("int[][][]", asGenericType("c"));
-    assertEquals(
-        getClass().getTypeName() + "<T>.W<java.lang.Number>.Y<java.lang.Integer>",
-        asGenericType("w"));
-    assertEquals("java.util.List<java.lang.String>[][]", asGenericType("d"));
-    assertEquals("java.util.List<java.lang.String>", asGenericType("los"));
-    assertEquals("java.util.List<T>", asGenericType("lot"));
-    assertEquals("java.util.List<?>", asGenericType("low"));
-    assertEquals("java.util.List<? extends T>", asGenericType("lowe"));
-    assertEquals("java.util.List<? super T>", asGenericType("lows"));
+    assertEquals("List<String>[][]", asGenericType("d"));
+    assertEquals("List<String>", asGenericType("los"));
+    assertEquals("List<T>", asGenericType("lot"));
+    assertEquals("List<?>", asGenericType("low"));
+    assertEquals("List<? extends T>", asGenericType("lowe"));
+    assertEquals("List<? super T>", asGenericType("lows"));
+    assertEquals(getClass().getSimpleName() + "<T>.W<Number>.Y<Integer>", asGenericType("w"));
   }
 
   @Test
-  void className() {
+  void binary() {
     assertEquals(boolean.class.getName(), Type.type(boolean.class).binary());
     assertEquals(byte.class.getName(), Type.type(byte.class).binary());
     assertEquals(char.class.getName(), Type.type(char.class).binary());
@@ -165,5 +171,27 @@ class TypeTest<T> {
     } catch (AssertionError e) {
       // expected
     }
+  }
+
+  private void primitives(Counter counter) {
+    assertEquals(9, counter.map.size());
+    assertEquals(Type.type(boolean.class), counter.map.get("field1"));
+    assertEquals(Type.type(byte.class), counter.map.get("field2"));
+    assertEquals(Type.type(char.class), counter.map.get("field3"));
+    assertEquals(Type.type(double.class), counter.map.get("field4"));
+    assertEquals(Type.type(float.class), counter.map.get("field5"));
+    assertEquals(Type.type(int.class), counter.map.get("field6"));
+    assertEquals(Type.type(long.class), counter.map.get("field7"));
+    assertEquals(Type.type(short.class), counter.map.get("field8"));
+    assertEquals(Type.type(void.class), counter.map.get("noop"));
+  }
+
+  @Test
+  void primitivesFromFile() {
+    String charContent = Tests.load(TypeTest.class, "primitives");
+    JavaFileObject source = Compilation.source(URI.create("test/Primitives.java"), charContent);
+    Counter counter = new Counter();
+    Compilation.compile(null, emptyList(), singletonList(counter), singletonList(source));
+    primitives(counter);
   }
 }

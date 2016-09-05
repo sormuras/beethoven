@@ -14,11 +14,13 @@
 
 package com.github.sormuras.beethoven;
 
+import static java.util.Arrays.sort;
+import static java.util.Arrays.stream;
+
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,7 +62,7 @@ public class Annotation implements Listable {
     Annotation result = annotation(annotation.annotationType());
     try {
       Method[] methods = annotation.annotationType().getDeclaredMethods();
-      Arrays.sort(methods, (m1, m2) -> m1.getName().compareTo(m2.getName()));
+      sort(methods, (m1, m2) -> m1.getName().compareTo(m2.getName()));
       for (Method method : methods) {
         Object value = method.invoke(annotation);
         if (!includeDefaultValues) {
@@ -95,7 +97,7 @@ public class Annotation implements Listable {
 
   public static Annotation annotation(Name name, Object... values) {
     Annotation annotation = new Annotation(name);
-    Arrays.stream(values).forEach(annotation::addValue);
+    stream(values).forEach(annotation::addValue);
     return annotation;
   }
 
@@ -113,14 +115,14 @@ public class Annotation implements Listable {
 
   /** Create list argument {@link Annotation} instances by reflecting given all annotations. */
   public static List<Annotation> annotations(java.lang.annotation.Annotation... annotations) {
-    return Arrays.stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
+    return stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
   }
 
   /** Create list argument {@link Annotation} instances by reflecting given all annotations. */
   @SafeVarargs
   public static List<Annotation> annotations(
       Class<? extends java.lang.annotation.Annotation>... annotations) {
-    return Arrays.stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
+    return stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
   }
 
   /** Not-so type-safe annotation adder. */

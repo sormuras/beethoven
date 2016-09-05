@@ -70,7 +70,7 @@ public interface Tests {
   }
 
   static String load(Class<?> testClass, String testName) {
-    String fileName = testClass.getName().replace('.', '/') + "." + testName + ".txt";
+    String fileName = testClass.getName().replace('.', '/') + "." + testName + ".java";
     try {
       Path path = Paths.get(testClass.getClassLoader().getResource(fileName).toURI());
       return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);

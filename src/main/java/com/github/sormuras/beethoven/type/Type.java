@@ -64,7 +64,7 @@ import javax.lang.model.util.SimpleTypeVisitor8;
 public abstract class Type extends Annotated {
 
   /** Common {@link Type} factory collection parsing {@link javax.lang.model.type.TypeMirror}s. */
-  interface Mirrors {
+  public interface Mirrors {
 
     /** Annotation value visitor adding members to the {@link Annotation} instance. */
     class AnnotationVisitor extends SimpleAnnotationValueVisitor8<Annotation, String> {
@@ -274,7 +274,7 @@ public abstract class Type extends Annotated {
     }
   }
 
-  interface Reflection {
+  public interface Reflection {
 
     /** Create {@link Type} based on {@link AnnotatedArrayType} instance. */
     static ArrayType reflect(AnnotatedArrayType annotatedType) {
