@@ -27,7 +27,7 @@ import java.util.function.IntFunction;
  * required.
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-Wildcard">JLS
- * 4</a>
+ *     4</a>
  */
 public class WildcardType extends Type {
 

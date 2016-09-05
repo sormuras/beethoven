@@ -25,7 +25,7 @@ class TypeTest<T> {
       int i = a;
     }
   }
-  
+
   // "@U Y<..." crashes GJF 1.0 -- fixed in 1.1-SNAPSHOT ?
   @U W<Number>.@U Y<Integer> w = null;
 

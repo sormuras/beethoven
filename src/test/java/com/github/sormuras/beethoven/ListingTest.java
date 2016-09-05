@@ -1,22 +1,20 @@
 package com.github.sormuras.beethoven;
 
-import org.junit.jupiter.api.Test;
+import static java.lang.Math.PI;
+import static java.util.Locale.GERMAN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static java.util.Locale.GERMAN;
-import static java.lang.Math.PI;
+import org.junit.jupiter.api.Test;
 
 class ListingTest {
 

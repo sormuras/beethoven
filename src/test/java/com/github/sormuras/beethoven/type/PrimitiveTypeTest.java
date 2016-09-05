@@ -7,9 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
-import org.junit.jupiter.api.Test;
-
 import java.util.Collections;
+import org.junit.jupiter.api.Test;
 
 class PrimitiveTypeTest {
 

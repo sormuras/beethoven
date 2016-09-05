@@ -42,7 +42,7 @@ public abstract class Annotated implements Listable {
   /**
    * Build listable annotation separator.
    *
-   * This implementation creates a separator depending on the annotation target element type.
+   * <p>This implementation creates a separator depending on the annotation target element type.
    */
   protected Listable buildAnnotationsSeparator() {
     ElementType target = getAnnotationsTarget();

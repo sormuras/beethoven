@@ -30,8 +30,7 @@ public class Listing {
   /**
    * Name emission mode.
    *
-   * <p>
-   * {@link NameMode#CANONICAL}: Canonical, like:
+   * <p>{@link NameMode#CANONICAL}: Canonical, like:
    *
    * <pre>
    *    "java.util.Objects"
@@ -127,8 +126,7 @@ public class Listing {
   /**
    * Add list of listables using given textual separator inline.
    *
-   * <p>
-   * For example: {@code "a, b, c"}, {@code "a & b & c"} or {@code "[][][]"}
+   * <p>For example: {@code "a, b, c"}, {@code "a & b & c"} or {@code "[][][]"}
    */
   public Listing add(List<? extends Listable> listables, CharSequence separator) {
     return add(listables, listing -> listing.add(separator));
@@ -158,19 +156,22 @@ public class Listing {
   /**
    * Parse source string and replace placeholders with {@link #add}-calls to this {@link Listing}
    * instance.
-   * <p>
-   * Simple placeholders:
+   *
+   * <p>Simple placeholders:
+   *
    * <ul>
-   * <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}</li>
-   * <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}</li>
-   * <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}</li>
+   * <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}
+   * <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}
+   * <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}
    * </ul>
+   *
    * Every unknown placeholder is treated as a method chain call. Example:
    *
    * <pre>
    * String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}"
    * new Listing().add(source, System.class, "123", "", "$").toString()
    * </pre>
+   *
    * produces: {@code java.lang.System.out.println(\"123\"); // 0 String}
    */
   public Listing add(String source, Object... args) {

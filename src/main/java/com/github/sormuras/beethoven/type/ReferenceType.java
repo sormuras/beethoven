@@ -15,7 +15,6 @@
 package com.github.sormuras.beethoven.type;
 
 import com.github.sormuras.beethoven.Annotation;
-
 import java.util.List;
 
 /**

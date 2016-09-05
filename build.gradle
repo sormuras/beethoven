@@ -29,26 +29,28 @@ tasks.withType(JavaCompile) {
     targetCompatibility  = 1.9
 }
 
+jar {
+    from sourceSets.main.allJava.files
+}
+
 dependencies {
     testCompile('org.junit.jupiter:junit-jupiter-api:5.0.0-M2')
     testRuntime('org.junit.jupiter:junit-jupiter-engine:5.0.0-M2')
 }
 
-//googleJavaFormat {
-//    toolVersion '1.0' // '1.1-SNAPSHOT'
-//}
-
-//checkstyle {
-//    toolVersion = 7.1
-//    configFile = rootProject.file('src/checkstyle-config-google.xml')
-//    sourceSets = [ sourceSets.main ]
-//}
-
 afterEvaluate {
-    def JavaExec junitPlatformTestTask = (JavaExec) tasks.getByName('junitPlatformTest')
+    def JavaExec junit = (JavaExec) tasks.getByName('junitPlatformTest')
 
-    junitPlatformTestTask.setEnableAssertions(true)
-    junitPlatformTestTask.systemProperty 'java.util.logging.config.file', 'src/test/resources/logging.properties'
+    junit.setEnableAssertions(true)
+    junit.systemProperty 'java.util.logging.config.file', 'src/test/resources/logging.properties'
+}
+
+task format(type: JavaExec) {
+    main '-jar'
+    args =  ['gradle/google-java-format-1.1-20160811.184829-28-all-deps.jar']
+    args += ['--replace']
+    args += sourceSets.main.allJava.files
+    args += sourceSets.test.allJava.files
 }
 
 task wrapper(type: Wrapper) {

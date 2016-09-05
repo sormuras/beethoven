@@ -32,11 +32,10 @@ import javax.lang.model.element.PackageElement;
 /**
  * Names are used to refer to entities declared in a program.
  *
- * <p>
- * A declared entity is a package, class type (normal or enum), interface type (normal or annotation
- * type), member (class, interface, field, or method) argument a reference type, type parameter
- * (argument a class, interface, method or constructor), parameter (to a method, constructor, or
- * exception handler), or local variable.
+ * <p>A declared entity is a package, class type (normal or enum), interface type (normal or
+ * annotation type), member (class, interface, field, or method) argument a reference type, type
+ * parameter (argument a class, interface, method or constructor), parameter (to a method,
+ * constructor, or exception handler), or local variable.
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
  */
@@ -113,8 +112,7 @@ public final class Name {
   /**
    * Create name instance for the identifiers.
    *
-   * <p>
-   * The fully qualified class name {@code abc.xyz.Alphabet} can be created by:
+   * <p>The fully qualified class name {@code abc.xyz.Alphabet} can be created by:
    *
    * <pre>
    * name(2, "abc", "xyz", "Alphabet")
@@ -132,8 +130,7 @@ public final class Name {
   /**
    * Create name instance for the identifiers by delegating to {@link #name(int, List)}.
    *
-   * <p>
-   * The package level is determined by the first capital name argument the list.
+   * <p>The package level is determined by the first capital name argument the list.
    */
   public static Name name(List<String> names) {
     int size = names.size();
