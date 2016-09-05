@@ -1,5 +1,6 @@
-sudo:
-  false
+sudo: required
+dist: precise
+group: edge
 
 before_install:
   - chmod +x gradlew
