@@ -40,11 +40,11 @@ public class ArrayType extends ReferenceType {
 
     @Override
     public Listing apply(Listing listing) {
-      return listing.add(toAnnotationsListable()).add("[]");
+      return listing.add(getAnnotationsListable()).add("[]");
     }
 
     @Override
-    public ElementType getAnnotationTarget() {
+    public ElementType getAnnotationsTarget() {
       return ElementType.TYPE_USE;
     }
   }
@@ -83,7 +83,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public ArrayType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+  public ArrayType annotated(IntFunction<List<Annotation>> annotationsSupplier) {
     return new ArrayType(componentType, dimensions(dimensions.size(), annotationsSupplier));
   }
 

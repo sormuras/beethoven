@@ -14,8 +14,11 @@
 
 package com.github.sormuras.beethoven.type;
 
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.addAll;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -27,8 +30,6 @@ import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
 
@@ -46,10 +47,6 @@ public class ClassType extends ReferenceType {
     private final String name;
     private final List<TypeArgument> typeArguments;
 
-    Simple(String name) {
-      this(emptyList(), name, emptyList());
-    }
-
     Simple(List<Annotation> annotations, String name, List<TypeArgument> typeArguments) {
       super(annotations);
       this.name = name;
@@ -58,7 +55,7 @@ public class ClassType extends ReferenceType {
 
     @Override
     public Listing apply(Listing listing) {
-      listing.add(toAnnotationsListable());
+      listing.add(getAnnotationsListable());
       if (typeArguments.isEmpty()) {
         return listing.add(getName());
       }
@@ -67,7 +64,7 @@ public class ClassType extends ReferenceType {
     }
 
     @Override
-    public ElementType getAnnotationTarget() {
+    public ElementType getAnnotationsTarget() {
       return ElementType.TYPE_USE;
     }
 
@@ -77,6 +74,10 @@ public class ClassType extends ReferenceType {
 
     public List<TypeArgument> getTypeArguments() {
       return typeArguments;
+    }
+
+    public boolean isGeneric() {
+      return !typeArguments.isEmpty();
     }
   }
 
@@ -99,7 +100,7 @@ public class ClassType extends ReferenceType {
     ClassType rawClassType = type(raw);
     int last = rawClassType.getSimples().size() - 1;
     IntFunction<List<Type>> function = i -> i == last ? Type.types(arguments) : emptyList();
-    return rawClassType.toParameterizedType(function);
+    return rawClassType.parameterized(function);
   }
 
   public static ClassType type(Class<?> type) {
@@ -113,11 +114,31 @@ public class ClassType extends ReferenceType {
   /** Create {@link ClassType} with elements given as simple name strings. */
   public static ClassType type(String packageName, String topLevelName, String... nested) {
     if (nested.length == 0) {
-      return new ClassType(packageName, Collections.singletonList(new Simple(topLevelName)));
+      return new ClassType(packageName, singletonList(simple(topLevelName)));
     }
     List<Simple> simples = simples(nested);
-    simples.add(0, new Simple(topLevelName));
+    simples.add(0, simple(topLevelName));
     return new ClassType(packageName, simples);
+  }
+
+  public static ClassType type(String packageName, Simple topLevel, Simple... nested) {
+    List<Simple> simples = new ArrayList<>();
+    simples.add(topLevel);
+    simples.addAll(asList(nested));
+    return new ClassType(packageName, simples);
+  }
+
+  public static Simple simple(String identifier, java.lang.reflect.Type... typeArguments) {
+    List<TypeArgument> arguments = emptyList();
+    if (typeArguments.length > 0) {
+      arguments = Type.types(typeArguments).stream().map(TypeArgument::argument).collect(toList());
+    }
+    return new Simple(emptyList(), identifier, arguments);
+  }
+
+  public static Simple simple(
+      List<Annotation> annotations, String identifier, List<TypeArgument> arguments) {
+    return new Simple(annotations, identifier, arguments);
   }
 
   /** Create list of simple simples - potentially with annotations and type parameters. */
@@ -127,7 +148,7 @@ public class ClassType extends ReferenceType {
       List<Annotation> annotations = Annotation.annotations(type);
       String identifier = type.getSimpleName();
       List<TypeArgument> arguments = emptyList(); // TODO type.getTypeParameters()
-      simples.add(0, new Simple(annotations, identifier, arguments));
+      simples.add(0, simple(annotations, identifier, arguments));
       type = type.getEnclosingClass();
       if (type == null) {
         return simples;
@@ -137,7 +158,7 @@ public class ClassType extends ReferenceType {
 
   /** Create list of simple simples. */
   public static List<Simple> simples(String... names) {
-    return Arrays.stream(names).map(Simple::new).collect(toList());
+    return stream(names).map(ClassType::simple).collect(toList());
   }
 
   private final String packageName;
@@ -146,23 +167,15 @@ public class ClassType extends ReferenceType {
 
   ClassType(String packageName, List<Simple> simples) {
     super(emptyList());
+    assert packageName != null : "packageName";
+    assert !simples.isEmpty() : "simples must not be empty";
     this.packageName = packageName;
     this.simples = unmodifiableList(simples);
     this.name = name(this);
   }
 
   @Override
-  public String binary() {
-    StringBuilder builder = new StringBuilder();
-    if (!getPackageName().isEmpty()) {
-      builder.append(getPackageName()).append('.');
-    }
-    builder.append(getSimples().stream().map(Simple::getName).collect(joining("$")));
-    return builder.toString();
-  }
-
-  @Override
-  public ClassType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+  public ClassType annotated(IntFunction<List<Annotation>> annotationsSupplier) {
     List<Simple> newSimples = new ArrayList<>();
     for (int i = 0; i < simples.size(); i++) {
       Simple source = simples.get(i);
@@ -176,7 +189,7 @@ public class ClassType extends ReferenceType {
   public Listing apply(Listing listing) {
     NameMode mode = listing.getNameModeFunction().apply(getName());
     if (mode == NameMode.LAST) {
-      return listing.add(getLastClassName());
+      return listing.add(getLastSimple());
     }
     if (mode == NameMode.SIMPLE) {
       return listing.add(getSimples(), ".");
@@ -189,8 +202,18 @@ public class ClassType extends ReferenceType {
   }
 
   @Override
+  public String binary() {
+    StringBuilder builder = new StringBuilder();
+    if (!getPackageName().isEmpty()) {
+      builder.append(getPackageName()).append('.');
+    }
+    builder.append(getSimples().stream().map(Simple::getName).collect(joining("$")));
+    return builder.toString();
+  }
+
+  @Override
   public List<Annotation> getAnnotations() {
-    return getLastClassName().getAnnotations();
+    return getLastSimple().getAnnotations();
   }
 
   @Override
@@ -198,7 +221,7 @@ public class ClassType extends ReferenceType {
     return simples.size() - 1;
   }
 
-  public Simple getLastClassName() {
+  public Simple getLastSimple() {
     return simples.get(simples.size() - 1);
   }
 
@@ -219,6 +242,10 @@ public class ClassType extends ReferenceType {
     return simples.stream().filter(Annotated::isAnnotated).findAny().isPresent();
   }
 
+  public boolean isGeneric() {
+    return simples.stream().filter(Simple::isGeneric).findAny().isPresent();
+  }
+
   @Override
   public boolean isJavaLangObject() {
     return packageName.equals("java.lang")
@@ -227,7 +254,7 @@ public class ClassType extends ReferenceType {
   }
 
   /** Create new {@link ClassType} copied from this instance with supplied type arguments. */
-  public ClassType toParameterizedType(IntFunction<List<Type>> typeArgumentsSupplier) {
+  public ClassType parameterized(IntFunction<List<Type>> typeArgumentsSupplier) {
     List<Simple> newSimples = new ArrayList<>();
     for (int i = 0; i < simples.size(); i++) {
       Simple source = simples.get(i);

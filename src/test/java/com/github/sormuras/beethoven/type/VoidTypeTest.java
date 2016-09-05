@@ -13,8 +13,8 @@ class VoidTypeTest {
 
   @Test
   void annotationTargetIsNull() {
-    assertNull(VoidType.INSTANCE.getAnnotationTarget());
-    assertEquals(Listable.NEWLINE, VoidType.INSTANCE.getAnnotationSeparator());
+    assertNull(VoidType.INSTANCE.getAnnotationsTarget());
+    assertEquals(Listable.NEWLINE, VoidType.INSTANCE.getAnnotationsSeparator());
   }
 
   @Test

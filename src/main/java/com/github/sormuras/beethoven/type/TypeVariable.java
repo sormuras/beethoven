@@ -48,17 +48,22 @@ public class TypeVariable extends ReferenceType {
   }
 
   @Override
-  public TypeVariable annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+  public TypeVariable annotated(IntFunction<List<Annotation>> annotationsSupplier) {
     return new TypeVariable(annotationsSupplier.apply(0), identifier);
   }
 
   @Override
   public Listing apply(Listing listing) {
-    return listing.add(toAnnotationsListable()).add(getIdentifier());
+    return listing.add(getAnnotationsListable()).add(getIdentifier());
   }
 
   @Override
-  public ElementType getAnnotationTarget() {
+  public String binary() {
+    throw new UnsupportedOperationException("Type variables have no binary class name.");
+  }
+
+  @Override
+  public ElementType getAnnotationsTarget() {
     return ElementType.TYPE_PARAMETER;
   }
 

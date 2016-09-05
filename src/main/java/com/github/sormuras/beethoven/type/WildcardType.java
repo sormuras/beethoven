@@ -71,13 +71,13 @@ public class WildcardType extends Type {
   }
 
   @Override
-  public WildcardType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+  public WildcardType annotated(IntFunction<List<Annotation>> annotationsSupplier) {
     return new WildcardType(annotationsSupplier.apply(0), boundExtends, boundSuper);
   }
 
   @Override
   public Listing apply(Listing listing) {
-    listing.add(toAnnotationsListable());
+    listing.add(getAnnotationsListable());
     listing.add('?');
     if (!getBoundExtends().isJavaLangObject()) {
       return listing.add(" extends ").add(getBoundExtends());
@@ -90,7 +90,12 @@ public class WildcardType extends Type {
   }
 
   @Override
-  public ElementType getAnnotationTarget() {
+  public String binary() {
+    throw new UnsupportedOperationException("Wildcards have no binary class name.");
+  }
+
+  @Override
+  public ElementType getAnnotationsTarget() {
     return ElementType.TYPE_PARAMETER;
   }
 

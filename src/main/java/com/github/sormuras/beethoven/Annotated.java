@@ -14,17 +14,43 @@
 
 package com.github.sormuras.beethoven;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+
 import java.lang.annotation.ElementType;
-import java.util.Collections;
 import java.util.List;
 
 /** Base {@link Annotation}-collecting implementation. */
 public abstract class Annotated implements Listable {
 
   private final List<Annotation> annotations;
+  private final Listable annotationsListable;
+  private final Listable annotationsSeparator;
 
-  public Annotated(List<Annotation> annotations) {
-    this.annotations = Collections.unmodifiableList(annotations);
+  /** Initialize this instance. */
+  protected Annotated(List<Annotation> annotations) {
+    this.annotations = unmodifiableList(annotations.isEmpty() ? emptyList() : annotations);
+    this.annotationsSeparator = buildAnnotationsSeparator();
+    this.annotationsListable = annotations.isEmpty() ? Listable.IDENTITY : this::applyAnnotations;
+  }
+
+  /** Add all annotations to the given {@link Listing} instance. */
+  protected Listing applyAnnotations(Listing listing) {
+    return listing.add(annotations, annotationsSeparator).add(annotationsSeparator);
+  }
+
+  /**
+   * Build listable annotation separator.
+   *
+   * This implementation creates a separator depending on the annotation target element type.
+   */
+  protected Listable buildAnnotationsSeparator() {
+    ElementType target = getAnnotationsTarget();
+    boolean inline =
+        target == ElementType.TYPE_PARAMETER
+            || target == ElementType.TYPE_USE
+            || target == ElementType.PARAMETER;
+    return inline ? Listable.SPACE : Listable.NEWLINE;
   }
 
   @Override
@@ -42,37 +68,38 @@ public abstract class Annotated implements Listable {
     return annotations;
   }
 
-  /** Return listable separator depending on the annotation target element type. */
-  public Listable getAnnotationSeparator() {
-    ElementType target = getAnnotationTarget();
-    boolean inline =
-        target == ElementType.TYPE_PARAMETER
-            || target == ElementType.TYPE_USE
-            || target == ElementType.PARAMETER;
-    return inline ? Listable.SPACE : Listable.NEWLINE;
+  /** Return listable source snippet for all annotations. */
+  public Listable getAnnotationsListable() {
+    return annotationsListable;
   }
 
-  public abstract ElementType getAnnotationTarget();
+  /** Return listable separator used to textually separate annotations from each other. */
+  public Listable getAnnotationsSeparator() {
+    return annotationsSeparator;
+  }
+
+  /** The designated target element type of the annotations. */
+  public abstract ElementType getAnnotationsTarget();
+
+  /** Used by {@link #toString()} as an instance description hint. */
+  public String getDescription() {
+    return list() + " // 0x" + Integer.toHexString(System.identityHashCode(this));
+  }
 
   @Override
   public int hashCode() {
     return list().hashCode();
   }
 
+  /** Return {@code true} if there is at least one annotation available. */
   public boolean isAnnotated() {
     return !annotations.isEmpty();
   }
 
-  public Listable toAnnotationsListable() {
-    if (isAnnotated()) {
-      Listable separator = getAnnotationSeparator();
-      return listing -> listing.add(getAnnotations(), separator).add(separator);
-    }
-    return Listable.IDENTITY;
-  }
-
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{@" + (isAnnotated() ? getAnnotations().size() : 0) + "}";
+    String className = getClass().getSimpleName();
+    String description = getDescription();
+    return String.format("%s {@%d %s}", className, getAnnotations().size(), description);
   }
 }

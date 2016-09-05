@@ -300,7 +300,7 @@ public abstract class Type extends Annotated {
         java.lang.reflect.ParameterizedType type = (java.lang.reflect.ParameterizedType) underlying;
         ClassType ownerClassType = reflect(type);
         List<Annotation> annotations = Annotation.annotations(annotatedType);
-        String name = ownerClassType.getLastClassName().getName();
+        String name = ownerClassType.getLastSimple().getName();
         simples.add(0, new ClassType.Simple(annotations, name, arguments));
         annotatedType = (AnnotatedParameterizedType) type.getOwnerType();
         if (annotatedType == null) {
@@ -401,7 +401,7 @@ public abstract class Type extends Annotated {
 
   @SuppressWarnings("unchecked")
   public static <T extends Type> T annotated(T type, List<Annotation> annotations) {
-    return (T) type.annotate(i -> i == type.getAnnotationIndex() ? annotations : emptyList());
+    return (T) type.annotated(i -> i == type.getAnnotationIndex() ? annotations : emptyList());
   }
 
   public static <T extends Type> T annotationless(T type) {
@@ -484,9 +484,7 @@ public abstract class Type extends Annotated {
   }
 
   /** Create new copy of this instance attaching supplied index-based annotations. */
-  public Type annotate(IntFunction<List<Annotation>> annotationsSupplier) {
-    throw new UnsupportedOperationException(getClass() + " does not support annotate()");
-  }
+  public abstract Type annotated(IntFunction<List<Annotation>> annotationsSupplier);
 
   /**
    * Return the binary name of this type as a String.
@@ -495,12 +493,10 @@ public abstract class Type extends Annotated {
    * @see Class#getName()
    * @see Class#forName(String)
    */
-  public String binary() {
-    throw new UnsupportedOperationException(getClass() + " does not support binary()");
-  }
+  public abstract String binary();
 
   @Override
-  public ElementType getAnnotationTarget() {
+  public ElementType getAnnotationsTarget() {
     return ElementType.TYPE_USE;
   }
 

@@ -59,7 +59,7 @@ public class Counter extends AbstractProcessor {
     }
     roundEnv.getElementsAnnotatedWith(Mark.class).forEach(marked::add);
     for (Element element : marked) {
-      // Huh? JavaMirrors.annotate(new WildcardType(), element);
+      // Huh? JavaMirrors.annotated(new WildcardType(), element);
       TypeMirror mirror = element.asType();
       if (element instanceof ExecutableElement) {
         mirror = ((ExecutableElement) element).getReturnType();

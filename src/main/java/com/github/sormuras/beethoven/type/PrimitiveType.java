@@ -71,7 +71,7 @@ public final class PrimitiveType extends Type {
   }
 
   @Override
-  public PrimitiveType annotate(IntFunction<List<Annotation>> annotationsSupplier) {
+  public PrimitiveType annotated(IntFunction<List<Annotation>> annotationsSupplier) {
     return new PrimitiveType(annotationsSupplier.apply(0), type, typeChar);
   }
 
@@ -82,7 +82,7 @@ public final class PrimitiveType extends Type {
 
   @Override
   public Listing apply(Listing listing) {
-    return listing.add(toAnnotationsListable()).add(binary());
+    return listing.add(getAnnotationsListable()).add(binary());
   }
 
   public Class<?> getType() {
