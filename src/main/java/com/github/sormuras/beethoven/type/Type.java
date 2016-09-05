@@ -289,24 +289,44 @@ public abstract class Type extends Annotated {
     }
 
     /** Create {@link Type} based on {@link AnnotatedParameterizedType} instance. */
+    // https://bugs.openjdk.java.net/browse/JDK-8146861
+    // Impossible to read an annotated owner type of an annotated parameterized type.
+    // Fixed in Java 9:
+    // http://download.java.net/java/jdk9/docs/api/java/lang/reflect/AnnotatedParameterizedType.html
     static ClassType reflect(AnnotatedParameterizedType annotatedType) {
       List<ClassType.Simple> simples = new ArrayList<>();
+      java.lang.reflect.Type underlying = annotatedType.getType();
+      java.lang.reflect.ParameterizedType type = (java.lang.reflect.ParameterizedType) underlying;
       while (true) {
+        List<Annotation> annotations = emptyList();
         List<TypeArgument> arguments = new ArrayList<>();
-        for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
-          arguments.add(TypeArgument.argument(Type.type(actual)));
+        if (annotatedType != null) {
+          annotations = Annotation.annotations(annotatedType);
+          for (AnnotatedType actual : annotatedType.getAnnotatedActualTypeArguments()) {
+            arguments.add(TypeArgument.argument(Type.type(actual)));
+          }
+        } else {
+          for (java.lang.reflect.Type actual : type.getActualTypeArguments()) {
+            arguments.add(TypeArgument.argument(Type.type(actual)));
+          }
         }
-        java.lang.reflect.Type underlying = annotatedType.getType();
-        java.lang.reflect.ParameterizedType type = (java.lang.reflect.ParameterizedType) underlying;
-        ClassType ownerClassType = reflect(type);
-        List<Annotation> annotations = Annotation.annotations(annotatedType);
-        String name = ownerClassType.getLastSimple().getName();
+
+        ClassType classType = reflect(type);
+        String name = classType.getLastSimple().getName();
         simples.add(0, new ClassType.Simple(annotations, name, arguments));
-        annotatedType = (AnnotatedParameterizedType) type.getOwnerType();
-        if (annotatedType == null) {
-          String packageName = ownerClassType.getPackageName();
+
+        java.lang.reflect.Type owner = type.getOwnerType();
+        if (owner == null) {
+          String packageName = classType.getPackageName();
           return new ClassType(packageName, simples);
         }
+        if (owner instanceof AnnotatedParameterizedType) {
+          annotatedType = (AnnotatedParameterizedType) owner;
+          type = (java.lang.reflect.ParameterizedType) annotatedType.getType();
+          continue;
+        }
+        annotatedType = null;
+        type = (java.lang.reflect.ParameterizedType) owner;
       }
     }
 

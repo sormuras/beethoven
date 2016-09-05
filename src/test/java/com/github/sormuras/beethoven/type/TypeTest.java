@@ -14,9 +14,8 @@ import com.github.sormuras.beethoven.U;
 import java.lang.reflect.AnnotatedType;
 import java.net.URI;
 import java.util.List;
-import org.junit.jupiter.api.Test;
-
 import javax.tools.JavaFileObject;
+import org.junit.jupiter.api.Test;
 
 class TypeTest<T> {
 
@@ -27,6 +26,8 @@ class TypeTest<T> {
     }
   }
 
+  // "@U W<..." will only work in Java 9+ -- see https://bugs.openjdk.java.net/browse/JDK-8146861
+  // "@U Y<..." crashes GJF 1.0 -- fixed in 1.1-SNAPSHOT
   W<Number>.Y<Integer> w = null;
 
   int a = 4;
@@ -94,7 +95,7 @@ class TypeTest<T> {
     assertEquals("List<@U ?>", asAnnotatedType("low"));
     assertEquals("List<@U ? extends T>", asAnnotatedType("lowe"));
     assertEquals("List<@U ? super T>", asAnnotatedType("lows"));
-    // TODO assertEquals(getClass().getSimpleName() + ".W.Y", asAnnotatedType("w"));
+    assertEquals("TypeTest<T>.W<Number>.Y<Integer>", asAnnotatedType("w"));
   }
 
   @Test
