@@ -104,12 +104,12 @@ public class Listing {
     return this;
   }
 
-  /** Add list argument listables using newline separator. */
+  /** Add list of listables using newline separator. */
   public Listing add(List<? extends Listable> listables) {
     return add(listables, Listable.NEWLINE);
   }
 
-  /** Add list argument listables using given listable separator. */
+  /** Add list of listables using given listable separator. */
   public Listing add(List<? extends Listable> listables, Listable separator) {
     if (listables.isEmpty()) {
       return this;
@@ -125,7 +125,7 @@ public class Listing {
   }
 
   /**
-   * Add list argument listables using given textual separator inline.
+   * Add list of listables using given textual separator inline.
    *
    * <p>
    * For example: {@code "a, b, c"}, {@code "a & b & c"} or {@code "[][][]"}
@@ -293,7 +293,7 @@ public class Listing {
       collectedLines.add(newline);
       return this;
     }
-    // prepend indentation pattern in front argument the new line
+    // prepend indentation pattern in front of the new line
     collectedLines.add(indentationTable[currentIndentationDepth] + newline);
     return this;
   }
