@@ -25,10 +25,9 @@ class TypeTest<T> {
       int i = a;
     }
   }
-
-  // "@U W<..." will only work in Java 9+ -- see https://bugs.openjdk.java.net/browse/JDK-8146861
-  // "@U Y<..." crashes GJF 1.0 -- fixed in 1.1-SNAPSHOT
-  W<Number>.Y<Integer> w = null;
+  
+  // "@U Y<..." crashes GJF 1.0 -- fixed in 1.1-SNAPSHOT ?
+  @U W<Number>.@U Y<Integer> w = null;
 
   int a = 4;
 
@@ -95,7 +94,7 @@ class TypeTest<T> {
     assertEquals("List<@U ?>", asAnnotatedType("low"));
     assertEquals("List<@U ? extends T>", asAnnotatedType("lowe"));
     assertEquals("List<@U ? super T>", asAnnotatedType("lows"));
-    assertEquals("TypeTest<T>.W<Number>.Y<Integer>", asAnnotatedType("w"));
+    assertEquals("TypeTest<T>.@U W<Number>.@U Y<Integer>", asAnnotatedType("w"));
   }
 
   @Test
