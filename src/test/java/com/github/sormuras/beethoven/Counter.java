@@ -1,6 +1,8 @@
 package com.github.sormuras.beethoven;
 
 import com.github.sormuras.beethoven.type.Type;
+import com.sun.source.tree.Tree;
+import com.sun.source.util.Trees;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +26,8 @@ public class Counter extends AbstractProcessor {
   public @interface Mark {}
 
   public final List<Element> marked = new ArrayList<>();
-  public final Map<String, Type> map = new HashMap<>();
+  public final Map<String, Tree> trees = new HashMap<>();
+  public final Map<String, Type> types = new HashMap<>();
   public final List<Annotation> annotations = new ArrayList<>();
   public Elements elementUtils;
   public Types typeUtils;
@@ -50,6 +53,12 @@ public class Counter extends AbstractProcessor {
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    // System.out.println("\n" +roundEnv);
+    if (roundEnv.processingOver()) {
+      return true;
+    }
+    Trees treeUtils = Trees.instance(processingEnv);
+
     for (Element root : roundEnv.getRootElements()) {
       this.annotations.addAll(
           root.getAnnotationMirrors()
@@ -63,7 +72,11 @@ public class Counter extends AbstractProcessor {
       if (element instanceof ExecutableElement) {
         mirror = ((ExecutableElement) element).getReturnType();
       }
-      map.put(element.getSimpleName().toString(), Type.type(mirror));
+      String name = element.getSimpleName().toString();
+      Type type = Type.type(mirror);
+      Tree tree = treeUtils.getTree(element);
+      types.put(name, type);
+      trees.put(name, tree);
     }
     return true;
   }

@@ -172,16 +172,16 @@ class TypeTest<T> {
   }
 
   private void primitives(Counter counter) {
-    assertEquals(9, counter.map.size());
-    assertEquals(Type.type(boolean.class), counter.map.get("field1"));
-    assertEquals(Type.type(byte.class), counter.map.get("field2"));
-    assertEquals(Type.type(char.class), counter.map.get("field3"));
-    assertEquals(Type.type(double.class), counter.map.get("field4"));
-    assertEquals(Type.type(float.class), counter.map.get("field5"));
-    assertEquals(Type.type(int.class), counter.map.get("field6"));
-    assertEquals(Type.type(long.class), counter.map.get("field7"));
-    assertEquals(Type.type(short.class), counter.map.get("field8"));
-    assertEquals(Type.type(void.class), counter.map.get("noop"));
+    assertEquals(9, counter.types.size());
+    assertEquals(Type.type(boolean.class), counter.types.get("field1"));
+    assertEquals(Type.type(byte.class), counter.types.get("field2"));
+    assertEquals(Type.type(char.class), counter.types.get("field3"));
+    assertEquals(Type.type(double.class), counter.types.get("field4"));
+    assertEquals(Type.type(float.class), counter.types.get("field5"));
+    assertEquals(Type.type(int.class), counter.types.get("field6"));
+    assertEquals(Type.type(long.class), counter.types.get("field7"));
+    assertEquals(Type.type(short.class), counter.types.get("field8"));
+    assertEquals(Type.type(void.class), counter.types.get("noop"));
   }
 
   @Test
@@ -189,7 +189,10 @@ class TypeTest<T> {
     String charContent = Tests.load(TypeTest.class, "primitives");
     JavaFileObject source = Compilation.source(URI.create("test/Primitives.java"), charContent);
     Counter counter = new Counter();
-    Compilation.compile(null, List.of(), List.of(counter), List.of(source));
+    Compilation.compile(getClass().getClassLoader(), List.of(), List.of(counter), List.of(source));
     primitives(counter);
+    // Tree tree = counter.trees.get("field1");
+    // Type type = tree.accept(new Type.Trees.TypeTreeVisitor(), null);
+    // System.out.print(tree + " -> " + type);
   }
 }

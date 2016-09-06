@@ -223,8 +223,31 @@ public abstract class Type extends Annotated {
 
     /** Create {@link PrimitiveType} based on {@link javax.lang.model.type.PrimitiveType} type. */
     static PrimitiveType mirror(javax.lang.model.type.PrimitiveType mirror) {
+      return primitive(annotations(mirror), mirror.getKind());
+    }
+
+    /** Create {@link TypeVariable} based on {@link javax.lang.model.type.TypeVariable} mirror. */
+    static TypeVariable mirror(javax.lang.model.type.TypeVariable mirror) {
       List<Annotation> annotations = annotations(mirror);
-      TypeKind kind = mirror.getKind();
+      return TypeVariable.variable(annotations, mirror.asElement().getSimpleName().toString());
+    }
+
+    /** Create {@link WildcardType} based on {@link javax.lang.model.type.WildcardType} instance. */
+    static WildcardType mirror(javax.lang.model.type.WildcardType mirror) {
+      List<Annotation> annotations = annotations(mirror);
+      TypeMirror extendsBound = mirror.getExtendsBound();
+      if (extendsBound != null) {
+        return WildcardType.extend(annotations, (ReferenceType) type(extendsBound));
+      }
+      TypeMirror superBound = mirror.getSuperBound();
+      if (superBound != null) {
+        return WildcardType.supertype(annotations, (ReferenceType) type(superBound));
+      }
+      return WildcardType.wildcard(annotations);
+    }
+
+    /** Create {@link PrimitiveType} based on {@link TypeKind kind} type. */
+    static PrimitiveType primitive(List<Annotation> annotations, TypeKind kind) {
       if (kind == TypeKind.BOOLEAN) {
         return PrimitiveType.primitive(annotations, boolean.class);
       }
@@ -249,27 +272,7 @@ public abstract class Type extends Annotated {
       if (kind == TypeKind.SHORT) {
         return PrimitiveType.primitive(annotations, short.class);
       }
-      throw new AssertionError("Unsupported primitive type: " + mirror.getKind());
-    }
-
-    /** Create {@link TypeVariable} based on {@link javax.lang.model.type.TypeVariable} mirror. */
-    static TypeVariable mirror(javax.lang.model.type.TypeVariable mirror) {
-      List<Annotation> annotations = annotations(mirror);
-      return TypeVariable.variable(annotations, mirror.asElement().getSimpleName().toString());
-    }
-
-    /** Create {@link WildcardType} based on {@link javax.lang.model.type.WildcardType} instance. */
-    static WildcardType mirror(javax.lang.model.type.WildcardType mirror) {
-      List<Annotation> annotations = annotations(mirror);
-      TypeMirror extendsBound = mirror.getExtendsBound();
-      if (extendsBound != null) {
-        return WildcardType.extend(annotations, (ReferenceType) type(extendsBound));
-      }
-      TypeMirror superBound = mirror.getSuperBound();
-      if (superBound != null) {
-        return WildcardType.supertype(annotations, (ReferenceType) type(superBound));
-      }
-      return WildcardType.wildcard(annotations);
+      throw new AssertionError("Unsupported primitive type: " + kind);
     }
   }
 
