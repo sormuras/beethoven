@@ -125,7 +125,7 @@ public class Annotation implements Listable {
     return stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
   }
 
-  /** Not-so type-safe annotation adder. */
+  /** Not-so type-safe annotation factory. */
   @SuppressWarnings("unchecked")
   public static Annotation cast(Object object, Object... values) {
     if (object instanceof Annotation) {
