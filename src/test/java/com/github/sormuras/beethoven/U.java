@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Collections;
 import java.util.List;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -15,5 +14,5 @@ public @interface U {
 
   String USE = "@" + U.class.getCanonicalName();
 
-  List<Annotation> SINGLETON = Collections.singletonList(Annotation.annotation(U.class));
+  List<Annotation> SINGLETON = List.of(Annotation.annotation(U.class));
 }

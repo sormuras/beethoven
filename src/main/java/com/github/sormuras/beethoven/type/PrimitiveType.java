@@ -16,7 +16,6 @@ package com.github.sormuras.beethoven.type;
 
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
 
@@ -27,52 +26,69 @@ import java.util.function.IntFunction;
  */
 public final class PrimitiveType extends Type {
 
+  /** Builder-like enum of all well-known primitive types defined in the Java language. */
+  public enum Primitive {
+    BOOLEAN(boolean.class, 'Z'),
+
+    BYTE(byte.class, 'B'),
+
+    CHAR(char.class, 'C'),
+
+    DOUBLE(double.class, 'D'),
+
+    FLOAT(float.class, 'F'),
+
+    INT(int.class, 'I'),
+
+    LONG(long.class, 'J'),
+
+    SHORT(short.class, 'S');
+
+    public final char binary;
+    public final Class<?> type;
+
+    Primitive(Class<?> type, char binary) {
+      this.type = type;
+      this.binary = binary;
+    }
+
+    public PrimitiveType build() {
+      return build(List.of());
+    }
+
+    public PrimitiveType build(List<Annotation> annotations) {
+      return new PrimitiveType(annotations, this);
+    }
+  }
+
   /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
   public static PrimitiveType primitive(Class<?> type) {
-    return primitive(Collections.emptyList(), type);
+    return primitive(List.of(), type);
   }
 
   /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
   public static PrimitiveType primitive(List<Annotation> annotations, Class<?> type) {
-    if (type == boolean.class) {
-      return new PrimitiveType(annotations, type, 'Z');
+    if (!type.isPrimitive() || type.equals(Void.TYPE)) {
+      throw new AssertionError("Expected primitive type, got " + type);
     }
-    if (type == byte.class) {
-      return new PrimitiveType(annotations, type, 'B');
-    }
-    if (type == char.class) {
-      return new PrimitiveType(annotations, type, 'C');
-    }
-    if (type == double.class) {
-      return new PrimitiveType(annotations, type, 'D');
-    }
-    if (type == float.class) {
-      return new PrimitiveType(annotations, type, 'F');
-    }
-    if (type == int.class) {
-      return new PrimitiveType(annotations, type, 'I');
-    }
-    if (type == long.class) {
-      return new PrimitiveType(annotations, type, 'J');
-    }
-    if (type == short.class) {
-      return new PrimitiveType(annotations, type, 'S');
-    }
-    throw new AssertionError("expected primitive type, got " + type);
+    return primitive(annotations, type.getName().toUpperCase());
   }
 
-  private final Class<?> type;
-  private final char typeChar;
+  /** Create new {@link PrimitiveType} instance for passed primitive type name. */
+  public static PrimitiveType primitive(List<Annotation> annotations, String name) {
+    return Primitive.valueOf(name).build(annotations);
+  }
 
-  PrimitiveType(List<Annotation> annotations, Class<?> type, char typeChar) {
+  private final Primitive primitive;
+
+  PrimitiveType(List<Annotation> annotations, Primitive primitive) {
     super(annotations);
-    this.type = type;
-    this.typeChar = typeChar;
+    this.primitive = primitive;
   }
 
   @Override
   public PrimitiveType annotated(IntFunction<List<Annotation>> annotationsSupplier) {
-    return new PrimitiveType(annotationsSupplier.apply(0), type, typeChar);
+    return new PrimitiveType(annotationsSupplier.apply(0), primitive);
   }
 
   @Override
@@ -86,10 +102,10 @@ public final class PrimitiveType extends Type {
   }
 
   public Class<?> getType() {
-    return type;
+    return primitive.type;
   }
 
   public char getTypeChar() {
-    return typeChar;
+    return primitive.binary;
   }
 }

@@ -41,6 +41,11 @@ public interface Tests {
     }
   }
 
+  static void assertListable(String expected, Listable listable) {
+    Listing listing = new Importing();
+    Assertions.assertEquals(expected, listing.add(listable).toString());
+  }
+
   static void assertSerializable(Listable listable) {
     try {
       String expected = listable.list();

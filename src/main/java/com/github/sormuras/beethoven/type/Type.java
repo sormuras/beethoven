@@ -248,31 +248,7 @@ public abstract class Type extends Annotated {
 
     /** Create {@link PrimitiveType} based on {@link TypeKind kind} type. */
     static PrimitiveType primitive(List<Annotation> annotations, TypeKind kind) {
-      if (kind == TypeKind.BOOLEAN) {
-        return PrimitiveType.primitive(annotations, boolean.class);
-      }
-      if (kind == TypeKind.INT) {
-        return PrimitiveType.primitive(annotations, int.class);
-      }
-      if (kind == TypeKind.LONG) {
-        return PrimitiveType.primitive(annotations, long.class);
-      }
-      if (kind == TypeKind.CHAR) {
-        return PrimitiveType.primitive(annotations, char.class);
-      }
-      if (kind == TypeKind.FLOAT) {
-        return PrimitiveType.primitive(annotations, float.class);
-      }
-      if (kind == TypeKind.DOUBLE) {
-        return PrimitiveType.primitive(annotations, double.class);
-      }
-      if (kind == TypeKind.BYTE) {
-        return PrimitiveType.primitive(annotations, byte.class);
-      }
-      if (kind == TypeKind.SHORT) {
-        return PrimitiveType.primitive(annotations, short.class);
-      }
-      throw new AssertionError("Unsupported primitive type: " + kind);
+      return PrimitiveType.primitive(annotations, kind.name());
     }
   }
 
