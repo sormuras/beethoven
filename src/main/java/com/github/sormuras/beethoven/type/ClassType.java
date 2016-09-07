@@ -14,11 +14,8 @@
 
 package com.github.sormuras.beethoven.type;
 
-import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.addAll;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -99,7 +96,7 @@ public class ClassType extends ReferenceType {
     assert raw.getTypeParameters().length == arguments.length;
     ClassType rawClassType = type(raw);
     int last = rawClassType.getSimples().size() - 1;
-    IntFunction<List<Type>> function = i -> i == last ? Type.types(arguments) : emptyList();
+    IntFunction<List<Type>> function = i -> i == last ? Type.types(arguments) : List.of();
     return rawClassType.parameterized(function);
   }
 
@@ -114,7 +111,7 @@ public class ClassType extends ReferenceType {
   /** Create {@link ClassType} with elements given as simple name strings. */
   public static ClassType type(String packageName, String topLevelName, String... nested) {
     if (nested.length == 0) {
-      return new ClassType(packageName, singletonList(simple(topLevelName)));
+      return new ClassType(packageName, List.of(simple(topLevelName)));
     }
     List<Simple> simples = simples(nested);
     simples.add(0, simple(topLevelName));
@@ -124,31 +121,23 @@ public class ClassType extends ReferenceType {
   public static ClassType type(String packageName, Simple topLevel, Simple... nested) {
     List<Simple> simples = new ArrayList<>();
     simples.add(topLevel);
-    simples.addAll(asList(nested));
+    simples.addAll(List.of(nested));
     return new ClassType(packageName, simples);
   }
 
   public static Simple simple(String identifier, java.lang.reflect.Type... typeArguments) {
-    List<TypeArgument> arguments = emptyList();
+    List<TypeArgument> arguments = List.of();
     if (typeArguments.length > 0) {
       arguments = Type.types(typeArguments).stream().map(TypeArgument::argument).collect(toList());
     }
-    return new Simple(emptyList(), identifier, arguments);
-  }
-
-  public static Simple simple(
-      List<Annotation> annotations, String identifier, List<TypeArgument> arguments) {
-    return new Simple(annotations, identifier, arguments);
+    return new Simple(List.of(), identifier, arguments);
   }
 
   /** Create list of simple simples - potentially with annotations and type parameters. */
   public static List<Simple> simples(Class<?> type) {
     List<Simple> simples = new ArrayList<>();
     while (true) {
-      List<Annotation> annotations = Annotation.annotations(type);
-      String identifier = type.getSimpleName();
-      List<TypeArgument> arguments = emptyList(); // TODO type.getTypeParameters()
-      simples.add(0, simple(annotations, identifier, arguments));
+      simples.add(0, simple(type.getSimpleName()));
       type = type.getEnclosingClass();
       if (type == null) {
         return simples;
@@ -166,7 +155,7 @@ public class ClassType extends ReferenceType {
   private final List<Simple> simples;
 
   ClassType(String packageName, List<Simple> simples) {
-    super(emptyList());
+    super(List.of());
     assert packageName != null : "packageName";
     assert !simples.isEmpty() : "simples must not be empty";
     this.packageName = packageName;
