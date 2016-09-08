@@ -1,8 +1,8 @@
 package com.github.sormuras.beethoven.type;
 
-import static com.github.sormuras.beethoven.Listing.NameMode.CANONICAL;
-import static com.github.sormuras.beethoven.Listing.NameMode.LAST;
-import static com.github.sormuras.beethoven.Listing.NameMode.SIMPLE;
+import static com.github.sormuras.beethoven.Style.CANONICAL;
+import static com.github.sormuras.beethoven.Style.LAST;
+import static com.github.sormuras.beethoven.Style.SIMPLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;

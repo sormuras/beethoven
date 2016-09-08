@@ -23,8 +23,8 @@ import static java.util.stream.Collectors.toList;
 import com.github.sormuras.beethoven.Annotated;
 import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Listing;
-import com.github.sormuras.beethoven.Listing.NameMode;
 import com.github.sormuras.beethoven.Name;
+import com.github.sormuras.beethoven.Style;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,14 +176,14 @@ public class ClassType extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
-    NameMode mode = listing.getNameModeFunction().apply(getName());
-    if (mode == NameMode.LAST) {
+    Style style = listing.getStyling().apply(getName());
+    if (style == Style.LAST) {
       return listing.add(getLastSimple());
     }
-    if (mode == NameMode.SIMPLE) {
+    if (style == Style.SIMPLE) {
       return listing.add(getSimples(), ".");
     }
-    assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
+    assert style == Style.CANONICAL : "Unknown style: " + style;
     if (!getPackageName().isEmpty()) {
       listing.add(getPackageName()).add('.');
     }

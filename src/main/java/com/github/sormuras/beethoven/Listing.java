@@ -21,81 +21,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Spliterator;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Listing {
-
-  /**
-   * Name emission mode.
-   *
-   * <p>{@link NameMode#CANONICAL}: Canonical, like:
-   *
-   * <pre>
-   *    "java.util.Objects"
-   *    "java.lang.Thread.State.NEW"
-   *    "java.util.Collections.sort"
-   * </pre>
-   *
-   * {@link NameMode#LAST}: Single (type and static) imports only emit last name, like:
-   *
-   * <pre>
-   *    import java.util.Objects                 -> "Objects"
-   *    import static java.util.Collections.sort -> "sort"
-   * </pre>
-   *
-   * {@link NameMode#LAST}: On-demand _static_ import, like:
-   *
-   * <pre>
-   *   import static java.lang.Thread.State.*
-   *     name("java.lang.Thread.State.BLOCKED")   -> "BLOCKED"
-   *     name("java.lang.Thread.State.NEW")       -> "NEW"
-   *     name("java.lang.Thread.State.WAITING")   -> "WAITING"
-   * </pre>
-   *
-   * {@link NameMode#SIMPLE} On-demand _package_ imports only emit all simple names, like:
-   *
-   * <pre>
-   *   import java.lang.*
-   *     name("java.lang.Object")                 -> "Object"
-   *     name("java.lang.Thread")                 -> "Thread"
-   *     name("java.lang.Thread.State")           -> "Thread.State"
-   *     name("java.lang.Thread.State.RUNNABLE")  -> "Thread.State.RUNNABLE"
-   * </pre>
-   */
-  public enum NameMode {
-    /** Emit canonical name, like {@code java.lang.Thread.State.BLOCKED}. */
-    CANONICAL,
-
-    /** Emit last name only, like {@code BLOCKED}. */
-    LAST,
-
-    /** Emit all simples names, like {@code Thread.State.BLOCKED}. */
-    SIMPLE;
-
-    /**
-     * A compilation unit automatically has access to all types declared in its package and also
-     * automatically imports all of the public types declared in the predefined package {@code
-     * java.lang}.
-     *
-     * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html">JLS 7</a>
-     */
-    public static NameMode auto(Name name) {
-      return auto("", name);
-    }
-
-    public static NameMode auto(String currentPackageName, Name name) {
-      if (name.packageName().equals(currentPackageName)) {
-        return NameMode.SIMPLE;
-      }
-      return name.isJavaLangPackage() ? NameMode.SIMPLE : NameMode.CANONICAL;
-    }
-
-    public Function<Name, NameMode> function() {
-      return name -> this;
-    }
-  }
 
   /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
   public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
@@ -104,26 +33,26 @@ public class Listing {
   public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{[^{^}]+?\\}");
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
-  private final StringBuilder currentLine = new StringBuilder(256);
   private int currentIndentationDepth = 0;
-  private final String[] indentationTable = new String[32];
+  private final StringBuilder currentLine = new StringBuilder(256);
+  private final String[] indentationLookupTable = new String[32];
   private final String lineSeparator;
-  private final Function<Name, NameMode> nameModeFunction;
+  private final Styling styling;
 
   public Listing() {
-    this("  ", "\n", NameMode::auto);
+    this("  ", "\n", Style::auto);
   }
 
-  public Listing(NameMode nameMode) {
-    this("  ", "\n", nameMode.function());
+  public Listing(Style style) {
+    this("  ", "\n", style.styling());
   }
 
-  public Listing(String indent, String lineSeparator, Function<Name, NameMode> nameModeFunction) {
+  public Listing(String indent, String lineSeparator, Styling styling) {
     this.lineSeparator = lineSeparator;
-    this.nameModeFunction = nameModeFunction;
-    indentationTable[0] = "";
-    for (int i = 1; i < indentationTable.length; i++) {
-      indentationTable[i] = indentationTable[i - 1] + indent;
+    this.styling = styling;
+    indentationLookupTable[0] = "";
+    for (int i = 1; i < indentationLookupTable.length; i++) {
+      indentationLookupTable[i] = indentationLookupTable[i - 1] + indent;
     }
   }
 
@@ -174,16 +103,16 @@ public class Listing {
     return listable.apply(this);
   }
 
-  /** Add name respecting name mode function result. */
+  /** Add name respecting name mode styling result. */
   public Listing add(Name name) {
-    NameMode mode = getNameModeFunction().apply(name);
-    if (mode == NameMode.LAST) {
+    Style style = getStyling().apply(name);
+    if (style == Style.LAST) {
       return add(name.lastName());
     }
-    if (mode == NameMode.SIMPLE) {
+    if (style == Style.SIMPLE) {
       return add(name.simpleNames());
     }
-    assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
+    assert style == Style.CANONICAL : "Unknown style: " + style;
     return add(name.canonical());
   }
 
@@ -290,7 +219,7 @@ public class Listing {
   }
 
   public String getIndentationString() {
-    return indentationTable[1];
+    return indentationLookupTable[1];
   }
 
   public int getCurrentIndentationDepth() {
@@ -302,8 +231,8 @@ public class Listing {
     return lineSeparator;
   }
 
-  public Function<Name, NameMode> getNameModeFunction() {
-    return nameModeFunction;
+  public Styling getStyling() {
+    return styling;
   }
 
   public Listing indent(int times) {
@@ -330,7 +259,7 @@ public class Listing {
       return this;
     }
     // prepend indentation pattern in front of the new line
-    collectedLines.add(indentationTable[currentIndentationDepth] + newline);
+    collectedLines.add(indentationLookupTable[currentIndentationDepth] + newline);
     return this;
   }
 

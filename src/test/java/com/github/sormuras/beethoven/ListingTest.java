@@ -2,8 +2,8 @@ package com.github.sormuras.beethoven;
 
 import static com.github.sormuras.beethoven.Listable.IDENTITY;
 import static com.github.sormuras.beethoven.Listable.SPACE;
-import static com.github.sormuras.beethoven.Listing.NameMode.LAST;
-import static com.github.sormuras.beethoven.Listing.NameMode.SIMPLE;
+import static com.github.sormuras.beethoven.Style.LAST;
+import static com.github.sormuras.beethoven.Style.SIMPLE;
 import static java.lang.Math.PI;
 import static java.util.Locale.GERMAN;
 import static org.junit.jupiter.api.Assertions.assertEquals;

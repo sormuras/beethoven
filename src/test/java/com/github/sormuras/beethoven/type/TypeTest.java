@@ -1,6 +1,6 @@
 package com.github.sormuras.beethoven.type;
 
-import static com.github.sormuras.beethoven.Listing.NameMode.SIMPLE;
+import static com.github.sormuras.beethoven.Style.SIMPLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -24,7 +24,6 @@ class TypeTest<T> {
     }
   }
 
-  // "@U Y<..." crashes GJF 1.0 -- fixed in 1.1-SNAPSHOT ?
   @U W<Number>.@U Y<Integer> w = null;
 
   int a = 4;

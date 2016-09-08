@@ -42,7 +42,11 @@ public interface Tests {
   }
 
   static void assertListable(String expected, Listable listable) {
-    Listing listing = new Listing(Listing.NameMode.LAST);
+    assertListable(expected, listable, Style.LAST);
+  }
+
+  static void assertListable(String expected, Listable listable, Style style) {
+    Listing listing = new Listing(style);
     Assertions.assertEquals(expected, listing.add(listable).toString());
   }
 
