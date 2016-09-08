@@ -103,19 +103,6 @@ public class Listing {
     return listable.apply(this);
   }
 
-  /** Add name respecting name mode styling result. */
-  public Listing add(Name name) {
-    Style style = getStyling().apply(name);
-    if (style == Style.LAST) {
-      return add(name.lastName());
-    }
-    if (style == Style.SIMPLE) {
-      return add(name.simpleNames());
-    }
-    assert style == Style.CANONICAL : "Unknown style: " + style;
-    return add(name.canonical());
-  }
-
   /**
    * Parse source string and replace placeholders with {@link #add}-calls to this {@link Listing}
    * instance.

@@ -24,7 +24,7 @@ import java.util.function.IntFunction;
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
  */
-public final class PrimitiveType extends Type {
+public class PrimitiveType extends Type {
 
   /** Builder-like enum of all well-known primitive types defined in the Java language. */
   public enum Primitive {

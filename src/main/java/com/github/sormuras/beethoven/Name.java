@@ -39,7 +39,7 @@ import javax.lang.model.element.PackageElement;
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
  */
-public final class Name {
+public class Name implements Listable {
 
   /** Compiled <code>"."</code> pattern used to split canonical package and type names. */
   public static final Pattern DOT = Pattern.compile("\\.");
@@ -193,6 +193,19 @@ public final class Name {
     this.simpleNames = String.join(".", identifiers.subList(packageLevel, size));
     this.lastName = identifiers.get(size - 1);
     this.topLevelName = packageLevel < size ? identifiers.get(packageLevel) : null;
+  }
+
+  /** Add name respecting name mode styling result. */
+  public Listing apply(Listing listing) {
+    Style style = listing.getStyling().apply(this);
+    if (style == Style.LAST) {
+      return listing.add(lastName());
+    }
+    if (style == Style.SIMPLE) {
+      return listing.add(simpleNames());
+    }
+    assert style == Style.CANONICAL : "Unknown style: " + style;
+    return listing.add(canonical());
   }
 
   public String canonical() {
