@@ -2,20 +2,20 @@ package com.github.sormuras.beethoven;
 
 import java.util.function.Function;
 
-public class Importing extends Omitting {
+public class Importing extends Listing {
 
-  private final NameMode mode;
+  private final Function<Name, NameMode> function;
 
   public Importing() {
     this(NameMode.SIMPLE);
   }
 
   public Importing(NameMode mode) {
-    this.mode = mode;
+    this.function = mode.function();
   }
 
   @Override
   public Function<Name, NameMode> getNameModeFunction() {
-    return name -> mode;
+    return function;
   }
 }

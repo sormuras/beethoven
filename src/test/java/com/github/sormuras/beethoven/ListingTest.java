@@ -86,11 +86,10 @@ class ListingTest {
     Name pi = Name.name(Math.class, "PI");
     Name map = Name.name(Map.class);
     Name entry = Name.name(Map.Entry.class);
-    assertEquals("java.lang.Object", new Listing().add(object).toString());
-    assertEquals("Object", new Omitting().add(object).toString());
-    assertEquals("Math.PI", new Omitting().add(pi).toString());
-    assertEquals("java.util.Map", new Omitting().add(map).toString());
-    assertEquals("java.util.Map.Entry", new Omitting().add(entry).toString());
+    assertEquals("Object", new Listing().add(object).toString());
+    assertEquals("Math.PI", new Listing().add(pi).toString());
+    assertEquals("java.util.Map", new Listing().add(map).toString());
+    assertEquals("java.util.Map.Entry", new Listing().add(entry).toString());
     assertEquals("Object", new Importing().add(object).toString());
     assertEquals("Map", new Importing().add(map).toString());
     assertEquals("Entry", new Importing(Listing.NameMode.LAST).add(entry).toString());
@@ -99,7 +98,7 @@ class ListingTest {
 
   @Test
   void addWithPlaceholder() {
-    String expected = "java.lang.System.out.println(\"123\"); // 0 String";
+    String expected = "System.out.println(\"123\"); // 0 String";
     String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}";
     assertEquals(expected, new Listing().add(source, System.class, "123", "", "$").toString());
     assertEquals(" ", new Listing().add("{L}", Listable.SPACE).toString());

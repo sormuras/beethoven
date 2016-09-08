@@ -72,7 +72,29 @@ public class Listing {
     LAST,
 
     /** Emit all simples names, like {@code Thread.State.BLOCKED}. */
-    SIMPLE
+    SIMPLE;
+
+    /**
+     * A compilation unit automatically has access to all types declared in its package and also
+     * automatically imports all of the public types declared in the predefined package {@code
+     * java.lang}.
+     *
+     * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html">JLS 7</a>
+     */
+    public static NameMode auto(Name name) {
+      return auto("", name);
+    }
+
+    public static NameMode auto(String currentPackageName, Name name) {
+      if (name.packageName().equals(currentPackageName)) {
+        return NameMode.SIMPLE;
+      }
+      return name.isJavaLangPackage() ? NameMode.SIMPLE : NameMode.CANONICAL;
+    }
+
+    public Function<Name, NameMode> function() {
+      return name -> this;
+    }
   }
 
   /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
@@ -250,6 +272,11 @@ public class Listing {
     return currentLine;
   }
 
+  /** Used by {@link #newline()} to get the next line of this listing. */
+  public String getCurrentLineAsString() {
+    return currentLine.toString();
+  }
+
   public String getIndentationString() {
     return "  ";
   }
@@ -263,7 +290,7 @@ public class Listing {
   }
 
   public Function<Name, NameMode> getNameModeFunction() {
-    return name -> NameMode.CANONICAL;
+    return NameMode::auto;
   }
 
   public Listing indent(int times) {
@@ -280,18 +307,13 @@ public class Listing {
 
   /** Carriage return and line feed. */
   public Listing newline() {
-    String newline = currentLine.toString().replaceFirst("\\s+$", "");
+    String newline = getCurrentLineAsString();
     currentLine.setLength(0);
     // trivial case: empty line (only add it if last line is not empty)
     if (newline.isEmpty()) {
       if (!isLastLineEmpty()) {
         collectedLines.add("");
       }
-      return this;
-    }
-    // trivial case: no indentation, just add the line
-    if (currentIndentationDepth == 0) {
-      collectedLines.add(newline);
       return this;
     }
     // prepend indentation pattern in front of the new line

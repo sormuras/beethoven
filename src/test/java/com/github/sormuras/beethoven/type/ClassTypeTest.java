@@ -9,7 +9,6 @@ import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Importing;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Name;
-import com.github.sormuras.beethoven.Omitting;
 import com.github.sormuras.beethoven.U;
 import com.github.sormuras.beethoven.V;
 import java.lang.annotation.ElementType;
@@ -31,7 +30,7 @@ class ClassTypeTest {
 
   @Test
   void createAnnotated() {
-    String expected = "java.lang." + U.USE + " " + V.USE + " String";
+    String expected = U.USE + " " + V.USE + " String";
     ClassType type = Type.withAnnotations(ClassType.type(String.class), U.class, V.class);
     assertEquals(expected, type.list());
     assertTrue(type.isAnnotated());
@@ -40,7 +39,7 @@ class ClassTypeTest {
 
   @Test
   void createAnnotatedAndParameterized() {
-    String expected = "java.lang." + U.USE + " Comparable<java.lang." + V.USE + " String>";
+    String expected = U.USE + " Comparable<" + V.USE + " String>";
     ClassType string = ClassType.type(String.class).annotated(i -> V.SINGLETON);
     ClassType comparable = ClassType.type(Comparable.class).annotated(i -> U.SINGLETON);
     ClassType type = comparable.parameterized(i -> List.of(string));
@@ -51,7 +50,7 @@ class ClassTypeTest {
 
   @Test
   void createParameterized() {
-    String expected = "java.lang.Comparable<java.lang.String>";
+    String expected = "Comparable<String>";
     ClassType type = ClassType.parameterized(Comparable.class, String.class);
     assertEquals(expected, type.list());
     assertFalse(type.isAnnotated());
@@ -70,8 +69,8 @@ class ClassTypeTest {
   @Test
   void imports() {
     ClassType state = ClassType.type(Thread.State.class);
-    assertEquals("java.lang.Thread.State", state.list());
-    assertEquals("Thread.State", state.list(new Omitting()));
+    assertEquals("java.lang.Thread.State", state.list(new Importing(Listing.NameMode.CANONICAL)));
+    assertEquals("Thread.State", state.list(new Importing(Listing.NameMode.SIMPLE)));
     assertEquals("State", state.list(new Importing(Listing.NameMode.LAST)));
     assertFalse(state.isAnnotated());
     assertFalse(state.isGeneric());
@@ -90,7 +89,7 @@ class ClassTypeTest {
             "a.b.c",
             ClassType.simple("Top", Number.class),
             ClassType.simple("Nested", Integer.class, Long.class));
-    assertEquals("a.b.c.Top<Number>.Nested<Integer, Long>", nested.list(new Omitting()));
+    assertEquals("a.b.c.Top<Number>.Nested<Integer, Long>", nested.list());
   }
 
   @Test

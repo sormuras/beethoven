@@ -65,12 +65,12 @@ class AnnotationTest {
             + "("
             + "e = 2.718282F, "
             + "f = 11.1, "
-            + "l = java.lang.Override.class, "
+            + "l = Override.class, "
             + "m = {9, 8, 1}, "
             + "o = @java.lang.annotation.Target(java.lang.annotation.ElementType.TYPE), "
             + "p = 1701, "
             + "q = @java.beans.Transient, "
-            + "r = {java.lang.Float.class, java.lang.Double.class}"
+            + "r = {Float.class, Double.class}"
             + ")",
         Annotation.annotation(AnnotationTest.class, All.class).list());
   }
@@ -89,16 +89,16 @@ class AnnotationTest {
             + "f = 11.1, "
             + "g = {'\\u0000', '쫾', 'z', '€', 'ℕ', '\"', '\\'', '\\t', '\\n'}, "
             + "h = true, "
-            + "i = java.lang.Thread.State.BLOCKED, "
+            + "i = Thread.State.BLOCKED, "
             + "j = @java.lang.annotation.Documented, "
             + "k = \"kk\", "
-            + "l = java.lang.Override.class, "
+            + "l = Override.class, "
             + "m = {9, 8, 1}, "
             + "n = {java.lang.annotation.ElementType.FIELD, java.lang.annotation.ElementType.METHOD}, "
             + "o = @java.lang.annotation.Target(java.lang.annotation.ElementType.TYPE), "
             + "p = 1701, "
             + "q = @java.beans.Transient(true), "
-            + "r = {java.lang.Float.class, java.lang.Double.class}"
+            + "r = {Float.class, Double.class}"
             + ")",
         Annotation.annotation(getClass().getAnnotation(All.class), true).list());
   }
@@ -141,8 +141,8 @@ class AnnotationTest {
   @Test
   void value() {
     assertEquals("int.class", Annotation.value(int.class).list());
-    assertEquals("java.lang.Thread.State.class", Annotation.value(Thread.State.class).list());
-    assertEquals("java.lang.Thread.State.NEW", Annotation.value(Thread.State.NEW).list());
+    assertEquals("Thread.State.class", Annotation.value(Thread.State.class).list());
+    assertEquals("Thread.State.NEW", Annotation.value(Thread.State.NEW).list());
     assertEquals("\"a\"", Annotation.value("a").list());
     assertEquals("2.718282F", Annotation.value((float) Math.E).list());
     assertEquals("2.718281828459045", Annotation.value(Math.E).list());

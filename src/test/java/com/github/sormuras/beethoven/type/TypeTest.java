@@ -154,7 +154,7 @@ class TypeTest<T> {
 
   @Test
   void object() {
-    assertEquals("java.lang.Object", Type.type(Object.class).list());
+    assertEquals("Object", Type.type(Object.class).list());
   }
 
   @Test
