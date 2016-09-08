@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -80,10 +81,7 @@ public final class Name {
   /** Create new Name based on the class type and declared member name. */
   public static Name name(Class<?> declaringType, String declaredMemberName) {
     Name declaringName = name(declaringType);
-    List<String> names = new ArrayList<>(declaringName.size + 1);
-    names.addAll(declaringName.identifiers);
-    names.add(declaredMemberName);
-    return new Name(declaringName.packageLevel, names);
+    return name(declaringName.packageLevel, declaringName.canonical + '.' + declaredMemberName);
   }
 
   /** Create new Name based on type element instance. */
@@ -109,12 +107,23 @@ public final class Name {
   }
 
   /**
+   * Create name instance for the canonical name.
+   *
+   * <pre>
+   * name(2, "abc.xyz.Alphabet")
+   * </pre>
+   */
+  public static Name name(int packageLevel, String canonical) {
+    return name(packageLevel, Arrays.asList(DOT.split(canonical)));
+  }
+
+  /**
    * Create name instance for the identifiers.
    *
    * <p>The fully qualified class name {@code abc.xyz.Alphabet} can be created by:
    *
    * <pre>
-   * name(2, "abc", "xyz", "Alphabet")
+   * name(2, List.of("abc", "xyz", "Alphabet"))
    * </pre>
    *
    * @throws AssertionError if any identifier is not a syntactically valid qualified name.
@@ -166,21 +175,24 @@ public final class Name {
   }
 
   private final String canonical;
-  private final List<String> identifiers;
+  private final String lastName;
   private final int packageLevel;
   private final String packageName;
   private final String simpleNames;
   private final int size;
+  private final String topLevelName;
 
   Name(int packageLevel, List<String> identifiers) {
-    assert packageLevel <= identifiers.size()
-        : "package level " + packageLevel + " too high: " + identifiers;
     this.packageLevel = packageLevel;
-    this.identifiers = List.of(identifiers.toArray(new String[identifiers.size()]));
     this.size = identifiers.size();
+    assert size > 0 : "Identifiers must not be empty";
+    assert packageLevel >= 0 : "Package level must not be negative: " + packageLevel;
+    assert packageLevel <= size : "Package level " + packageLevel + " too high: " + identifiers;
     this.canonical = String.join(".", identifiers);
     this.packageName = String.join(".", identifiers.subList(0, packageLevel));
     this.simpleNames = String.join(".", identifiers.subList(packageLevel, size));
+    this.lastName = identifiers.get(size - 1);
+    this.topLevelName = packageLevel < size ? identifiers.get(packageLevel) : null;
   }
 
   public String canonical() {
@@ -194,7 +206,7 @@ public final class Name {
     }
     int shrunkByOne = size - 1;
     int newPackageLevel = Math.min(packageLevel, shrunkByOne);
-    return new Name(newPackageLevel, identifiers.subList(0, shrunkByOne));
+    return name(newPackageLevel, canonical.substring(0, canonical.lastIndexOf('.')));
   }
 
   @Override
@@ -213,10 +225,6 @@ public final class Name {
     return canonical.hashCode();
   }
 
-  public List<String> identifiers() {
-    return identifiers;
-  }
-
   public boolean isEnclosed() {
     return size > 1;
   }
@@ -230,7 +238,7 @@ public final class Name {
   }
 
   public String lastName() {
-    return identifiers.get(size - 1);
+    return lastName;
   }
 
   public String packageName() {
@@ -245,8 +253,8 @@ public final class Name {
     return size;
   }
 
-  public String topLevelName() {
-    return identifiers.get(packageLevel);
+  public Optional<String> topLevelName() {
+    return Optional.ofNullable(topLevelName);
   }
 
   @Override
