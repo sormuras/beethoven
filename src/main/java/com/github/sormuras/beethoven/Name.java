@@ -173,6 +173,8 @@ public final class Name {
   private final int size;
 
   Name(int packageLevel, List<String> identifiers) {
+    assert packageLevel <= identifiers.size()
+        : "package level " + packageLevel + " too high: " + identifiers;
     this.packageLevel = packageLevel;
     this.identifiers = List.of(identifiers.toArray(new String[identifiers.size()]));
     this.size = identifiers.size();
