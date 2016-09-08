@@ -1,12 +1,14 @@
 package com.github.sormuras.beethoven.type;
 
+import static com.github.sormuras.beethoven.Listing.NameMode.CANONICAL;
+import static com.github.sormuras.beethoven.Listing.NameMode.LAST;
+import static com.github.sormuras.beethoven.Listing.NameMode.SIMPLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.sormuras.beethoven.Annotation;
-import com.github.sormuras.beethoven.Importing;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Name;
 import com.github.sormuras.beethoven.U;
@@ -69,9 +71,9 @@ class ClassTypeTest {
   @Test
   void imports() {
     ClassType state = ClassType.type(Thread.State.class);
-    assertEquals("java.lang.Thread.State", state.list(new Importing(Listing.NameMode.CANONICAL)));
-    assertEquals("Thread.State", state.list(new Importing(Listing.NameMode.SIMPLE)));
-    assertEquals("State", state.list(new Importing(Listing.NameMode.LAST)));
+    assertEquals("java.lang.Thread.State", state.list(new Listing(CANONICAL)));
+    assertEquals("Thread.State", state.list(new Listing(SIMPLE)));
+    assertEquals("State", state.list(new Listing(LAST)));
     assertFalse(state.isAnnotated());
     assertFalse(state.isGeneric());
   }

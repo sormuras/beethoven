@@ -1,11 +1,11 @@
 package com.github.sormuras.beethoven.type;
 
+import static com.github.sormuras.beethoven.Listing.NameMode.SIMPLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.sormuras.beethoven.Compilation;
 import com.github.sormuras.beethoven.Counter;
-import com.github.sormuras.beethoven.Importing;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Tests;
 import com.github.sormuras.beethoven.U;
@@ -47,13 +47,13 @@ class TypeTest<T> {
 
   private String asAnnotatedType(String fieldName) throws Exception {
     AnnotatedType annotatedType = getClass().getDeclaredField(fieldName).getAnnotatedType();
-    Listing listing = new Importing(Listing.NameMode.SIMPLE);
+    Listing listing = new Listing(SIMPLE);
     return listing.add(Type.type(annotatedType)).toString();
   }
 
   private String asGenericType(String fieldName) throws Exception {
     java.lang.reflect.Type type = getClass().getDeclaredField(fieldName).getGenericType();
-    Listing listing = new Importing(Listing.NameMode.SIMPLE);
+    Listing listing = new Listing(SIMPLE);
     return listing.add(Type.type(type)).toString();
   }
 

@@ -1,5 +1,9 @@
 package com.github.sormuras.beethoven;
 
+import static com.github.sormuras.beethoven.Listable.IDENTITY;
+import static com.github.sormuras.beethoven.Listable.SPACE;
+import static com.github.sormuras.beethoven.Listing.NameMode.LAST;
+import static com.github.sormuras.beethoven.Listing.NameMode.SIMPLE;
 import static java.lang.Math.PI;
 import static java.util.Locale.GERMAN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -25,13 +28,6 @@ class ListingTest {
 
     public Optional<Listable> smile() {
       return Optional.of(listing -> listing.add("(:"));
-    }
-  }
-
-  static class Failing extends Listing {
-    @Override
-    public Function<Name, NameMode> getNameModeFunction() {
-      return name -> null;
     }
   }
 
@@ -65,7 +61,7 @@ class ListingTest {
 
   @Test
   void addListable() {
-    assertEquals("", new Listing().add(Listable.IDENTITY).toString());
+    assertEquals("", new Listing().add(IDENTITY).toString());
     assertEquals("", new Listing().add((Listable) null).toString());
   }
 
@@ -90,10 +86,13 @@ class ListingTest {
     assertEquals("Math.PI", new Listing().add(pi).toString());
     assertEquals("java.util.Map", new Listing().add(map).toString());
     assertEquals("java.util.Map.Entry", new Listing().add(entry).toString());
-    assertEquals("Object", new Importing().add(object).toString());
-    assertEquals("Map", new Importing().add(map).toString());
-    assertEquals("Entry", new Importing(Listing.NameMode.LAST).add(entry).toString());
-    assertThrows(AssertionError.class, () -> new Failing().add(pi));
+    assertEquals("Object", new Listing(SIMPLE).add(object).toString());
+    assertEquals("Map", new Listing(SIMPLE).add(map).toString());
+    assertEquals("Map.Entry", new Listing(SIMPLE).add(entry).toString());
+    assertEquals("Object", new Listing(LAST).add(object).toString());
+    assertEquals("Map", new Listing(LAST).add(map).toString());
+    assertEquals("Entry", new Listing(LAST).add(entry).toString());
+    assertThrows(AssertionError.class, () -> new Listing(" ", "\n", name -> null).add(pi));
   }
 
   @Test
@@ -101,7 +100,7 @@ class ListingTest {
     String expected = "System.out.println(\"123\"); // 0 String";
     String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}";
     assertEquals(expected, new Listing().add(source, System.class, "123", "", "$").toString());
-    assertEquals(" ", new Listing().add("{L}", Listable.SPACE).toString());
+    assertEquals(" ", new Listing().add("{L}", SPACE).toString());
     assertEquals("x.Y", new Listing().add("{enclosing}", Name.name("x", "Y", "Z")).toString());
     assertEquals("(:", new Listing().add("{smile}", new Face()).toString());
     assertEquals("{{}}", new Listing().add("{{empty}{}}", new Face()).toString());

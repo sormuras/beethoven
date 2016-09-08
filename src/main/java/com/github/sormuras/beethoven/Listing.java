@@ -106,12 +106,24 @@ public class Listing {
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private final StringBuilder currentLine = new StringBuilder(256);
   private int currentIndentationDepth = 0;
-  private final String[] indentationTable = new String[20];
+  private final String[] indentationTable = new String[32];
+  private final String lineSeparator;
+  private final Function<Name, NameMode> nameModeFunction;
 
   public Listing() {
+    this("  ", "\n", NameMode::auto);
+  }
+
+  public Listing(NameMode nameMode) {
+    this("  ", "\n", nameMode.function());
+  }
+
+  public Listing(String indent, String lineSeparator, Function<Name, NameMode> nameModeFunction) {
+    this.lineSeparator = lineSeparator;
+    this.nameModeFunction = nameModeFunction;
     indentationTable[0] = "";
     for (int i = 1; i < indentationTable.length; i++) {
-      indentationTable[i] = indentationTable[i - 1] + getIndentationString();
+      indentationTable[i] = indentationTable[i - 1] + indent;
     }
   }
 
@@ -278,19 +290,20 @@ public class Listing {
   }
 
   public String getIndentationString() {
-    return "  ";
+    return indentationTable[1];
   }
 
   public int getCurrentIndentationDepth() {
     return currentIndentationDepth;
   }
 
+  /** The separator separating joined lines. */
   public String getLineSeparator() {
-    return "\n";
+    return lineSeparator;
   }
 
   public Function<Name, NameMode> getNameModeFunction() {
-    return NameMode::auto;
+    return nameModeFunction;
   }
 
   public Listing indent(int times) {
