@@ -135,39 +135,38 @@ class NameTest {
   void name() {
     assertEquals("A", Name.name("A").canonical());
     assertEquals("", Name.name("A").packageName());
-    assertEquals("A", Name.name("A").getSimpleNames());
+    assertEquals("A", Name.name("A").simpleNames());
     assertEquals("A", Name.name("A").lastName());
     assertEquals(1, Name.name("A").size());
     assertEquals(1, Name.name("A").identifiers().size());
 
     assertEquals("a", Name.name("a").canonical());
     assertEquals("a", Name.name("a").packageName());
-    assertEquals("", Name.name("a").getSimpleNames());
-    assertTrue(Name.name("a").simpleNames().isEmpty());
+    assertEquals("", Name.name("a").simpleNames());
     assertEquals("a", Name.name("a").lastName());
 
     assertEquals("a.b", Name.name("a", "b").canonical());
     assertEquals("a.b", Name.name("a", "b").packageName());
-    assertEquals("", Name.name("a", "b").getSimpleNames());
+    assertEquals("", Name.name("a", "b").simpleNames());
     assertEquals("b", Name.name("a", "b").lastName());
 
     assertEquals("a.b.C", Name.name("a", "b", "C").canonical());
     assertEquals("a.b", Name.name("a", "b", "C").packageName());
-    assertEquals("C", Name.name("a", "b", "C").getSimpleNames());
+    assertEquals("C", Name.name("a", "b", "C").simpleNames());
     assertEquals("C", Name.name("a", "b", "C").lastName());
     assertEquals(3, Name.name("a", "b", "C").size());
     assertEquals(3, Name.name("a", "b", "C").identifiers().size());
 
     assertEquals("java.lang.Object", Name.name(Object.class).canonical());
     assertEquals("java.lang", Name.name(Object.class).packageName());
-    assertEquals("Object", Name.name(Object.class).getSimpleNames());
+    assertEquals("Object", Name.name(Object.class).simpleNames());
     assertEquals("Object", Name.name(Object.class).lastName());
     assertEquals("Object", Name.name(Object.class).topLevelName());
     assertTrue(Name.name(Object.class).isJavaLangObject());
 
     assertEquals("java.lang.Thread.State.NEW", Name.name(Thread.State.NEW).canonical());
     assertEquals("java.lang", Name.name(Thread.State.NEW).packageName());
-    assertEquals("Thread.State.NEW", Name.name(Thread.State.NEW).getSimpleNames());
+    assertEquals("Thread.State.NEW", Name.name(Thread.State.NEW).simpleNames());
     assertEquals("NEW", Name.name(Thread.State.NEW).lastName());
     assertEquals("Thread", Name.name(Thread.State.NEW).topLevelName());
     assertFalse(Name.name(Thread.State.NEW).isJavaLangObject());

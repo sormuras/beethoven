@@ -32,7 +32,7 @@ class ClassTypeTest {
   @Test
   void createAnnotated() {
     String expected = "java.lang." + U.USE + " " + V.USE + " String";
-    ClassType type = Type.annotated(ClassType.type(String.class), U.class, V.class);
+    ClassType type = Type.withAnnotations(ClassType.type(String.class), U.class, V.class);
     assertEquals(expected, type.list());
     assertTrue(type.isAnnotated());
     assertFalse(type.isGeneric());

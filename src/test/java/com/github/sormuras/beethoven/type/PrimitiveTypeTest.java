@@ -56,13 +56,13 @@ class PrimitiveTypeTest {
     assertEquals(primitive(short.class), Type.type(short.class));
     assertNotEquals(primitive(byte.class), Type.type(char.class));
     assertNotEquals(Type.type(int.class), primitive(U.SINGLETON, int.class));
-    assertEquals(Type.type(int.class), Type.annotationless(primitive(U.SINGLETON, int.class)));
+    assertEquals(Type.type(int.class), Type.withoutAnnotations(primitive(U.SINGLETON, int.class)));
   }
 
   @Test
   void primitiveTypeUseWithAnnotations() throws Exception {
     assertListable("@U int", primitive(U.SINGLETON, int.class));
-    assertListable("@U int", Type.annotated(Type.type(int.class), U.class));
+    assertListable("@U int", Type.withAnnotations(Type.type(int.class), U.class));
     assertListable("@U int", Type.type(U.class.getDeclaredField("NUMBER").getAnnotatedType()));
     assertListable("@U @V int", primitive(Annotation.annotations(U.class, V.class), int.class));
   }

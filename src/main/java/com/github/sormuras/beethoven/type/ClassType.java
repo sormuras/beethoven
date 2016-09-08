@@ -105,7 +105,7 @@ public class ClassType extends ReferenceType {
   }
 
   public static ClassType type(Name name) {
-    return new ClassType(name.packageName(), simples(name.getSimpleNames()));
+    return new ClassType(name.packageName(), simples(name.simpleNames()));
   }
 
   /** Create {@link ClassType} with elements given as simple name strings. */
@@ -206,7 +206,7 @@ public class ClassType extends ReferenceType {
   }
 
   @Override
-  public int getAnnotationIndex() {
+  public int getAnnotationsIndex() {
     return simples.size() - 1;
   }
 

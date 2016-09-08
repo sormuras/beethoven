@@ -104,7 +104,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public int getAnnotationIndex() {
+  public int getAnnotationsIndex() {
     return dimensions.size() - 1;
   }
 

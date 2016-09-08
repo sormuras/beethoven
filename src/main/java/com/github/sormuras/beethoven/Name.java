@@ -18,7 +18,6 @@ import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
@@ -175,11 +174,11 @@ public final class Name {
 
   Name(int packageLevel, List<String> identifiers) {
     this.packageLevel = packageLevel;
-    this.identifiers = Collections.unmodifiableList(identifiers);
+    this.identifiers = List.of(identifiers.toArray(new String[identifiers.size()]));
     this.size = identifiers.size();
     this.canonical = String.join(".", identifiers);
     this.packageName = String.join(".", identifiers.subList(0, packageLevel));
-    this.simpleNames = String.join(".", simpleNames());
+    this.simpleNames = String.join(".", identifiers.subList(packageLevel, size));
   }
 
   public String canonical() {
@@ -205,10 +204,6 @@ public final class Name {
       return false;
     }
     return hashCode() == other.hashCode();
-  }
-
-  public String getSimpleNames() {
-    return simpleNames;
   }
 
   @Override
@@ -240,11 +235,8 @@ public final class Name {
     return packageName;
   }
 
-  public List<String> simpleNames() {
-    if (packageLevel >= size) {
-      return Collections.emptyList();
-    }
-    return identifiers.subList(packageLevel, size);
+  public String simpleNames() {
+    return simpleNames;
   }
 
   public int size() {
@@ -257,6 +249,6 @@ public final class Name {
 
   @Override
   public String toString() {
-    return String.format("Name{%s/%s}", packageName, String.join(".", simpleNames()));
+    return String.format("Name{%s/%s}", packageName, simpleNames);
   }
 }

@@ -16,7 +16,6 @@ package com.github.sormuras.beethoven.type;
 
 import static com.github.sormuras.beethoven.type.Type.Reflection.reflect;
 import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import com.github.sormuras.beethoven.Annotated;
@@ -148,7 +147,7 @@ public abstract class Type extends Annotated {
     static List<Annotation> annotations(AnnotatedConstruct source) {
       List<? extends AnnotationMirror> mirrors = source.getAnnotationMirrors();
       if (mirrors.isEmpty()) {
-        return emptyList();
+        return List.of();
       }
       return mirrors.stream().map(Mirrors::annotation).collect(toList());
     }
@@ -202,7 +201,7 @@ public abstract class Type extends Annotated {
         String name = element.getSimpleName().toString();
         type = (javax.lang.model.type.DeclaredType) element.asType();
         List<Annotation> annotations = annotations(type);
-        List<TypeArgument> arguments = emptyList();
+        List<TypeArgument> arguments = List.of();
         List<? extends TypeMirror> mirrors = type.getTypeArguments();
         if (!mirrors.isEmpty()) {
           arguments = mirrors.stream().map(ta -> TypeArgument.argument(type(ta))).collect(toList());
@@ -322,7 +321,7 @@ public abstract class Type extends Annotated {
       List<ArrayType.Dimension> dimensions = new ArrayList<>();
       java.lang.reflect.Type component = type;
       while (component instanceof java.lang.reflect.GenericArrayType) {
-        dimensions.add(new ArrayType.Dimension(emptyList()));
+        dimensions.add(new ArrayType.Dimension(List.of()));
         component = ((java.lang.reflect.GenericArrayType) component).getGenericComponentType();
       }
       return ArrayType.array(Type.type(component), dimensions);
@@ -338,7 +337,7 @@ public abstract class Type extends Annotated {
           arguments.add(TypeArgument.argument(Type.type(actual)));
         }
         String name = ((Class<?>) owner.getRawType()).getSimpleName();
-        simples.add(0, new ClassType.Simple(emptyList(), name, arguments));
+        simples.add(0, new ClassType.Simple(List.of(), name, arguments));
         owner = (java.lang.reflect.ParameterizedType) owner.getOwnerType();
       }
       String packageName = ((Class<?>) type.getRawType()).getPackage().getName();
@@ -369,21 +368,6 @@ public abstract class Type extends Annotated {
     }
   }
 
-  @SafeVarargs
-  public static <T extends Type> T annotated(
-      T type, Class<? extends java.lang.annotation.Annotation>... annotations) {
-    return annotated(type, Annotation.annotations(annotations));
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <T extends Type> T annotated(T type, List<Annotation> annotations) {
-    return (T) type.annotated(i -> i == type.getAnnotationIndex() ? annotations : emptyList());
-  }
-
-  public static <T extends Type> T annotationless(T type) {
-    return annotated(type, emptyList());
-  }
-
   /** Create {@link Type} based on {@link AnnotatedType} instance. */
   public static Type type(AnnotatedType annotatedType) {
     if (annotatedType instanceof AnnotatedArrayType) {
@@ -398,8 +382,8 @@ public abstract class Type extends Annotated {
     if (annotatedType instanceof AnnotatedWildcardType) {
       return reflect((AnnotatedWildcardType) annotatedType);
     }
-    // default case: use underlying type and create potentially annotated version of it.
-    return annotated(type(annotatedType.getType()), Annotation.annotations(annotatedType));
+    // default case: use underlying type and create potentially withAnnotations version of it.
+    return withAnnotations(type(annotatedType.getType()), Annotation.annotations(annotatedType));
   }
 
   /** Create {@link Type} based on {@link Class} instance. */
@@ -454,6 +438,22 @@ public abstract class Type extends Annotated {
     return stream(types).map(Type::type).collect(toList());
   }
 
+  @SafeVarargs
+  public static <T extends Type> T withAnnotations(
+      T type, Class<? extends java.lang.annotation.Annotation>... annotations) {
+    return withAnnotations(type, Annotation.annotations(annotations));
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Type> T withAnnotations(T type, List<Annotation> annotations) {
+    return (T) type.annotated(i -> i == type.getAnnotationsIndex() ? annotations : List.of());
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Type> T withoutAnnotations(T type) {
+    return (T) type.annotated(i -> List.of());
+  }
+
   /** Initialize this {@link Type} instance. */
   Type(List<Annotation> annotations) {
     super(annotations);
@@ -471,13 +471,13 @@ public abstract class Type extends Annotated {
    */
   public abstract String binary();
 
+  public int getAnnotationsIndex() {
+    return 0;
+  }
+
   @Override
   public ElementType getAnnotationsTarget() {
     return ElementType.TYPE_USE;
-  }
-
-  public int getAnnotationIndex() {
-    return 0;
   }
 
   public boolean isJavaLangObject() {

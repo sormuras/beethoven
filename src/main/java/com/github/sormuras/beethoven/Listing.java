@@ -147,7 +147,7 @@ public class Listing {
       return add(name.lastName());
     }
     if (mode == NameMode.SIMPLE) {
-      return add(name.getSimpleNames());
+      return add(name.simpleNames());
     }
     assert mode == NameMode.CANONICAL : "Unknown name mode: " + mode;
     return add(name.canonical());
