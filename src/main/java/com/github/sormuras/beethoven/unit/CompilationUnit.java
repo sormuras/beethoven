@@ -31,7 +31,10 @@ import javax.tools.JavaFileObject;
  * <pre>
  * CompilationUnit:
  *   [PackageDeclaration] {ImportDeclaration} {TypeDeclaration}
+ *   [ModuleDeclaration]
  * </pre>
+ *
+ * TODO ModuleDeclaration http://openjdk.java.net/projects/jigsaw/doc/lang-vm.html#jigsaw-1.3.2
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.3">JLS 7.3</a>
  */
@@ -58,7 +61,7 @@ public class CompilationUnit implements DeclarationContainer {
   /** Compile and return {@link Class} instance. */
   public Class<?> compile() throws ClassNotFoundException {
     ClassLoader loader = Compilation.compile(toJavaFileObject());
-    TypeDeclaration declaration = getEponymousDeclaration().get();
+    TypeDeclaration declaration = getEponymousDeclaration().orElseThrow(IllegalStateException::new);
     return loader.loadClass(getPackageDeclaration().resolve(declaration.getName()));
   }
 
@@ -110,7 +113,7 @@ public class CompilationUnit implements DeclarationContainer {
     TypeDeclaration declaration = types.get(0);
     // if multiple types are present, find first public one
     if (types.size() > 1) {
-      declaration = types.stream().filter(TypeDeclaration::isPublic).findFirst().get();
+      return types.stream().filter(TypeDeclaration::isPublic).findFirst();
     }
     return Optional.of(declaration);
   }
@@ -156,7 +159,7 @@ public class CompilationUnit implements DeclarationContainer {
   }
 
   public JavaFileObject toJavaFileObject() {
-    TypeDeclaration declaration = getEponymousDeclaration().get();
+    TypeDeclaration declaration = getEponymousDeclaration().orElseThrow(IllegalStateException::new);
     URI uri = getPackageDeclaration().toUri(declaration.getName() + ".java");
     return Compilation.source(uri, list());
   }

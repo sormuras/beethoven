@@ -1,0 +1,8 @@
+module com.github.sormuras.beethoven {
+
+    requires jdk.compiler;
+
+    exports com.github.sormuras.beethoven;
+    exports com.github.sormuras.beethoven.unit;
+    exports com.github.sormuras.beethoven.type;
+}
