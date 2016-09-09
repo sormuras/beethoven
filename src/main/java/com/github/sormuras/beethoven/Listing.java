@@ -35,23 +35,29 @@ public class Listing {
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private int currentIndentationDepth = 0;
   private final StringBuilder currentLine = new StringBuilder(256);
-  private final String[] indentationLookupTable = new String[32];
+  private final String[] indentationLookupTable;
   private final String lineSeparator;
   private final Styling styling;
 
   public Listing() {
-    this("  ", "\n", Style::auto);
+    this(Style::auto);
   }
 
   public Listing(Style style) {
-    this("  ", "\n", style.styling());
+    this(style.styling());
   }
 
-  public Listing(String indent, String lineSeparator, Styling styling) {
+  public Listing(Styling styling) {
+    this(23, "  ", "\n", styling);
+  }
+
+  public Listing(int indentMax, String indent, String lineSeparator, Styling styling) {
     this.lineSeparator = lineSeparator;
     this.styling = styling;
+    this.indentationLookupTable = new String[indentMax];
+    // populate indentation lookup table
     indentationLookupTable[0] = "";
-    for (int i = 1; i < indentationLookupTable.length; i++) {
+    for (int i = 1; i < indentMax; i++) {
       indentationLookupTable[i] = indentationLookupTable[i - 1] + indent;
     }
   }

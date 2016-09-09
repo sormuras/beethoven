@@ -77,7 +77,7 @@ public class WildcardType extends Type {
 
   @Override
   public Listing apply(Listing listing) {
-    listing.add(getAnnotationsListable());
+    applyAnnotations(listing);
     listing.add('?');
     if (!getBoundExtends().isJavaLangObject()) {
       return listing.add(" extends ").add(getBoundExtends());

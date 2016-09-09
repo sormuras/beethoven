@@ -29,7 +29,7 @@ import java.util.function.UnaryOperator;
  * @see #SPACE
  */
 @FunctionalInterface
-public interface Listable extends UnaryOperator<Listing> {
+public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
 
   class Identity implements Listable {
 
@@ -122,6 +122,15 @@ public interface Listable extends UnaryOperator<Listing> {
   Listable NEWLINE = Listing::newline;
 
   Listable SPACE = listing -> listing.add(' ');
+
+  @Override
+  default int compareTo(Listable other) {
+    return comparisonKey().compareTo(other.comparisonKey());
+  }
+
+  default String comparisonKey() {
+    return getClass().getSimpleName().toLowerCase() + "#" + toString().toLowerCase();
+  }
 
   default boolean isEmpty() {
     return list().isEmpty();

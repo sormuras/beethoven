@@ -92,7 +92,7 @@ class ListingTest {
     assertEquals("Object", new Listing(LAST).add(object).toString());
     assertEquals("Map", new Listing(LAST).add(map).toString());
     assertEquals("Entry", new Listing(LAST).add(entry).toString());
-    assertThrows(AssertionError.class, () -> new Listing(" ", "\n", name -> null).add(pi));
+    assertThrows(AssertionError.class, () -> new Listing(1, " ", "\n", name -> null).add(pi));
   }
 
   @Test

@@ -98,7 +98,7 @@ public class PrimitiveType extends Type {
 
   @Override
   public Listing apply(Listing listing) {
-    return listing.add(getAnnotationsListable()).add(binary());
+    return applyAnnotations(listing).add(binary());
   }
 
   public Class<?> getType() {

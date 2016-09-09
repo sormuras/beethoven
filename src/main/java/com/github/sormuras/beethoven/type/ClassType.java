@@ -52,7 +52,7 @@ public class ClassType extends ReferenceType {
 
     @Override
     public Listing apply(Listing listing) {
-      listing.add(getAnnotationsListable());
+      applyAnnotations(listing);
       if (typeArguments.isEmpty()) {
         return listing.add(getName());
       }

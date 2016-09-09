@@ -20,37 +20,29 @@ import static java.util.Collections.unmodifiableList;
 import java.lang.annotation.ElementType;
 import java.util.List;
 
-/** Base {@link Annotation}-collecting implementation. */
+/** Base {@link Annotation}-collection implementation. */
 public abstract class Annotated implements Listable {
 
-  private final List<Annotation> annotations;
-  private final Listable annotationsListable;
-  private final Listable annotationsSeparator;
+  protected List<Annotation> annotations;
 
   /** Initialize this instance. */
+  protected Annotated() {
+    this.annotations = emptyList();
+  }
+
+  /** Initialize this instance with an unmodifiable list of annotations. */
   protected Annotated(List<Annotation> annotations) {
-    this.annotations = unmodifiableList(annotations.isEmpty() ? emptyList() : annotations);
-    this.annotationsSeparator = buildAnnotationsSeparator();
-    this.annotationsListable = annotations.isEmpty() ? Listable.IDENTITY : this::applyAnnotations;
+    this.annotations = annotations.isEmpty() ? emptyList() : unmodifiableList(annotations);
   }
 
   /** Add all annotations to the given {@link Listing} instance. */
   protected Listing applyAnnotations(Listing listing) {
-    return listing.add(annotations, annotationsSeparator).add(annotationsSeparator);
-  }
-
-  /**
-   * Build listable annotation separator.
-   *
-   * <p>This implementation creates a separator depending on the annotation target element type.
-   */
-  protected Listable buildAnnotationsSeparator() {
-    ElementType target = getAnnotationsTarget();
-    boolean inline =
-        target == ElementType.TYPE_PARAMETER
-            || target == ElementType.TYPE_USE
-            || target == ElementType.PARAMETER;
-    return inline ? Listable.SPACE : Listable.NEWLINE;
+    if (isAnnotated()) {
+      Listable annotationsSeparator = getAnnotationsSeparator();
+      listing.add(annotations, annotationsSeparator);
+      listing.add(annotationsSeparator);
+    }
+    return listing;
   }
 
   @Override
@@ -68,14 +60,18 @@ public abstract class Annotated implements Listable {
     return annotations;
   }
 
-  /** Return listable source snippet for all annotations. */
-  public Listable getAnnotationsListable() {
-    return annotationsListable;
-  }
-
-  /** Return listable separator used to textually separate annotations from each other. */
+  /**
+   * Return listable separator textually separating annotations from each other.
+   *
+   * <p>This implementation returns a separator depending on the annotation target element type.
+   */
   public Listable getAnnotationsSeparator() {
-    return annotationsSeparator;
+    ElementType target = getAnnotationsTarget();
+    boolean inline =
+        target == ElementType.TYPE_PARAMETER
+            || target == ElementType.TYPE_USE
+            || target == ElementType.PARAMETER;
+    return inline ? Listable.SPACE : Listable.NEWLINE;
   }
 
   /** The designated target element type of the annotations. */

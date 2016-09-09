@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.github.sormuras.beethoven.Listable;
+import com.github.sormuras.beethoven.Annotation;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class VoidTypeTest {
@@ -14,13 +15,13 @@ class VoidTypeTest {
   @Test
   void annotationTargetIsNull() {
     assertNull(VoidType.INSTANCE.getAnnotationsTarget());
-    assertEquals(Listable.NEWLINE, VoidType.INSTANCE.getAnnotationsSeparator());
   }
 
   @Test
   void annotationsAreImmutable() {
-    assertTrue(VoidType.INSTANCE.getAnnotations().isEmpty());
-    assertThrows(Exception.class, () -> VoidType.INSTANCE.getAnnotations().clear());
+    List<Annotation> annotations = VoidType.INSTANCE.getAnnotations();
+    assertTrue(annotations.isEmpty());
+    assertThrows(Exception.class, () -> annotations.add(Annotation.annotation(Deprecated.class)));
   }
 
   @Test

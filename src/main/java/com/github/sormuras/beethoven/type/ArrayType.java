@@ -34,13 +34,13 @@ public class ArrayType extends ReferenceType {
 
   public static class Dimension extends Annotated {
 
-    public Dimension(List<Annotation> annotations) {
+    Dimension(List<Annotation> annotations) {
       super(annotations);
     }
 
     @Override
     public Listing apply(Listing listing) {
-      return listing.add(getAnnotationsListable()).add("[]");
+      return applyAnnotations(listing).add("[]");
     }
 
     @Override

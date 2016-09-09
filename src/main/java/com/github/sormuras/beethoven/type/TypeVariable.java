@@ -54,7 +54,7 @@ public class TypeVariable extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
-    return listing.add(getAnnotationsListable()).add(getIdentifier());
+    return applyAnnotations(listing).add(getIdentifier());
   }
 
   @Override

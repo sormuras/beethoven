@@ -212,6 +212,11 @@ public class Name implements Listable {
     return canonical;
   }
 
+  @Override
+  public String comparisonKey() {
+    return canonical;
+  }
+
   /** Create new enclosing {@link Name} instance based on this identifiers. */
   public Name enclosing() {
     if (!isEnclosed()) {
