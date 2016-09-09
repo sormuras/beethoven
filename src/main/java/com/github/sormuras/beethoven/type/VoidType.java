@@ -25,6 +25,10 @@ public class VoidType extends Type {
 
   public static final VoidType INSTANCE = new VoidType();
 
+  public static VoidType instance() {
+    return INSTANCE;
+  }
+
   private VoidType() {
     super(Collections.emptyList());
   }
