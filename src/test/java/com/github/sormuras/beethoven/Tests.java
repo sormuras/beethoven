@@ -1,5 +1,8 @@
 package com.github.sormuras.beethoven;
 
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInput;
@@ -7,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -14,11 +18,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Executable;
 
 public interface Tests {
+
+  @FunctionalInterface
+  interface Creator<T> {
+    T create() throws Throwable;
+  }
 
   @SafeVarargs
   static <T> Deque<T> asDeque(T... elements) {
@@ -92,6 +106,31 @@ public interface Tests {
     ClassLoader loader = type.getClassLoader();
     Class<?>[] interfaces = {type};
     return type.cast(Proxy.newProxyInstance(loader, interfaces, handler));
+  }
+
+  static <T> List<DynamicTest> tests(Class<T> superClass, Consumer<T> consumer) {
+    Function<Class<? extends T>, Executable> defaultConstructor;
+    defaultConstructor = type -> () -> consumer.accept(type.getConstructor().newInstance());
+    return tests(superClass, defaultConstructor);
+  }
+
+  static <T> List<DynamicTest> tests(
+      Class<T> superClass, Function<Class<? extends T>, Executable> executor) {
+    List<DynamicTest> tests = new ArrayList<>();
+    List<String> names = new FastClasspathScanner().scan().getNamesOfSubclassesOf(superClass);
+    for (String name : names) {
+      try {
+        @SuppressWarnings("unchecked")
+        Class<? extends T> type = (Class<? extends T>) Class.forName(name);
+        if (Modifier.isAbstract(type.getModifiers())) {
+          continue;
+        }
+        tests.add(dynamicTest(type.getSimpleName(), executor.apply(type)));
+      } catch (ClassNotFoundException exception) {
+        throw new AssertionError("Unexpected!", exception);
+      }
+    }
+    return tests;
   }
 
   /** Same as: <code>toString(bytes, 16, 16)</code>. */

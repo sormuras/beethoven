@@ -63,6 +63,11 @@ public class PackageDeclaration extends Annotatable {
     return ElementType.PACKAGE;
   }
 
+  @Override
+  public String getDescription() {
+    return isUnnamed() ? "<unnamed>" : name.packageName();
+  }
+
   public Name getName() {
     return name;
   }

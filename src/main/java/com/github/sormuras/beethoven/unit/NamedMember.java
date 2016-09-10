@@ -11,6 +11,11 @@ public abstract class NamedMember extends Annotatable {
     return compilationUnit;
   }
 
+  @Override
+  public String getDescription() {
+    return name == null ? "<name>" : name;
+  }
+
   public TypeDeclaration getEnclosingDeclaration() {
     return enclosing;
   }
