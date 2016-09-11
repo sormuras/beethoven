@@ -12,6 +12,10 @@ import com.github.sormuras.beethoven.type.PrimitiveType.Primitive;
 import com.github.sormuras.beethoven.type.TypeVariable;
 import com.github.sormuras.beethoven.type.VoidType;
 import com.github.sormuras.beethoven.type.WildcardType;
+import com.github.sormuras.beethoven.unit.AnnotationDeclaration;
+import com.github.sormuras.beethoven.unit.AnnotationElement;
+import com.github.sormuras.beethoven.unit.ConstantDeclaration;
+import com.github.sormuras.beethoven.unit.PackageDeclaration;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -31,6 +35,7 @@ class AnnotatedTest {
     assertEquals(annotated, annotated);
     assertEquals(annotated, supplier.get());
     assertFalse(annotated.isAnnotated());
+    assertNotNull(annotated.getDescription());
     assertNotNull(annotated.toString());
   }
 
@@ -43,10 +48,16 @@ class AnnotatedTest {
   @TestFactory
   List<DynamicTest> types() {
     return List.of(
+        // type
         dynamicTest("VoidType", () -> test(VoidType::instance)),
         dynamicTest("WildcardType", () -> test(WildcardType::wildcard)),
         dynamicTest("TypeVariable", () -> test(() -> TypeVariable.variable("T"))),
         dynamicTest("ArrayType.Dimension", () -> test(() -> ArrayType.dimensions(1).get(0))),
-        dynamicTest("ClassType.Simple", () -> test(() -> ClassType.simple("S"))));
+        dynamicTest("ClassType.Simple", () -> test(() -> ClassType.simple("S"))),
+        // unit
+        dynamicTest("PackageDeclaration", () -> test(PackageDeclaration::new)),
+        dynamicTest("ConstantDeclaration", () -> test(ConstantDeclaration::new)),
+        dynamicTest("AnnotationElement", () -> test(AnnotationElement::new)),
+        dynamicTest("PackageDeclaration", () -> test(AnnotationDeclaration::new)));
   }
 }
