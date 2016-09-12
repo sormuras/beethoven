@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.sormuras.beethoven.Listable;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.lukehutch.fastclasspathscanner.matchprocessor.SubclassMatchProcessor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -15,6 +17,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 class AnnotatableTest {
+
+  class Annotatables implements SubclassMatchProcessor<Annotatable> {
+
+    List<Annotatable> annotatables = new ArrayList<>();
+
+    @Override
+    public void processMatch(Class<? extends Annotatable> type) {
+      if (Modifier.isAbstract(type.getModifiers())) {
+        return;
+      }
+      try {
+        annotatables.add(type.getConstructor().newInstance());
+      } catch (Exception e) {
+        throw new AssertionError("Unexpected!", e);
+      }
+    }
+
+    Iterator<Annotatable> iterator() {
+      new FastClasspathScanner().matchSubclassesOf(Annotatable.class, this).scan();
+      return annotatables.iterator();
+    }
+  }
 
   @Test
   void annotatableExtendsListable() {
@@ -27,27 +51,9 @@ class AnnotatableTest {
     assertTrue(annotatable.isAnnotated());
   }
 
-  void annotatable(Class<? extends Annotatable> type) {
-    try {
-      annotatable(type.getConstructor().newInstance());
-    } catch (Exception e) {
-      throw new AssertionError("Unexpected!", e);
-    }
-  }
-
   @TestFactory
   Stream<DynamicTest> annotatables() {
-    List<Class<? extends Annotatable>> annotatableClasses = new ArrayList<>();
-    new FastClasspathScanner()
-        .matchSubclassesOf(
-            Annotatable.class,
-            type -> {
-              if (!Modifier.isAbstract(type.getModifiers())) {
-                annotatableClasses.add(type);
-              }
-            })
-        .scan();
-    Function<Class<?>, String> displayName = name -> "annotatable(" + name.getSimpleName() + ")";
-    return DynamicTest.stream(annotatableClasses.iterator(), displayName, this::annotatable);
+    Function<Annotatable, String> name = a -> "annotatable(" + a.getClass().getSimpleName() + ")";
+    return DynamicTest.stream(new Annotatables().iterator(), name, this::annotatable);
   }
 }
