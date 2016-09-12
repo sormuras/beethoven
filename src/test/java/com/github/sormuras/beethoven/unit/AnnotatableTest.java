@@ -4,8 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.sormuras.beethoven.Listable;
-import com.github.sormuras.beethoven.Tests;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
@@ -23,8 +27,27 @@ class AnnotatableTest {
     assertTrue(annotatable.isAnnotated());
   }
 
+  void annotatable(Class<? extends Annotatable> type) {
+    try {
+      annotatable(type.getConstructor().newInstance());
+    } catch (Exception e) {
+      throw new AssertionError("Unexpected!", e);
+    }
+  }
+
   @TestFactory
-  List<DynamicTest> declarations() {
-    return Tests.tests(Annotatable.class, this::annotatable);
+  Stream<DynamicTest> annotatables() {
+    List<Class<? extends Annotatable>> annotatableClasses = new ArrayList<>();
+    new FastClasspathScanner()
+        .matchSubclassesOf(
+            Annotatable.class,
+            type -> {
+              if (!Modifier.isAbstract(type.getModifiers())) {
+                annotatableClasses.add(type);
+              }
+            })
+        .scan();
+    Function<Class<?>, String> displayName = name -> "annotatable(" + name.getSimpleName() + ")";
+    return DynamicTest.stream(annotatableClasses.iterator(), displayName, this::annotatable);
   }
 }
