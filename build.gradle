@@ -35,6 +35,7 @@ jar {
 
 dependencies {
     testCompile('org.junit.jupiter:junit-jupiter-api:5.0.0-M2')
+    testCompile('org.junit.platform:junit-platform-launcher:1.0.0-M2')
     testRuntime('org.junit.jupiter:junit-jupiter-engine:5.0.0-M2')
     testCompile('io.github.lukehutch:fast-classpath-scanner:2.0.3')
 }
@@ -44,6 +45,8 @@ afterEvaluate {
 
     junit.setEnableAssertions(true)
     junit.systemProperty 'java.util.logging.config.file', 'src/test/resources/logging.properties'
+
+    //  junit.args = ['-all']
 }
 
 task format(type: JavaExec) {
