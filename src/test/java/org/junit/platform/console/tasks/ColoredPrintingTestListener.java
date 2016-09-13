@@ -13,7 +13,6 @@ package org.junit.platform.console.tasks;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Optional;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -28,13 +27,13 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
     CONTAINER_END(" +--", "└─"),
 
-    REPORT("r"),
+    REPORT("r", " ├─"),
 
-    SKIP("x"),
+    SKIP("x", " ├─"),
 
-    TEST("o", "»"),
+    TEST("o", " ├─"),
 
-    VERTICAL(" | ", "│");
+    VERTICAL(" | ", " │ ");
 
     String[] set;
 
@@ -44,8 +43,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   }
 
   private Deque<TestIdentifier> deque = new ArrayDeque<>();
-  private Optional<TestIdentifier> justFinished = Optional.empty();
-  private int tileSet = 0;
+  private int tileSet = 1;
   private final PrintWriter out;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
@@ -76,42 +74,25 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     deque.pop();
   }
 
-  boolean inline = false;
-
   @Override
   public void executionStarted(TestIdentifier id) {
-    if (inline) {
-      out.printf("%n");
-      inline = false;
+    out.printf("%s %s%n", indent(Tile.TEST), id.getDisplayName());
+    if (id.isContainer()) {
+      deque.push(id);
     }
-    if (deque.size() == 1 && justFinished.isPresent()) {
-      out.printf("%s%n", indent(Tile.VERTICAL));
-    }
-    deque.push(id);
-    Tile tile = id.isContainer() ? Tile.CONTAINER_BEGIN : Tile.TEST;
-    out.printf("%s %s", indent(tile), id.getDisplayName());
-    inline = true;
   }
 
   @Override
   public void executionFinished(TestIdentifier id, TestExecutionResult testExecutionResult) {
-    if (inline) {
-      out.printf("%n");
-    } else if (id.isContainer()) {
-      out.printf("%s %s%n", indent(Tile.CONTAINER_END), id.getDisplayName());
+    if (id.isContainer()) {
+      deque.pop();
       out.flush();
     }
     testExecutionResult.getThrowable().ifPresent(t -> out.printf("Exception: %s%n", t));
-    justFinished = Optional.of(deque.pop());
-    inline = false;
   }
 
   @Override
   public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
-    if (inline) {
-      inline = false;
-      out.printf(" reports%n");
-    }
     out.printf("%s %s%n", indent(Tile.REPORT), entry.toString());
   }
 

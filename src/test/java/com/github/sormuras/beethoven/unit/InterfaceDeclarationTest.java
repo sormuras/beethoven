@@ -40,11 +40,12 @@ class InterfaceDeclarationTest {
     top.setName("Top");
     InterfaceDeclaration nested = top.declareInterface("Nested");
     InterfaceDeclaration base64 = nested.declareInterface("Base64");
-    Consumer<InterfaceDeclaration> constants = declaration -> {
-      declaration.declareConstant(top.toType(), "topper", (Object) null);
-      declaration.declareConstant(nested.toType(), "nested", (Object) null);
-      declaration.declareConstant(base64.toType(), "base64", (Object) null);
-    };
+    Consumer<InterfaceDeclaration> constants =
+        declaration -> {
+          declaration.declareConstant(top.toType(), "topper", (Object) null);
+          declaration.declareConstant(nested.toType(), "nested", (Object) null);
+          declaration.declareConstant(base64.toType(), "base64", (Object) null);
+        };
     constants.accept(top);
     constants.accept(nested);
     constants.accept(base64);
