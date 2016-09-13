@@ -25,8 +25,6 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   private final PrintWriter out;
   private Deque<TestIdentifier> testIdentifiers = new ArrayDeque<>();
 
-  private int treeLevel = 1;
-
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
     this.out = out;
   }
@@ -68,7 +66,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       inline = false;
     }
     testIdentifiers.push(testIdentifier);
-    String pointer = testIdentifier.isContainer() ? " /-" : "---";
+    String pointer = testIdentifier.isContainer() ? " ┌─" : " » ";
     out.printf("%s %s", indent(pointer), testIdentifier.getDisplayName());
     inline = true;
   }
@@ -79,12 +77,12 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     if (inline) {
       out.printf("%n");
     } else if (testIdentifier.isContainer()) {
-      out.printf("%s %s%n", indent(" \\-"), testIdentifier.getDisplayName());
+      out.printf("%s %s%n", indent(" └─"), testIdentifier.getDisplayName());
     }
-    TestIdentifier popped = testIdentifiers.pop();
+    testIdentifiers.pop();
     testExecutionResult.getThrowable().ifPresent(t -> out.printf("Exception: %s%n", t));
     if (testIdentifiers.size() == 1) {
-      out.println(" | ");
+      out.println(" │ ");
     }
     inline = false;
   }
@@ -101,7 +99,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   private String indent(String pointer) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < testIdentifiers.size() - 1; i++) {
-      builder.append(" | ");
+      builder.append(" │ ");
     }
     builder.append(pointer);
     return builder.toString();
