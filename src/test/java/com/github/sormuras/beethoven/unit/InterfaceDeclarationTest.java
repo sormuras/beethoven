@@ -7,6 +7,7 @@ import com.github.sormuras.beethoven.Tests;
 import com.github.sormuras.beethoven.type.Type;
 import java.lang.annotation.ElementType;
 import java.math.BigInteger;
+import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 class InterfaceDeclarationTest {
@@ -31,6 +32,23 @@ class InterfaceDeclarationTest {
     declaration.declareConstant(Type.type(double.class), "E", Name.name(Math.class, "E"));
     declaration.declareMethod(BigInteger.class, "id");
     Tests.assertEquals(getClass(), "everything", declaration);
+  }
+
+  @Test
+  void nested() {
+    InterfaceDeclaration top = new InterfaceDeclaration();
+    top.setName("Top");
+    InterfaceDeclaration nested = top.declareInterface("Nested");
+    InterfaceDeclaration base64 = nested.declareInterface("Base64");
+    Consumer<InterfaceDeclaration> constants = declaration -> {
+      declaration.declareConstant(top.toType(), "topper", (Object) null);
+      declaration.declareConstant(nested.toType(), "nested", (Object) null);
+      declaration.declareConstant(base64.toType(), "base64", (Object) null);
+    };
+    constants.accept(top);
+    constants.accept(nested);
+    constants.accept(base64);
+    Tests.assertEquals(getClass(), "nested", top);
   }
 
   @Test

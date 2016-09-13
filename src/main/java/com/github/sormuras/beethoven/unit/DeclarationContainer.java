@@ -53,10 +53,10 @@ public interface DeclarationContainer extends Listable {
   //    return declare(new EnumDeclaration(), name);
   //  }
 
-  //  /** Declare enum as nested child. */
-  //  default InterfaceDeclaration declareInterface(String name) {
-  //    return declare(new InterfaceDeclaration(), name);
-  //  }
+    /** Declare enum as nested child. */
+    default InterfaceDeclaration declareInterface(String name) {
+      return declare(new InterfaceDeclaration(), name);
+    }
 
   List<TypeDeclaration> getDeclarations();
 }

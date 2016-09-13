@@ -17,6 +17,8 @@ package com.github.sormuras.beethoven.unit;
 import static java.util.Collections.addAll;
 
 import com.github.sormuras.beethoven.Name;
+import com.github.sormuras.beethoven.type.ClassType;
+
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +35,6 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
       if (name.equals(member.getName())) {
         throw new IllegalArgumentException("nested " + name + " hides an enclosing type");
       }
-      member = member.getEnclosingDeclaration();
     }
   }
 
@@ -76,8 +77,11 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
     int packageLevel = identifiers.size();
     for (NamedMember member = this; member != null; member = member.getEnclosingDeclaration()) {
       identifiers.add(0, member.getName());
-      member = member.getEnclosingDeclaration();
     }
     return Name.name(packageLevel, identifiers);
+  }
+
+  public ClassType toType() {
+    return ClassType.type(toName());
   }
 }
