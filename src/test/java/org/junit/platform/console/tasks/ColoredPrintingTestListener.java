@@ -53,8 +53,9 @@ class ColoredPrintingTestListener implements TestExecutionListener {
         "%s %s skipped due to: %s %n", indent("-X-"), testIdentifier.getDisplayName(), reason);
     testIdentifiers.pop();
     if (testIdentifiers.size() == 1) {
-      out.println(" | ");
+      out.println("|");
     }
+    out.flush();
   }
 
   boolean inline = false;
@@ -66,9 +67,10 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       inline = false;
     }
     testIdentifiers.push(testIdentifier);
-    String pointer = testIdentifier.isContainer() ? " ┌─" : " » ";
+    String pointer = testIdentifier.isContainer() ? "┌─" : " »";
     out.printf("%s %s", indent(pointer), testIdentifier.getDisplayName());
     inline = true;
+    out.flush();
   }
 
   @Override
@@ -77,14 +79,15 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     if (inline) {
       out.printf("%n");
     } else if (testIdentifier.isContainer()) {
-      out.printf("%s %s%n", indent(" └─"), testIdentifier.getDisplayName());
+      out.printf("%s %s%n", indent("└─"), testIdentifier.getDisplayName());
     }
     testIdentifiers.pop();
     testExecutionResult.getThrowable().ifPresent(t -> out.printf("Exception: %s%n", t));
     if (testIdentifiers.size() == 1) {
-      out.println(" │ ");
+      out.println("│");
     }
     inline = false;
+    out.flush();
   }
 
   @Override
@@ -94,12 +97,13 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       out.printf(" reports%n");
     }
     out.printf("%s %s%n", indent("   "), entry.toString());
+    out.flush();
   }
 
   private String indent(String pointer) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < testIdentifiers.size() - 1; i++) {
-      builder.append(" │ ");
+      builder.append("│");
     }
     builder.append(pointer);
     return builder.toString();
