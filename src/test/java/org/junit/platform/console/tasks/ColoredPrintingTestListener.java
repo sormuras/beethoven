@@ -25,7 +25,7 @@ import org.junit.platform.launcher.TestPlan;
 class ColoredPrintingTestListener implements TestExecutionListener {
 
   enum Tile {
-    CONTAINER(" +-", "┌─"),
+    CONTAINER(" +-", " ┌─"),
 
     REPORT(" r ", " ├─"),
 
