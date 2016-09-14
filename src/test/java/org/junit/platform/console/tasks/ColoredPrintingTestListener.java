@@ -11,6 +11,8 @@
 package org.junit.platform.console.tasks;
 
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.junit.platform.engine.TestExecutionResult;
@@ -23,15 +25,13 @@ import org.junit.platform.launcher.TestPlan;
 class ColoredPrintingTestListener implements TestExecutionListener {
 
   enum Tile {
-    CONTAINER_BEGIN(" +--", "┌─"),
+    CONTAINER(" +-", "┌─"),
 
-    CONTAINER_END(" +--", "└─"),
+    REPORT(" r ", " ├─"),
 
-    REPORT("r", " ├─"),
+    SKIP(" x ", " ├─"),
 
-    SKIP("x", " ├─"),
-
-    TEST("o", " ├─"),
+    TEST(" · ", " ├─"),
 
     VERTICAL(" | ", " │ ");
 
@@ -43,7 +43,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   }
 
   private Deque<TestIdentifier> deque = new ArrayDeque<>();
-  private int tileSet = 1;
+  private int tileSet = Charset.defaultCharset().equals(StandardCharsets.UTF_8) ? 1 : 0;
   private final PrintWriter out;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
@@ -59,7 +59,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void testPlanExecutionFinished(TestPlan testPlan) {
-    out.println("Test plan execution finished.");
+    out.println("Test plan execution finished. PrintWriter(" + Charset.defaultCharset() + ") ");
   }
 
   @Override
@@ -76,9 +76,14 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void executionStarted(TestIdentifier id) {
-    out.printf("%s %s%n", indent(Tile.TEST), id.getDisplayName());
     if (id.isContainer()) {
+      if (deque.size() == 1) {
+        out.printf("%s%n", indent(Tile.VERTICAL));
+      }
+      out.printf("%s %s%n", indent(Tile.CONTAINER), id.getDisplayName());
       deque.push(id);
+    } else {
+      out.printf("%s %s%n", indent(Tile.TEST), id.getDisplayName());
     }
   }
 
@@ -86,7 +91,6 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   public void executionFinished(TestIdentifier id, TestExecutionResult testExecutionResult) {
     if (id.isContainer()) {
       deque.pop();
-      out.flush();
     }
     testExecutionResult.getThrowable().ifPresent(t -> out.printf("Exception: %s%n", t));
   }
@@ -98,7 +102,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   private String indent(Tile tile) {
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < deque.size() - 1; i++) {
+    for (int i = 0; i < deque.size(); i++) {
       builder.append(Tile.VERTICAL.set[tileSet]);
     }
     builder.append(tile.set[tileSet]);
