@@ -59,7 +59,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void testPlanExecutionFinished(TestPlan testPlan) {
-    out.println("Test plan execution finished. PrintWriter(" + Charset.defaultCharset() + ") ");
+    out.println("Test plan execution finished.");
   }
 
   @Override
@@ -77,9 +77,10 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   @Override
   public void executionStarted(TestIdentifier id) {
     if (id.isContainer()) {
-      if (deque.size() == 1) {
-        out.printf("%s%n", indent(Tile.VERTICAL));
-      }
+      // spacing to last line above?
+      //if (deque.size() == 1) {
+      //  out.printf("%s%n", indent(Tile.VERTICAL));
+      //}
       out.printf("%s %s%n", indent(Tile.CONTAINER), id.getDisplayName());
       deque.push(id);
     } else {
