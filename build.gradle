@@ -46,7 +46,7 @@ afterEvaluate {
     junit.setEnableAssertions(true)
     junit.systemProperty 'java.util.logging.config.file', 'src/test/resources/logging.properties'
 
-    // junit.args = ['-all']
+    junit.args = ['-all']
 }
 
 task format(type: JavaExec) {
