@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
-class CompilationTest {
+class CompilationTests {
 
   @Test
   void compileString() {

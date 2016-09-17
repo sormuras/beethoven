@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
-public class ImportDeclarationsTest {
+public class ImportDeclarationsTests {
 
   private static void check(Consumer<ImportDeclarations> consumer, String... expected) {
     ImportDeclarations declarations = new ImportDeclarations();
@@ -39,7 +39,7 @@ public class ImportDeclarationsTest {
 
   @Test
   void emptyIsEmpty() {
-    check(ImportDeclarationsTest::empty);
+    check(ImportDeclarationsTests::empty);
     assertTrue(new ImportDeclarations().isEmpty());
   }
 

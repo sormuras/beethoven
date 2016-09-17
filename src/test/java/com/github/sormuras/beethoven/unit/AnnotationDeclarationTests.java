@@ -12,7 +12,7 @@ import java.util.Formatter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AnnotationDeclarationTest {
+class AnnotationDeclarationTests {
 
   @Test
   void empty() {

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import org.junit.jupiter.api.Test;
 
-class TypeVariableTest {
+class TypeVariableTests {
 
   @Test
   void defaults() {

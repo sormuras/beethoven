@@ -19,7 +19,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import org.junit.jupiter.api.Test;
 
-class ListingTest {
+class ListingTests {
 
   static class Face {
     public Optional<?> empty() {

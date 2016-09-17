@@ -22,7 +22,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
-class NameTest {
+class NameTests {
 
   @SupportedAnnotationTypes({"X", "x.X"})
   @SupportedSourceVersion(SourceVersion.RELEASE_8)

@@ -12,7 +12,7 @@ import com.github.sormuras.beethoven.V;
 import com.github.sormuras.beethoven.type.PrimitiveType.Primitive;
 import org.junit.jupiter.api.Test;
 
-class PrimitiveTypeTest {
+class PrimitiveTypeTests {
 
   @Test
   void primitiveType() {

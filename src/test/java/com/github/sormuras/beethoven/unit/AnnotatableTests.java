@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
-class AnnotatableTest {
+class AnnotatableTests {
 
   class Annotatables implements SubclassMatchProcessor<Annotatable> {
 

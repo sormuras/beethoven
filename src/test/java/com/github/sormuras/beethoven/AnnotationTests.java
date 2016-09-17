@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Test;
   r = {Float.class, Double.class}
 )
 @Generated("not generated, not visible at runtime")
-class AnnotationTest {
+class AnnotationTests {
 
   @Test
   void annotations() {
-    List<Annotation> annotations = Annotation.annotations(AnnotationTest.class);
+    List<Annotation> annotations = Annotation.annotations(AnnotationTests.class);
     assertEquals(1, annotations.size());
     assertEquals(All.class.getCanonicalName(), annotations.get(0).getTypeName().canonical());
     Map<String, List<Listable>> members = annotations.get(0).getMembers();
@@ -72,7 +72,7 @@ class AnnotationTest {
             + "q = @java.beans.Transient, "
             + "r = {Float.class, Double.class}"
             + ")",
-        Annotation.annotation(AnnotationTest.class, All.class).list());
+        Annotation.annotation(AnnotationTests.class, All.class).list());
   }
 
   @Test

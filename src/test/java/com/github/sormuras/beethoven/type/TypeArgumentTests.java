@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import org.junit.jupiter.api.Test;
 
-class TypeArgumentTest {
+class TypeArgumentTests {
 
   @Test
   void constructor() {

@@ -13,7 +13,7 @@ import java.lang.annotation.ElementType;
 import java.net.URI;
 import org.junit.jupiter.api.Test;
 
-class PackageDeclarationTest {
+class PackageDeclarationTests {
 
   @Test
   void empty() {

@@ -136,7 +136,12 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult, Duration duration) {
     if (!testIdentifier.isContainer()) {
       String prefixDetail = indentation("|  ");
-      println(NONE, "%stime: %d secs %d nanos", prefixDetail, duration.getSeconds(), duration.getNano());
+      println(
+          NONE,
+          "%stime: %d secs %d nanos",
+          prefixDetail,
+          duration.getSeconds(),
+          duration.getNano());
     }
     Color color = determineColor(testExecutionResult.getStatus());
     String tile = testIdentifier.isContainer() ? testIdentifier.getDisplayName() : "=";
@@ -149,12 +154,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   }
 
   private void printlnTestDescriptor(Color color, String message, TestIdentifier testIdentifier) {
-    println(
-        color,
-        "%s%s (%s)",
-        indentation(""),
-        testIdentifier.getDisplayName(),
-        message);
+    println(color, "%s%s (%s)", indentation(""), testIdentifier.getDisplayName(), message);
   }
 
   private void printlnException(Color color, String prefix, Throwable throwable) {

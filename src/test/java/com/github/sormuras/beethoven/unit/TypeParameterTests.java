@@ -10,7 +10,7 @@ import com.github.sormuras.beethoven.type.Type;
 import java.lang.annotation.ElementType;
 import org.junit.jupiter.api.Test;
 
-class TypeParameterTest {
+class TypeParameterTests {
 
   @Test
   void simple() {
@@ -38,7 +38,7 @@ class TypeParameterTest {
   void boundWithClassType() {
     TypeParameter tp = new TypeParameter();
     tp.addBounds(ClassType.type(Number.class), ClassType.type(Cloneable.class));
-    tp.addBounds(new ClassType[0]);
+    tp.addBounds();
     assertEquals("T extends Number & Cloneable", tp.list());
     assertEquals(false, tp.getBoundTypeVariable().isPresent());
     assertEquals(false, tp.getBounds().isEmpty());

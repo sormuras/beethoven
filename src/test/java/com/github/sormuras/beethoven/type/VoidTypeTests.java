@@ -10,7 +10,7 @@ import com.github.sormuras.beethoven.Annotation;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class VoidTypeTest {
+class VoidTypeTests {
 
   @Test
   void annotationTargetIsNull() {

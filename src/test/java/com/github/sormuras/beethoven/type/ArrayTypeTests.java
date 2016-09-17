@@ -6,7 +6,7 @@ import com.github.sormuras.beethoven.Annotation;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class ArrayTypeTest {
+class ArrayTypeTests {
 
   @Test
   void arrayType() {

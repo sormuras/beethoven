@@ -10,7 +10,7 @@ import java.math.BigInteger;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
-class InterfaceDeclarationTest {
+class InterfaceDeclarationTests {
 
   @Test
   void empty() {

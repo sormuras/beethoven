@@ -9,7 +9,7 @@ import com.github.sormuras.beethoven.type.TypeVariable;
 import java.lang.annotation.ElementType;
 import org.junit.jupiter.api.Test;
 
-public class MethodParameterTest {
+public class MethodParameterTests {
 
   @Test
   void simple() {

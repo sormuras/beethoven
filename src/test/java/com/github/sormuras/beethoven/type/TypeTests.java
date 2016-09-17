@@ -15,7 +15,7 @@ import java.util.List;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
-class TypeTest<T> {
+class TypeTests<T> {
 
   class W<X> {
 
@@ -91,7 +91,7 @@ class TypeTest<T> {
     assertEquals("List<@U ?>", asAnnotatedType("low"));
     assertEquals("List<@U ? extends T>", asAnnotatedType("lowe"));
     assertEquals("List<@U ? super T>", asAnnotatedType("lows"));
-    assertEquals("TypeTest<T>.@U W<Number>.@U Y<Integer>", asAnnotatedType("w"));
+    assertEquals("TypeTests<T>.@U W<Number>.@U Y<Integer>", asAnnotatedType("w"));
   }
 
   @Test
@@ -159,11 +159,11 @@ class TypeTest<T> {
   @Test
   void type() throws Exception {
     assertEquals(
-        "void", Type.type(TypeTest.class.getDeclaredMethod("type").getGenericReturnType()).list());
+        "void", Type.type(TypeTests.class.getDeclaredMethod("type").getGenericReturnType()).list());
     try {
       assertEquals(
           "void",
-          Type.type(TypeTest.class.getDeclaredField("parametrizedFieldType").getGenericType())
+          Type.type(TypeTests.class.getDeclaredField("parametrizedFieldType").getGenericType())
               .list());
     } catch (AssertionError e) {
       // expected
@@ -185,7 +185,7 @@ class TypeTest<T> {
 
   @Test
   void primitivesFromFile() {
-    String charContent = Tests.load(TypeTest.class, "primitives");
+    String charContent = Tests.load(TypeTests.class, "primitives");
     JavaFileObject source = Compilation.source(URI.create("test/Primitives.java"), charContent);
     Counter counter = new Counter();
     Compilation.compile(getClass().getClassLoader(), List.of(), List.of(counter), List.of(source));

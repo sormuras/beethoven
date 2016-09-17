@@ -11,7 +11,7 @@ import java.lang.annotation.ElementType;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class MethodDeclarationTest {
+class MethodDeclarationTests {
 
   @Test
   void constructor() {
