@@ -44,11 +44,9 @@ afterEvaluate {
     def JavaExec junit = (JavaExec) tasks.getByName('junitPlatformTest')
 
     junit.setEnableAssertions(true)
-    // junit.setDefaultCharacterEncoding('UTF-8')
     junit.systemProperty 'java.util.logging.config.file', 'src/test/resources/logging.properties'
-    // junit.systemProperty 'file.encoding', 'UTF-8'
 
-    junit.args = ['-all']
+    // junit.args = ['-all']
 }
 
 task format(type: JavaExec) {
