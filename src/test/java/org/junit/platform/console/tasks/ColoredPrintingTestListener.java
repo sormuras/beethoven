@@ -18,6 +18,7 @@ import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color
 import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.YELLOW;
 
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.regex.Pattern;
@@ -37,7 +38,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   private final PrintWriter out;
   private final boolean disableAnsiColors;
   private final Deque<TestIdentifier> containers;
-  private TestIdentifier activeTest;
+  private long executionStartedNanos;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
     this.out = out;
@@ -48,47 +49,46 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   @Override
   public void testPlanExecutionStarted(TestPlan testPlan) {
     out.printf(
-        "Test execution started. Number of static tests: %d%n",
+        "Test plan execution started. Number of static tests: %d%n",
         testPlan.countTestIdentifiers(TestIdentifier::isTest));
   }
 
   @Override
   public void testPlanExecutionFinished(TestPlan testPlan) {
-    out.println("Test execution finished.");
+    out.printf(
+        "Test plan execution finished. Number of all tests: %d%n",
+        testPlan.countTestIdentifiers(TestIdentifier::isTest));
   }
 
   @Override
   public void dynamicTestRegistered(TestIdentifier testIdentifier) {
-    activeTest = testIdentifier;
-    printlnTestBegin(BLUE, testIdentifier);
+    printlnTestDescriptor(BLUE, "registered", testIdentifier);
   }
 
   @Override
   public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-    printlnTestDescriptor(YELLOW, "Skipped:", testIdentifier);
-    printlnMessage(YELLOW, "Reason", reason);
+    printlnTestDescriptor(YELLOW, "skipped", testIdentifier);
+    printlnMessage(YELLOW, "reason", reason);
   }
 
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
-    if (activeTest != testIdentifier) {
-      activeTest = testIdentifier;
-      printlnTestBegin(NONE, testIdentifier);
-    }
+    printlnTestBegin(NONE, testIdentifier);
     if (testIdentifier.isContainer()) {
       containers.push(testIdentifier);
     }
+    executionStartedNanos = System.nanoTime();
   }
 
   @Override
   public void executionFinished(
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+    long duration = System.nanoTime() - executionStartedNanos;
     if (testIdentifier.isContainer()) {
       containers.pop();
     }
-    printlnTestEnd(testIdentifier, testExecutionResult);
+    printlnTestEnd(testIdentifier, testExecutionResult, Duration.ofNanos(duration));
     out.flush();
-    activeTest = null;
   }
 
   @Override
@@ -124,30 +124,37 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     print(NONE, "%s", prefixHeader);
     println(color, "%s", testIdentifier.getDisplayName());
     String prefixDetail = indentation("|  ");
-    println(NONE, "%s  id: %s", prefixDetail, testIdentifier.getUniqueId());
-    println(NONE, "%stags: %s", prefixDetail, testIdentifier.getTags());
+    if (testIdentifier.isContainer()) {
+      println(NONE, "%s", prefixDetail);
+    } else {
+      println(NONE, "%s  id: %s", prefixDetail, testIdentifier.getUniqueId());
+      println(NONE, "%stags: %s", prefixDetail, testIdentifier.getTags());
+    }
   }
 
   private void printlnTestEnd(
-      TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+      TestIdentifier testIdentifier, TestExecutionResult testExecutionResult, Duration duration) {
+    if (!testIdentifier.isContainer()) {
+      String prefixDetail = indentation("|  ");
+      println(NONE, "%stime: %d secs %d nanos", prefixDetail, duration.getSeconds(), duration.getNano());
+    }
     Color color = determineColor(testExecutionResult.getStatus());
     String tile = testIdentifier.isContainer() ? testIdentifier.getDisplayName() : "=";
-    String prefixDetail = indentation(tile);
-    print(NONE, "%s ", prefixDetail);
+    String prefixResult = indentation(tile);
+    print(NONE, "%s ", prefixResult);
     println(color, "%s", testExecutionResult.getStatus());
-    testExecutionResult.getThrowable().ifPresent(t -> printlnException(color, prefixDetail, t));
+    testExecutionResult.getThrowable().ifPresent(t -> printlnException(color, prefixResult, t));
     String prefixFooter = indentation("");
     println(NONE, "%s", prefixFooter);
   }
 
   private void printlnTestDescriptor(Color color, String message, TestIdentifier testIdentifier) {
-    String tile = testIdentifier.isContainer() ? "+--" : " - ";
     println(
         color,
         "%s%s (%s)",
-        indentation(tile),
+        indentation(""),
         testIdentifier.getDisplayName(),
-        testIdentifier.getUniqueId());
+        message);
   }
 
   private void printlnException(Color color, String prefix, Throwable throwable) {
