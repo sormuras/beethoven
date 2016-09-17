@@ -18,6 +18,7 @@ import com.github.sormuras.beethoven.Listable;
 import com.github.sormuras.beethoven.Listing;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * A block is a sequence of statements, local class declarations and local variable declaration
@@ -53,33 +54,33 @@ public class Block implements Listable {
     return listing;
   }
 
-  //  /**
-  //   * Declare an enum that is not a member of any class and that has a name.
-  //   *
-  //   * @param name the simple local enum name
-  //   * @return enum declaration instance
-  //   */
-  //  public EnumDeclaration declareLocalEnum(String name) {
-  //    return declareLocal(EnumDeclaration::new, name);
-  //  }
+  /**
+   * Declare an enum that is not a member of any class and that has a name.
+   *
+   * @param name the simple local enum name
+   * @return enum declaration instance
+   */
+  public EnumDeclaration declareLocalEnum(String name) {
+    return declareLocal(EnumDeclaration::new, name);
+  }
 
-  //  /**
-  //   * Declare a normal local class that is not a member of any class and that has a name.
-  //   *
-  //   * @param name the simple local class name
-  //   * @return normal class declaration instance
-  //   */
-  //  public NormalClassDeclaration declareLocalClass(String name) {
-  //    return declareLocal(NormalClassDeclaration::new, name);
-  //  }
+  /**
+   * Declare a normal local class that is not a member of any class and that has a name.
+   *
+   * @param name the simple local class name
+   * @return normal class declaration instance
+   */
+  public NormalClassDeclaration declareLocalClass(String name) {
+    return declareLocal(NormalClassDeclaration::new, name);
+  }
 
-  //  public <C extends ClassDeclaration> C declareLocal(Supplier<C> supplier, String name) {
-  //    C declaration = supplier.get();
-  //    declaration.setLocal(true);
-  //    declaration.setName(name);
-  //    getSequence().add(declaration);
-  //    return declaration;
-  //  }
+  public <C extends ClassDeclaration> C declareLocal(Supplier<C> supplier, String name) {
+    C declaration = supplier.get();
+    declaration.setLocal(true);
+    declaration.setName(name);
+    getSequence().add(declaration);
+    return declaration;
+  }
 
   public List<Listable> getSequence() {
     return sequence;

@@ -159,9 +159,8 @@ public class ImportDeclarations implements Listable {
       return Style.LAST;
     }
     // on demand static import match?
-    Name enclosing = name.enclosing();
-    if (enclosing != null) {
-      if (onDemandStaticImports.contains(enclosing)) {
+    if (name.isEnclosed()) {
+      if (onDemandStaticImports.contains(name.enclosing())) {
         return Style.LAST;
       }
     }

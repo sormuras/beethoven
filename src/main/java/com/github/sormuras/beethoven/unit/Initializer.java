@@ -26,7 +26,7 @@ import com.github.sormuras.beethoven.Listing;
  */
 public class Initializer extends Block {
 
-  // private ClassDeclaration enclosing;
+  private ClassDeclaration enclosing;
   private boolean isStatic = false;
 
   @Override
@@ -37,13 +37,13 @@ public class Initializer extends Block {
     return super.apply(listing);
   }
 
-  //public ClassDeclaration getEnclosing() {
-  //  return enclosing;
-  //}
+  public ClassDeclaration getEnclosing() {
+    return enclosing;
+  }
 
-  //public void setEnclosing(ClassDeclaration enclosing) {
-  //  this.enclosing = enclosing;
-  //}
+  public void setEnclosing(ClassDeclaration enclosing) {
+    this.enclosing = enclosing;
+  }
 
   public void setStatic(boolean isStatic) {
     this.isStatic = isStatic;
