@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import org.junit.platform.commons.util.ExceptionUtils;
 import org.junit.platform.engine.TestExecutionResult;
@@ -37,7 +38,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   private final PrintWriter out;
   private final boolean disableAnsiColors;
-  private final Deque<TestIdentifier> containers;
+  private final Deque<Long> containers;
   private long executionStartedNanos;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
@@ -74,10 +75,10 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
     printlnTestBegin(NONE, testIdentifier);
-    if (testIdentifier.isContainer()) {
-      containers.push(testIdentifier);
-    }
     executionStartedNanos = System.nanoTime();
+    if (testIdentifier.isContainer()) {
+      containers.push(executionStartedNanos);
+    }
   }
 
   @Override
@@ -85,7 +86,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
     long duration = System.nanoTime() - executionStartedNanos;
     if (testIdentifier.isContainer()) {
-      containers.pop();
+      duration = System.nanoTime() - containers.pop();
     }
     printlnTestEnd(testIdentifier, testExecutionResult, Duration.ofNanos(duration));
     out.flush();
@@ -134,17 +135,16 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   private void printlnTestEnd(
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult, Duration duration) {
+    long ms = TimeUnit.MILLISECONDS.convert(duration.toNanos(), TimeUnit.NANOSECONDS);
     if (!testIdentifier.isContainer()) {
       String prefixDetail = indentation("|  ");
-      println(
-          NONE,
-          "%stime: %d secs %d nanos",
-          prefixDetail,
-          duration.getSeconds(),
-          duration.getNano());
+      println(NONE, "%stime: %d ms", prefixDetail, ms);
     }
     Color color = determineColor(testExecutionResult.getStatus());
-    String tile = testIdentifier.isContainer() ? testIdentifier.getDisplayName() : "=";
+    String tile = "=";
+    if (testIdentifier.isContainer()) {
+      tile = testIdentifier.getDisplayName() + " took " + ms + " ms and was";
+    }
     String prefixResult = indentation(tile);
     print(NONE, "%s ", prefixResult);
     println(color, "%s", testExecutionResult.getStatus());
