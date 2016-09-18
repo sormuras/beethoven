@@ -194,12 +194,8 @@ public abstract class Type extends Annotated {
 
       // extract simple name, annotations and type arguments
       List<ClassType.Simple> simples = new ArrayList<>();
-      for (Element element = type.asElement();
-          element.getKind().isClass() || element.getKind().isInterface();
-          element = element.getEnclosingElement()) {
-
-        String name = element.getSimpleName().toString();
-        type = (javax.lang.model.type.DeclaredType) element.asType();
+      while (true) {
+        String name = type.asElement().getSimpleName().toString();
         List<Annotation> annotations = annotations(type);
         List<TypeArgument> arguments = List.of();
         List<? extends TypeMirror> mirrors = type.getTypeArguments();
@@ -207,8 +203,13 @@ public abstract class Type extends Annotated {
           arguments = mirrors.stream().map(ta -> TypeArgument.argument(type(ta))).collect(toList());
         }
         simples.add(0, new ClassType.Simple(annotations, name, arguments));
+        TypeMirror enclosing = type.getEnclosingType();
+        if (enclosing.getKind() == TypeKind.DECLARED) {
+          type = (javax.lang.model.type.DeclaredType) enclosing;
+          continue;
+        }
+        break;
       }
-
       return new ClassType(packageName, simples);
     }
 

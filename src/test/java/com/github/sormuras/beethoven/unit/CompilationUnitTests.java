@@ -149,8 +149,8 @@ class CompilationUnitTests {
     Counter counter = new Counter();
     Compilation.compile(null, emptyList(), asList(counter), asList(unit.toJavaFileObject()));
     assertEquals(2, counter.marked.size());
-    assertEquals("A<U>.B<V, W>.C<X, Y, Z>", counter.types.get("raw").list());
-    assertEquals("A<U>.B<V, W>.C<X, Y, Z>", counter.types.get("parametered").list());
+    assertEquals("A.B.C", counter.types.get("raw").list());
+    assertEquals("A<I>.B<I, I>.C<I, I, I>", counter.types.get("parametered").list());
   }
 
   @Test
