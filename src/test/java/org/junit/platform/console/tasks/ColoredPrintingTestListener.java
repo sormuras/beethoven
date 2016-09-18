@@ -11,6 +11,7 @@
 package org.junit.platform.console.tasks;
 
 import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.BLUE;
+import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.CYAN;
 import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.GREEN;
 import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.NONE;
 import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.PURPLE;
@@ -74,7 +75,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
-    printlnTestBegin(NONE, testIdentifier);
+    printlnTestBegin(testIdentifier.isContainer() ? NONE : CYAN, testIdentifier);
     executionStartedNanos = System.nanoTime();
     if (testIdentifier.isContainer()) {
       containers.push(executionStartedNanos);
@@ -128,8 +129,10 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     if (testIdentifier.isContainer()) {
       println(NONE, "%s", prefixDetail);
     } else {
-      println(NONE, "%s  id: %s", prefixDetail, testIdentifier.getUniqueId());
-      println(NONE, "%stags: %s", prefixDetail, testIdentifier.getTags());
+      println(NONE, "%s   tags: %s", prefixDetail, testIdentifier.getTags());
+      println(NONE, "%s     id: %s", prefixDetail, testIdentifier.getUniqueId());
+      testIdentifier.getParentId().ifPresent(s -> println(NONE, "%s parent: %s", prefixDetail, s));
+      testIdentifier.getSource().ifPresent(s -> println(NONE, "%s source: %s", prefixDetail, s));
     }
   }
 
@@ -137,8 +140,8 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult, Duration duration) {
     long ms = TimeUnit.MILLISECONDS.convert(duration.toNanos(), TimeUnit.NANOSECONDS);
     if (!testIdentifier.isContainer()) {
-      String prefixDetail = indentation("|  ");
-      println(NONE, "%stime: %d ms", prefixDetail, ms);
+      String prefixDetail = indentation("|");
+      println(NONE, "%s duration: %d ms", prefixDetail, ms);
     }
     Color color = determineColor(testExecutionResult.getStatus());
     String tile = "=";
@@ -154,7 +157,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   }
 
   private void printlnTestDescriptor(Color color, String message, TestIdentifier testIdentifier) {
-    println(color, "%s%s (%s)", indentation(""), testIdentifier.getDisplayName(), message);
+    println(color, "%s%s %s", indentation(""), testIdentifier.getDisplayName(), message);
   }
 
   private void printlnException(Color color, String prefix, Throwable throwable) {
