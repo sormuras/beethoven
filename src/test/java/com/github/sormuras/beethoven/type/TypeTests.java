@@ -160,14 +160,10 @@ class TypeTests<T> {
   void type() throws Exception {
     assertEquals(
         "void", Type.type(TypeTests.class.getDeclaredMethod("type").getGenericReturnType()).list());
-    try {
-      assertEquals(
-          "void",
-          Type.type(TypeTests.class.getDeclaredField("parametrizedFieldType").getGenericType())
-              .list());
-    } catch (AssertionError e) {
-      // expected
-    }
+    assertEquals(
+        "java.util.List<String>",
+        Type.type(TypeTests.class.getDeclaredField("parametrizedFieldType").getGenericType())
+            .list());
   }
 
   private void primitives(Counter counter) {
