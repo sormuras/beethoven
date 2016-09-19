@@ -23,7 +23,6 @@ import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 import org.junit.platform.commons.util.ExceptionUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestExecutionResult.Status;
@@ -34,8 +33,6 @@ import org.junit.platform.launcher.TestPlan;
 
 /** @since 1.0 */
 class ColoredPrintingTestListener implements TestExecutionListener {
-
-  private static final Pattern LINE_START_PATTERN = Pattern.compile("(?m)^");
 
   private final PrintWriter out;
   private final boolean disableAnsiColors;
@@ -69,8 +66,15 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-    printlnTestDescriptor(YELLOW, "skipped", testIdentifier);
-    printlnMessage(YELLOW, "reason", reason);
+    //print(NONE, indentation("+-- "));
+    //println(YELLOW, "%s skipped. Reason: %s", testIdentifier.getDisplayName(), indented(reason));
+    //println(NONE, indentation(""));
+    printlnTestBegin(YELLOW, testIdentifier);
+    print(NONE, indentation("|"));
+    println(YELLOW, "   reason: %s", indented(reason));
+    print(NONE, indentation("= "));
+    println(YELLOW, "SKIPPED");
+    println(NONE, indentation(""));
   }
 
   @Override
@@ -95,7 +99,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
-    printlnMessage(PURPLE, "reported values", entry.toString());
+    printlnMessage(PURPLE, " reported: ", entry.toString());
   }
 
   private Color determineColor(Status status) {
@@ -138,12 +142,13 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   private void printlnTestEnd(
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult, Duration duration) {
+    Color color = determineColor(testExecutionResult.getStatus());
+    testExecutionResult.getThrowable().ifPresent(t -> printlnException(color, t));
     long ms = TimeUnit.MILLISECONDS.convert(duration.toNanos(), TimeUnit.NANOSECONDS);
     if (!testIdentifier.isContainer()) {
       String prefixDetail = indentation("|");
       println(NONE, "%s duration: %d ms", prefixDetail, ms);
     }
-    Color color = determineColor(testExecutionResult.getStatus());
     String tile = "=";
     if (testIdentifier.isContainer()) {
       tile = testIdentifier.getDisplayName() + " took " + ms + " ms and was";
@@ -151,25 +156,22 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     String prefixResult = indentation(tile);
     print(NONE, "%s ", prefixResult);
     println(color, "%s", testExecutionResult.getStatus());
-    testExecutionResult.getThrowable().ifPresent(t -> printlnException(color, prefixResult, t));
     String prefixFooter = indentation("");
     println(NONE, "%s", prefixFooter);
   }
 
   private void printlnTestDescriptor(Color color, String message, TestIdentifier testIdentifier) {
-    println(color, "%s%s %s", indentation(""), testIdentifier.getDisplayName(), message);
+    print(NONE, "%s", indentation(""));
+    println(color, "%s %s", testIdentifier.getDisplayName(), message);
   }
 
-  private void printlnException(Color color, String prefix, Throwable throwable) {
-    printlnMessage(color, "Exception", ExceptionUtils.readStackTrace(throwable));
+  private void printlnException(Color color, Throwable throwable) {
+    printlnMessage(color, "   caught: ", indented(ExceptionUtils.readStackTrace(throwable)));
   }
 
   private void printlnMessage(Color color, String message, String detail) {
-    printlnMessage(color, indentation("=> "), message, detail);
-  }
-
-  private void printlnMessage(Color color, String prefix, String message, String detail) {
-    println(color, prefix + message + ": %s", indented(detail));
+    print(NONE, indentation("|"));
+    println(color, message + "%s", indented(detail));
   }
 
   private void print(Color color, String format, Object... args) {
@@ -207,7 +209,8 @@ class ColoredPrintingTestListener implements TestExecutionListener {
    * @return indented message
    */
   private String indented(String message) {
-    return LINE_START_PATTERN.matcher(message).replaceAll(indentation("")).trim();
+    String[] lines = message.trim().split("\r\n|\n|\r");
+    return String.join("\n" + indentation(""), (CharSequence[]) lines);
   }
 
   enum Color {
