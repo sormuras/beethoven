@@ -36,7 +36,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   private final PrintWriter out;
   private final boolean disableAnsiColors;
-  private final Deque<Long> containers;
+  private final Deque<ContainerInfo> containers;
   private long executionStartedNanos;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
@@ -66,9 +66,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-    //print(NONE, indentation("+-- "));
-    //println(YELLOW, "%s skipped. Reason: %s", testIdentifier.getDisplayName(), indented(reason));
-    //println(NONE, indentation(""));
+    containers.peek().numberOfSkipped++;
     printlnTestBegin(YELLOW, testIdentifier);
     print(NONE, indentation("|"));
     println(YELLOW, "   reason: %s", indented(reason));
@@ -82,18 +80,53 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     printlnTestBegin(testIdentifier.isContainer() ? NONE : CYAN, testIdentifier);
     executionStartedNanos = System.nanoTime();
     if (testIdentifier.isContainer()) {
-      containers.push(executionStartedNanos);
+      containers.push(new ContainerInfo(testIdentifier));
     }
+    containers.peek().numberOfStarted++;
   }
 
   @Override
   public void executionFinished(
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-    long duration = System.nanoTime() - executionStartedNanos;
-    if (testIdentifier.isContainer()) {
-      duration = System.nanoTime() - containers.pop();
+    if (testExecutionResult.getStatus() == Status.ABORTED) {
+      containers.peek().numberOfAborted++;
     }
-    printlnTestEnd(testIdentifier, testExecutionResult, Duration.ofNanos(duration));
+    if (testExecutionResult.getStatus() == Status.FAILED) {
+      containers.peek().numberOfFailed++;
+    }
+    if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
+      containers.peek().numberOfSuccessful++;
+    }
+    ContainerInfo info = new ContainerInfo(testIdentifier);
+    Duration duration = Duration.ofNanos(System.nanoTime() - executionStartedNanos);
+    if (testIdentifier.isContainer()) {
+      info = containers.pop();
+      duration = Duration.ofNanos(System.nanoTime() - info.creationNanos);
+    }
+    Color color = determineColor(testExecutionResult.getStatus());
+    testExecutionResult.getThrowable().ifPresent(t -> printlnException(color, t));
+    long ms = TimeUnit.MILLISECONDS.convert(duration.toNanos(), TimeUnit.NANOSECONDS);
+    if (!testIdentifier.isContainer()) {
+      String prefixDetail = indentation("|");
+      println(NONE, "%s duration: %d ms", prefixDetail, ms);
+    }
+    String tile = "=";
+    if (testIdentifier.isContainer()) {
+      tile =
+          testIdentifier.getDisplayName()
+              + " took "
+              + ms
+              + " ms, ("
+              + info.numberOfSkipped
+              + ") and was";
+    }
+    String prefixResult = indentation(tile);
+    print(NONE, "%s ", prefixResult);
+    println(color, "%s", testExecutionResult.getStatus());
+
+    String prefixFooter = indentation("");
+    println(NONE, "%s", prefixFooter);
+
     out.flush();
   }
 
@@ -138,26 +171,6 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       testIdentifier.getParentId().ifPresent(s -> println(NONE, "%s parent: %s", prefixDetail, s));
       testIdentifier.getSource().ifPresent(s -> println(NONE, "%s source: %s", prefixDetail, s));
     }
-  }
-
-  private void printlnTestEnd(
-      TestIdentifier testIdentifier, TestExecutionResult testExecutionResult, Duration duration) {
-    Color color = determineColor(testExecutionResult.getStatus());
-    testExecutionResult.getThrowable().ifPresent(t -> printlnException(color, t));
-    long ms = TimeUnit.MILLISECONDS.convert(duration.toNanos(), TimeUnit.NANOSECONDS);
-    if (!testIdentifier.isContainer()) {
-      String prefixDetail = indentation("|");
-      println(NONE, "%s duration: %d ms", prefixDetail, ms);
-    }
-    String tile = "=";
-    if (testIdentifier.isContainer()) {
-      tile = testIdentifier.getDisplayName() + " took " + ms + " ms and was";
-    }
-    String prefixResult = indentation(tile);
-    print(NONE, "%s ", prefixResult);
-    println(color, "%s", testExecutionResult.getStatus());
-    String prefixFooter = indentation("");
-    println(NONE, "%s", prefixFooter);
   }
 
   private void printlnTestDescriptor(Color color, String message, TestIdentifier testIdentifier) {
@@ -241,6 +254,21 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     @Override
     public String toString() {
       return "\u001B[" + this.ansiCode + "m";
+    }
+  }
+
+  class ContainerInfo {
+    private final TestIdentifier testIdentifier;
+    private final long creationNanos;
+    private int numberOfAborted;
+    private int numberOfSkipped;
+    private int numberOfFailed;
+    private int numberOfSuccessful;
+    private int numberOfStarted;
+
+    private ContainerInfo(TestIdentifier testIdentifier) {
+      this.testIdentifier = testIdentifier;
+      this.creationNanos = System.nanoTime();
     }
   }
 }
