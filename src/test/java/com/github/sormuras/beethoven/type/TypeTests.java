@@ -136,7 +136,7 @@ class TypeTests<T> {
     assertEquals(long[][][].class.getName(), Type.type(long[][][].class).binary());
     assertEquals(short[][][].class.getName(), Type.type(short[][][].class).binary());
     assertThrows(UnsupportedOperationException.class, () -> WildcardType.wildcard().binary());
-    throw new RuntimeException("Fail!");
+    // throw new RuntimeException("Fail!");
   }
 
   @Test
