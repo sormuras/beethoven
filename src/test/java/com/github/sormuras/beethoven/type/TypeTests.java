@@ -112,7 +112,7 @@ class TypeTests<T> {
 
   @Test
   void binary(TestReporter reporter) {
-    reporter.publishEntry("key", "value");
+    reporter.publishEntry("key", "val\nue");
     assertEquals(boolean.class.getName(), Type.type(boolean.class).binary());
     assertEquals(byte.class.getName(), Type.type(byte.class).binary());
     assertEquals(char.class.getName(), Type.type(char.class).binary());
@@ -136,7 +136,7 @@ class TypeTests<T> {
     assertEquals(long[][][].class.getName(), Type.type(long[][][].class).binary());
     assertEquals(short[][][].class.getName(), Type.type(short[][][].class).binary());
     assertThrows(UnsupportedOperationException.class, () -> WildcardType.wildcard().binary());
-    // throw new RuntimeException("Fail!");
+    throw new RuntimeException("Fail!");
   }
 
   @Test

@@ -10,19 +10,15 @@
 
 package org.junit.platform.console.tasks;
 
-import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.BLUE;
-import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.GREEN;
-import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.NONE;
-import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.PURPLE;
-import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.RED;
-import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.YELLOW;
+import static org.junit.platform.commons.util.ExceptionUtils.readStackTrace;
+import static org.junit.platform.console.tasks.ColoredPrintingTestListener.Color.*;
 
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import org.junit.platform.commons.util.Preconditions;
+import java.util.concurrent.TimeUnit;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -41,18 +37,22 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   private long executionStartedNanos;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
-    this(out, disableAnsiColors, Theme.valueOf(Charset.defaultCharset()), false);
+    this(out, disableAnsiColors, 50, Theme.valueOf(Charset.defaultCharset()), true);
   }
 
   ColoredPrintingTestListener(
-      PrintWriter out, boolean disableAnsiColors, Theme theme, boolean verbose) {
+      PrintWriter out,
+      boolean disableAnsiColors,
+      int maxContainerNestingLevel,
+      Theme theme,
+      boolean verbose) {
     this.out = out;
     this.disableAnsiColors = disableAnsiColors;
     this.theme = theme;
     this.verbose = verbose;
     this.frames = new ArrayDeque<>();
     // create and populate vertical indentation lookup table
-    this.verticals = new String[50];
+    this.verticals = new String[maxContainerNestingLevel];
     this.verticals[0] = "";
     this.verticals[1] = "";
     for (int i = 2; i < verticals.length; i++) {
@@ -73,8 +73,6 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void testPlanExecutionFinished(TestPlan testPlan) {
-    Preconditions.condition(
-        frames.size() == 1, () -> "Stack should contain single item, but it has: " + frames);
     Frame frame = frames.pop();
     if (verbose) {
       long tests = testPlan.countTestIdentifiers(TestIdentifier::isTest);
@@ -85,6 +83,8 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
+    frames.peek().numberOfStarted++;
+    executionStartedNanos = System.nanoTime();
     if (testIdentifier.isContainer()) {
       printVerticals();
       printf(NONE, theme.entry());
@@ -96,8 +96,9 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     if (verbose) {
       printVerticals();
       printf(NONE, theme.entry());
-      printf(NONE, " %s", testIdentifier.getDisplayName());
+      printf(CYAN, " %s", testIdentifier.getDisplayName());
       printf(NONE, "%n"); // "started%n"
+      printDetails(testIdentifier);
     }
   }
 
@@ -105,58 +106,65 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   public void executionFinished(
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
     if (testIdentifier.isContainer()) {
-      frames.pop();
+      Frame frame = frames.pop();
+      printVerticals();
+      printf(NONE, theme.entry());
+      printf(BLUE, " %s", testIdentifier.getDisplayName());
+      printf(NONE, " finished. %s%n", frame);
       return;
     }
-    Color color = determineColor(testExecutionResult.getStatus());
+    frames.peek().count(testExecutionResult);
+    long nanos = System.nanoTime() - executionStartedNanos;
+    Color color = Color.valueOf(testExecutionResult);
     if (verbose) {
-      printVerticals();
-      printf(NONE, theme.spacing());
-      printf(color, "%s%n", testExecutionResult.getStatus());
+      testExecutionResult
+          .getThrowable()
+          .ifPresent(t -> printDetail(RED, "caught", readStackTrace(t)));
+      printDetail(NONE, "duration", "%d ms%n", duration(nanos));
+      printDetail(color, "", "%s%n", testExecutionResult.getStatus());
       printVerticals();
       printf(NONE, "%n");
     } else {
       printVerticals();
       printf(NONE, theme.entry());
       printf(color, " %s", testIdentifier.getDisplayName());
+      // printf(NONE, " (%d ms)", duration(nanos));
+      testExecutionResult.getThrowable().ifPresent(t -> printf(RED, " %s", t));
       printf(NONE, "%n");
     }
   }
 
   @Override
   public void executionSkipped(TestIdentifier testIdentifier, String reason) {
+    frames.peek().numberOfSkipped++;
     printVerticals();
     printf(NONE, theme.entry());
     if (verbose) {
       printf(NONE, " %s not executed%n", testIdentifier.getDisplayName());
+      printDetails(testIdentifier);
+      printDetail(YELLOW, "reason", reason);
+      printDetail(YELLOW, "", "SKIPPED");
       printVerticals();
-      printMessage(YELLOW, theme.spacing() + "reason: " + reason);
-      printVerticals();
-      printf(YELLOW, "  SKIPPED%n");
+      printf(NONE, "%n");
     } else {
-      printf(YELLOW, " %s ", testIdentifier.getDisplayName());
-      printMessage(NONE, reason);
+      printf(YELLOW, " %s %s%n", testIdentifier.getDisplayName(), reason);
+    }
+  }
+
+  @Override
+  public void dynamicTestRegistered(TestIdentifier testIdentifier) {
+    if (verbose) {
+      printVerticals();
+      printf(NONE, theme.entry());
+      printf(PURPLE, " %s", testIdentifier.getDisplayName());
+      printf(NONE, " dynamically registered%n");
     }
   }
 
   @Override
   public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
     if (verbose) {
-      printVerticals();
-      printMessage(PURPLE, theme.spacing() + "reports: " + entry.toString());
-    }
-  }
-
-  private Color determineColor(TestExecutionResult.Status status) {
-    switch (status) {
-      case SUCCESSFUL:
-        return GREEN;
-      case ABORTED:
-        return YELLOW;
-      case FAILED:
-        return RED;
-      default:
-        return NONE;
+      printDetail(PURPLE, "reports", entry.toString());
     }
   }
 
@@ -167,6 +175,35 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       // Use string concatenation to avoid ANSI disruption on console
       out.printf(color + message + NONE, args);
     }
+  }
+
+  private void printDetails(TestIdentifier testIdentifier) {
+    printDetail(NONE, "tags", "%s%n", testIdentifier.getTags());
+    printDetail(NONE, "uniqueId", "%s%n", testIdentifier.getUniqueId());
+    printDetail(NONE, "parent", "%s%n", testIdentifier.getParentId().orElse("[]"));
+    testIdentifier.getSource().ifPresent(source -> printDetail(NONE, "source", "%s%n", source));
+  }
+
+  private void printDetail(Color color, String detail, String format, Object... args) {
+    printf(NONE, verticals[frames.size() + 1]);
+    if (!detail.isEmpty()) {
+      printf(NONE, String.format("%9s: ", detail));
+    }
+    if (args.length > 0) {
+      printf(color, format, args);
+      return;
+    }
+    String[] lines = format.split("\r\n|\n|\r");
+    printf(color, lines[0]);
+    if (lines.length > 1) {
+      String delimiter =
+          System.lineSeparator() + verticals[frames.size() + 1] + String.format("%9s    ", "");
+      for (int i = 1; i < lines.length; i++) {
+        printf(NONE, delimiter);
+        printf(color, lines[i]);
+      }
+    }
+    out.println();
     out.flush();
   }
 
@@ -178,18 +215,8 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     return verticals[frames.size()];
   }
 
-  private void printMessage(Color color, String message) {
-    String[] lines = message.split("\r\n|\n|\r");
-    printf(color, lines[0]);
-    if (lines.length > 1) {
-      String delimiter = System.lineSeparator() + verticals() + theme.spacing();
-      for (int i = 1; i < lines.length; i++) {
-        printf(NONE, delimiter);
-        printf(color, lines[i]);
-      }
-    }
-    out.println();
-    out.flush();
+  private long duration(long nanos) {
+    return TimeUnit.NANOSECONDS.toMillis(nanos);
   }
 
   enum Color {
@@ -211,6 +238,19 @@ class ColoredPrintingTestListener implements TestExecutionListener {
 
     WHITE(37);
 
+    static Color valueOf(TestExecutionResult result) {
+      switch (result.getStatus()) {
+        case SUCCESSFUL:
+          return GREEN;
+        case ABORTED:
+          return YELLOW;
+        case FAILED:
+          return RED;
+        default:
+          return NONE;
+      }
+    }
+
     private final int ansiCode;
 
     Color(int ansiCode) {
@@ -224,8 +264,16 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   }
 
   enum Theme {
-    ASCII(".", "| ", "+", "    "),
-    UTF_8(".", "│  ", "├─", "    ");
+    ASCII(".", "| ", "+--"),
+
+    UTF_8(".", "│  ", "├─");
+
+    static Theme valueOf(Charset charset) {
+      if (StandardCharsets.UTF_8.equals(charset)) {
+        return UTF_8;
+      }
+      return ASCII;
+    }
 
     private final String[] tiles;
 
@@ -244,17 +292,6 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     String entry() {
       return tiles[2];
     }
-
-    String spacing() {
-      return tiles[3];
-    }
-
-    static Theme valueOf(Charset charset) {
-      if (StandardCharsets.UTF_8.equals(charset)) {
-        return UTF_8;
-      }
-      return ASCII;
-    }
   }
 
   class Frame {
@@ -269,6 +306,43 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     private Frame(String uniqueId) {
       this.uniqueId = uniqueId;
       this.creationNanos = System.nanoTime();
+    }
+
+    private Frame count(TestExecutionResult result) {
+      switch (result.getStatus()) {
+        case SUCCESSFUL:
+          numberOfSuccessful++;
+          return this;
+        case ABORTED:
+          numberOfAborted++;
+          return this;
+        case FAILED:
+          numberOfFailed++;
+          return this;
+        default:
+          return this;
+      }
+    }
+
+    @Override
+    public String toString() {
+      return "Frame{"
+          + "uniqueId='"
+          + uniqueId
+          + '\''
+          + ", creationNanos="
+          + creationNanos
+          + ", numberOfAborted="
+          + numberOfAborted
+          + ", numberOfSkipped="
+          + numberOfSkipped
+          + ", numberOfFailed="
+          + numberOfFailed
+          + ", numberOfSuccessful="
+          + numberOfSuccessful
+          + ", numberOfStarted="
+          + numberOfStarted
+          + '}';
     }
   }
 }
