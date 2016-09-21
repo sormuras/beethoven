@@ -13,9 +13,7 @@ import java.lang.reflect.AnnotatedType;
 import java.net.URI;
 import java.util.List;
 import javax.tools.JavaFileObject;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestReporter;
 
 class TypeTests<T> {
 
@@ -111,8 +109,7 @@ class TypeTests<T> {
   }
 
   @Test
-  void binary(TestReporter reporter) {
-    reporter.publishEntry("key", "val\nue");
+  void binary() {
     assertEquals(boolean.class.getName(), Type.type(boolean.class).binary());
     assertEquals(byte.class.getName(), Type.type(byte.class).binary());
     assertEquals(char.class.getName(), Type.type(char.class).binary());
@@ -136,11 +133,9 @@ class TypeTests<T> {
     assertEquals(long[][][].class.getName(), Type.type(long[][][].class).binary());
     assertEquals(short[][][].class.getName(), Type.type(short[][][].class).binary());
     assertThrows(UnsupportedOperationException.class, () -> WildcardType.wildcard().binary());
-    throw new RuntimeException("Fail!");
   }
 
   @Test
-  @Disabled
   void classType() {
     assertEquals("boolean", Type.type(boolean.class).list());
     assertEquals("byte", Type.type(byte.class).list());

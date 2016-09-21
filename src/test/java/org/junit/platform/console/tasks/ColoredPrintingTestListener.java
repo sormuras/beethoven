@@ -37,7 +37,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   private long executionStartedNanos;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
-    this(out, disableAnsiColors, 50, Theme.valueOf(Charset.defaultCharset()), true);
+    this(out, disableAnsiColors, 50, Theme.valueOf(Charset.defaultCharset()), false);
   }
 
   ColoredPrintingTestListener(
@@ -107,10 +107,14 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
     if (testIdentifier.isContainer()) {
       Frame frame = frames.pop();
-      printVerticals();
-      printf(NONE, theme.entry());
-      printf(BLUE, " %s", testIdentifier.getDisplayName());
-      printf(NONE, " finished. %s%n", frame);
+      if (verbose) {
+        printVerticals();
+        printf(NONE, theme.entry());
+        printf(BLUE, " %s", testIdentifier.getDisplayName());
+        printf(NONE, " finished. %s%n", frame);
+        printVerticals();
+        printf(NONE, "%n");
+      }
       return;
     }
     frames.peek().count(testExecutionResult);
@@ -175,8 +179,10 @@ class ColoredPrintingTestListener implements TestExecutionListener {
       // Use string concatenation to avoid ANSI disruption on console
       out.printf(color + message + NONE, args);
     }
+    out.flush();
   }
 
+  /** Print static information about the test identifier. */
   private void printDetails(TestIdentifier testIdentifier) {
     printDetail(NONE, "tags", "%s%n", testIdentifier.getTags());
     printDetail(NONE, "uniqueId", "%s%n", testIdentifier.getUniqueId());
@@ -184,20 +190,26 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     testIdentifier.getSource().ifPresent(source -> printDetail(NONE, "source", "%s%n", source));
   }
 
+  /** Print single detail with a potential multi-line message. */
   private void printDetail(Color color, String detail, String format, Object... args) {
-    printf(NONE, verticals[frames.size() + 1]);
+    // Print initial verticals - expecting to be at start of the line.
+    String indent = verticals[frames.size() + 1];
+    printf(NONE, indent);
+    String detailFormat = "%9s";
+    // Omit detail string if it's empty.
     if (!detail.isEmpty()) {
-      printf(NONE, String.format("%9s: ", detail));
+      printf(NONE, String.format(detailFormat + ": ", detail));
     }
+    // Trivial case: at least one arg is given? Let printf do the entire work.
     if (args.length > 0) {
       printf(color, format, args);
       return;
     }
+    // Still here? Split format into separate lines and indent them from the second on.
     String[] lines = format.split("\r\n|\n|\r");
     printf(color, lines[0]);
     if (lines.length > 1) {
-      String delimiter =
-          System.lineSeparator() + verticals[frames.size() + 1] + String.format("%9s    ", "");
+      String delimiter = System.lineSeparator() + indent + String.format(detailFormat + "    ", "");
       for (int i = 1; i < lines.length; i++) {
         printf(NONE, delimiter);
         printf(color, lines[i]);
@@ -327,12 +339,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
     @Override
     public String toString() {
       return "Frame{"
-          + "uniqueId='"
-          + uniqueId
-          + '\''
-          + ", creationNanos="
-          + creationNanos
-          + ", numberOfAborted="
+          + "numberOfAborted="
           + numberOfAborted
           + ", numberOfSkipped="
           + numberOfSkipped
