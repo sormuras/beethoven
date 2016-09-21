@@ -37,7 +37,7 @@ class ColoredPrintingTestListener implements TestExecutionListener {
   private long executionStartedNanos;
 
   ColoredPrintingTestListener(PrintWriter out, boolean disableAnsiColors) {
-    this(out, disableAnsiColors, 50, Theme.valueOf(Charset.defaultCharset()), false);
+    this(out, disableAnsiColors, 50, Theme.valueOf(Charset.defaultCharset()), true);
   }
 
   ColoredPrintingTestListener(
