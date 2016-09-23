@@ -18,9 +18,11 @@ import com.github.sormuras.beethoven.Tests;
 import com.github.sormuras.beethoven.type.ClassType;
 import com.github.sormuras.beethoven.type.Type;
 import com.github.sormuras.beethoven.type.TypeVariable;
+import com.github.sormuras.beethoven.type.WildcardType;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
@@ -107,39 +109,43 @@ class CompilationUnitTests {
     assertEquals(Tests.load(Units.class, "simple"), Units.simple().list());
   }
 
-  //  @Test
-  //  void processed() throws Exception {
-  //    CompilationUnit unit = CompilationUnit.of("test");
-  //    ClassDeclaration enterprise = unit.declareClass("Class");
-  //    enterprise.addModifier(Modifier.PUBLIC);
-  //    enterprise.declareField(Object.class, "field1").addAnnotation(Counter.Mark.class);
-  //    enterprise
-  //        .declareField(
-  //            ClassType.parameterized(Comparable.class, TypeArgument.argument(WildcardType.wildcard()), "field2"))
-  //        .addAnnotation(Counter.Mark.class);
-  //    enterprise
-  //        .declareField(
-  //            ClassType.of(
-  //                Name.name(Map.Entry.class),
-  //                TypeArgument.of(WildcardType.supertypeOf(String.class)),
-  //                TypeArgument.of(WildcardType.subtypeOf(Runnable.class))),
-  //            "field3")
-  //        .addAnnotation(Counter.Mark.class);
-  //    enterprise.declareField(int[].class, "field4").addAnnotation(Counter.Mark.class);
-  //    enterprise.declareField(int[][][].class, "field5").addAnnotation(Counter.Mark.class);
-  //    enterprise.declareField(String[][].class, "field6").addAnnotation(Counter.Mark.class);
-  //    Tests.assertEquals(getClass(), "processed", unit);
-  //
-  //    Counter counter = new Counter();
-  //    Compilation.compile(null, emptyList(), asList(counter), asList(unit.toJavaFileObject()));
-  //    assertEquals(6, counter.marked.size());
-  //    assertEquals(
-  //        "java.util.Map.Entry<? super java.lang.String, ? extends java.lang.Runnable>",
-  //        counter.types.get("field3").list());
-  //    assertEquals("int[]", counter.types.get("field4").list());
-  //    assertEquals("int[][][]", counter.types.get("field5").list());
-  //    assertEquals("java.lang.String[][]", counter.types.get("field6").list());
-  //  }
+  @Test
+  void processed() throws Exception {
+    CompilationUnit unit = CompilationUnit.of("test");
+    ClassDeclaration enterprise = unit.declareClass("Class");
+    enterprise.addModifier(Modifier.PUBLIC);
+    enterprise.declareField(Object.class, "field1").addAnnotation(Counter.Mark.class);
+    enterprise
+        .declareField(
+            ClassType.type(Comparable.class).parameterized(i -> List.of(WildcardType.wildcard())),
+            "field2")
+        .addAnnotation(Counter.Mark.class);
+    enterprise
+        .declareField(
+            ClassType.type(Map.Entry.class)
+                .parameterized(
+                    i ->
+                        i == 0
+                            ? List.of()
+                            : List.of(
+                                WildcardType.supertype(String.class),
+                                WildcardType.extend(Runnable.class))),
+            "field3")
+        .addAnnotation(Counter.Mark.class);
+    enterprise.declareField(int[].class, "field4").addAnnotation(Counter.Mark.class);
+    enterprise.declareField(int[][][].class, "field5").addAnnotation(Counter.Mark.class);
+    enterprise.declareField(String[][].class, "field6").addAnnotation(Counter.Mark.class);
+    Tests.assertEquals(getClass(), "processed", unit);
+    Counter counter = new Counter();
+    Compilation.compile(null, emptyList(), asList(counter), asList(unit.toJavaFileObject()));
+    assertEquals(6, counter.marked.size());
+    //        assertEquals(    TODO Fixme!
+    //            "java.util.Map.Entry<? super String, ? extends Runnable>",
+    //            counter.types.get("field3").list());
+    assertEquals("int[]", counter.types.get("field4").list());
+    assertEquals("int[][][]", counter.types.get("field5").list());
+    assertEquals("String[][]", counter.types.get("field6").list());
+  }
 
   @Test
   void abc() throws Exception {
