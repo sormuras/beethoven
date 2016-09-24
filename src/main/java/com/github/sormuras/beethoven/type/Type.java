@@ -120,7 +120,7 @@ public abstract class Type extends Annotated {
 
       @Override
       public Type visitError(javax.lang.model.type.ErrorType type, Void tag) {
-        return Mirrors.mirror(type);
+        return visitDeclared(type, tag);
       }
 
       @Override
@@ -207,6 +207,13 @@ public abstract class Type extends Annotated {
         if (enclosing.getKind() == TypeKind.DECLARED) {
           type = (javax.lang.model.type.DeclaredType) enclosing;
           continue;
+        }
+        Element element = type.asElement().getEnclosingElement();
+        while (element.getKind() != ElementKind.PACKAGE) {
+          annotations = annotations(element.asType());
+          name = element.getSimpleName().toString();
+          simples.add(0, new ClassType.Simple(annotations, name, List.of()));
+          element = element.getEnclosingElement();
         }
         break;
       }

@@ -1,6 +1,5 @@
 package com.github.sormuras.beethoven.unit;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -137,11 +136,11 @@ class CompilationUnitTests {
     enterprise.declareField(String[][].class, "field6").addAnnotation(Counter.Mark.class);
     Tests.assertEquals(getClass(), "processed", unit);
     Counter counter = new Counter();
-    Compilation.compile(null, emptyList(), asList(counter), asList(unit.toJavaFileObject()));
+    Compilation.compile(null, emptyList(), List.of(counter), List.of(unit.toJavaFileObject()));
     assertEquals(6, counter.marked.size());
-    //        assertEquals(    TODO Fixme!
-    //            "java.util.Map.Entry<? super String, ? extends Runnable>",
-    //            counter.types.get("field3").list());
+    assertEquals(
+        "java.util.Map.Entry<? super String, ? extends Runnable>",
+        counter.types.get("field3").list());
     assertEquals("int[]", counter.types.get("field4").list());
     assertEquals("int[][][]", counter.types.get("field5").list());
     assertEquals("String[][]", counter.types.get("field6").list());
@@ -153,7 +152,7 @@ class CompilationUnitTests {
     Tests.assertEquals(getClass(), "abc", unit);
 
     Counter counter = new Counter();
-    Compilation.compile(null, emptyList(), asList(counter), asList(unit.toJavaFileObject()));
+    Compilation.compile(null, emptyList(), List.of(counter), List.of(unit.toJavaFileObject()));
     assertEquals(2, counter.marked.size());
     assertEquals("A.B.C", counter.types.get("raw").list());
     assertEquals("A<I>.B<I, I>.C<I, I, I>", counter.types.get("parametered").list());
