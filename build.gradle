@@ -1,4 +1,4 @@
-group 'com.github.sormuras'
+group 'de.sormuras'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -16,6 +16,7 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'maven-publish'
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -29,8 +30,8 @@ tasks.withType(JavaCompile) {
     targetCompatibility  = 1.9
 }
 
-jar {
-    from sourceSets.main.allJava.files
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
 
 dependencies {
@@ -59,6 +60,18 @@ task format(type: JavaExec) {
     args += ['--replace']
     args += mainJavaFiles // sourceSets.main.allJava.files
     args += sourceSets.test.allJava.files
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
