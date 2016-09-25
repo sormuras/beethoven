@@ -3,6 +3,8 @@ package com.github.sormuras.beethoven.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.expectThrows;
 
+import com.github.sormuras.beethoven.Annotation;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class TypeVariableTests {
@@ -13,8 +15,23 @@ class TypeVariableTests {
   }
 
   @Test
+  void annotated() {
+    assertEquals(
+        "@Deprecated T",
+        TypeVariable.variable("T")
+            .annotated(i -> List.of(Annotation.annotation(Deprecated.class)))
+            .list());
+  }
+
+  @Test
   void constructorFailsWithEmptyName() {
     Exception e = expectThrows(Exception.class, () -> TypeVariable.variable(""));
     assertEquals("TypeVariable identifier must not be empty!", e.getMessage());
+  }
+
+  @Test
+  void binaryIsUnsupported() {
+    Exception e = expectThrows(Exception.class, () -> TypeVariable.variable("T").binary());
+    assertEquals("Type variables have no binary class name.", e.getMessage());
   }
 }
