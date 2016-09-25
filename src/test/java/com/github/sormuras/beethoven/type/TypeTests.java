@@ -1,17 +1,31 @@
 package com.github.sormuras.beethoven.type;
 
 import static com.github.sormuras.beethoven.Style.SIMPLE;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.github.sormuras.beethoven.All;
+import com.github.sormuras.beethoven.Annotation;
 import com.github.sormuras.beethoven.Compilation;
 import com.github.sormuras.beethoven.Counter;
 import com.github.sormuras.beethoven.Listing;
 import com.github.sormuras.beethoven.Tests;
 import com.github.sormuras.beethoven.U;
+import com.github.sormuras.beethoven.unit.Annotatable;
+import com.github.sormuras.beethoven.unit.Block;
+import com.github.sormuras.beethoven.unit.ClassDeclaration;
+import com.github.sormuras.beethoven.unit.CompilationUnit;
+import com.github.sormuras.beethoven.unit.MethodDeclaration;
+import com.github.sormuras.beethoven.unit.NormalClassDeclaration;
+import com.github.sormuras.beethoven.unit.TypeParameter;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedType;
 import java.net.URI;
 import java.util.List;
+import javax.lang.model.type.NoType;
+import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
@@ -166,6 +180,11 @@ class TypeTests<T> {
             .list());
   }
 
+  private <A extends Annotatable> A mark(A annotatable) {
+    annotatable.addAnnotation(Counter.Mark.class);
+    return annotatable;
+  }
+
   private void primitives(Counter counter) {
     assertEquals(9, counter.types.size());
     assertEquals(Type.type(boolean.class), counter.types.get("field1"));
@@ -180,6 +199,27 @@ class TypeTests<T> {
   }
 
   @Test
+  void primitivesFromCompilationUnit() throws Exception {
+    CompilationUnit unit = CompilationUnit.of("test");
+    ClassDeclaration type = unit.declareClass("PrimitiveFields");
+    mark(type.declareField(boolean.class, "field1"));
+    mark(type.declareField(byte.class, "field2"));
+    mark(type.declareField(char.class, "field3"));
+    mark(type.declareField(double.class, "field4"));
+    mark(type.declareField(float.class, "field5"));
+    mark(type.declareField(int.class, "field6"));
+    mark(type.declareField(long.class, "field7"));
+    mark(type.declareField(short.class, "field8"));
+    MethodDeclaration noop = type.declareMethod(void.class, "noop");
+    noop.setBody(new Block());
+    noop.addAnnotation(Counter.Mark.class);
+
+    Counter counter = new Counter();
+    Compilation.compile(null, emptyList(), List.of(counter), List.of(unit.toJavaFileObject()));
+    primitives(counter);
+  }
+
+  @Test
   void primitivesFromFile() {
     String charContent = Tests.load(TypeTests.class, "primitives");
     JavaFileObject source = Compilation.source(URI.create("test/Primitives.java"), charContent);
@@ -189,5 +229,47 @@ class TypeTests<T> {
     // Tree tree = counter.trees.get("field1");
     // Type type = tree.accept(new Type.Trees.TypeTreeVisitor(), null);
     // System.out.print(tree + " -> " + type);
+  }
+
+  @Test
+  void rootAnnotation() {
+    CompilationUnit unit = CompilationUnit.of("test");
+
+    Annotation annotation = Annotation.annotation(All.class);
+    annotation.addObject("o", Annotation.annotation(Target.class, ElementType.TYPE));
+    annotation.addObject("p", 4711);
+    annotation.addObject("r", Double.class);
+    annotation.addObject("r", Float.class);
+
+    NormalClassDeclaration type = unit.declareClass("Root");
+    type.addAnnotation(annotation);
+    type.addTypeParameter(TypeParameter.of("X"));
+    mark(type.declareField(TypeVariable.variable("X"), "i"));
+
+    Counter counter = new Counter();
+    Compilation.compile(null, emptyList(), List.of(counter), List.of(unit.toJavaFileObject()));
+    assertEquals(1, counter.annotations.size());
+    assertEquals(annotation.list(), counter.annotations.get(0).list());
+  }
+
+  //  @Test
+  //  void unknownTypeFails() {
+  //    AssertionError e =
+  //        expectThrows(
+  //            AssertionError.class,
+  //            () -> JavaMirrors.of(Tests.proxy(PrimitiveType.class, (p, m, a) -> TypeKind.ERROR)));
+  //    assertTrue(e.toString().contains("Unsupported primitive type"));
+  //    e =
+  //        expectThrows(
+  //            AssertionError.class,
+  //            () -> JavaMirrors.of(Tests.proxy(NoType.class, (p, m, a) -> TypeKind.ERROR)));
+  //    assertTrue(e.toString().contains("Unsupported no type"));
+  //  }
+
+  @Test
+  void visitor() {
+    Type.Mirrors.TypeVisitor visitor = new Type.Mirrors.TypeVisitor();
+    NoType voidType = Tests.proxy(NoType.class, (p, m, a) -> TypeKind.VOID);
+    assertEquals(Type.type(void.class), visitor.visitNoType(voidType, null));
   }
 }

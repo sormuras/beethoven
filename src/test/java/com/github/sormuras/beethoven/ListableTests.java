@@ -1,32 +1,76 @@
 package com.github.sormuras.beethoven;
 
+import static com.github.sormuras.beethoven.Listable.IDENTITY;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 class ListableTests {
 
+  class A implements Listable {
+
+    @Override
+    public Listing apply(Listing t) {
+      return t.add('a');
+    }
+
+    @Override
+    public String toString() {
+      return "a";
+    }
+  }
+
+  class Z implements Listable {
+
+    @Override
+    public Listing apply(Listing t) {
+      return t.add('z');
+    }
+
+    @Override
+    public String toString() {
+      return "z";
+    }
+  }
+
   @Test
   void identity() {
-    assertTrue(Listable.IDENTITY.isEmpty());
-    assertEquals("", Listable.IDENTITY.list());
-    assertEquals("", Listable.IDENTITY.list(new Listing()));
-    assertEquals("Listable.IDENTITY", Listable.IDENTITY.toString());
+    assertTrue(IDENTITY.isEmpty());
+    assertEquals("", IDENTITY.list());
+    assertEquals("", IDENTITY.list(new Listing()));
+    assertEquals("Listable.IDENTITY", IDENTITY.toString());
+  }
+
+  @Test
+  void compare() {
+    Listable[] expecteds = {new A(), l -> l, new Z()};
+    Listable[] actuals = {expecteds[2], expecteds[0], expecteds[1]};
+    Arrays.sort(actuals);
+    assertArrayEquals(expecteds, actuals);
+  }
+
+  @Test
+  void comparisonKey() {
+    assertEquals("a#a", new A().comparisonKey());
+    assertEquals("z#z", new Z().comparisonKey());
+    assertEquals("identity#listable.identity", IDENTITY.comparisonKey());
   }
 
   @Test
   void empty() {
-    assertTrue(Listable.IDENTITY.isEmpty());
+    assertTrue(IDENTITY.isEmpty());
     assertTrue(Listable.NEWLINE.isEmpty());
     assertFalse(Listable.SPACE.isEmpty());
   }
 
   @Test
   void list() {
-    assertEquals("", Listable.IDENTITY.list());
+    assertEquals("", IDENTITY.list());
     assertEquals("", Listable.NEWLINE.list()); // initial new line is ignored
     assertEquals(" ", Listable.SPACE.list());
   }
