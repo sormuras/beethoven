@@ -83,7 +83,9 @@ class ModifiableTest implements Modifiable {
   @Test
   void modifiers() {
     assertEquals("[strictfp]", Modifiable.modifiers(java.lang.reflect.Modifier.STRICT).toString());
-    assertEquals("[transient]", Modifiable.modifiers(java.lang.reflect.Modifier.TRANSIENT).toString());
-    assertEquals("[volatile]", Modifiable.modifiers(java.lang.reflect.Modifier.VOLATILE).toString());
+    assertEquals(
+        "[transient]", Modifiable.modifiers(java.lang.reflect.Modifier.TRANSIENT).toString());
+    assertEquals(
+        "[volatile]", Modifiable.modifiers(java.lang.reflect.Modifier.VOLATILE).toString());
   }
 }
