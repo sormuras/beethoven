@@ -27,12 +27,6 @@ import java.util.List;
  */
 public class NormalClassDeclaration extends ClassDeclaration {
 
-  public static NormalClassDeclaration of(String name) {
-    NormalClassDeclaration declaration = new NormalClassDeclaration();
-    declaration.setName(name);
-    return declaration;
-  }
-
   private ClassType superClass = null;
   private List<TypeParameter> typeParameters = Collections.emptyList();
 
