@@ -208,12 +208,15 @@ public abstract class Type extends Annotated {
           type = (javax.lang.model.type.DeclaredType) enclosing;
           continue;
         }
-        Element element = type.asElement().getEnclosingElement();
-        while (element.getKind() != ElementKind.PACKAGE) {
+        // TODO Why is the following block needed?
+        // expected: "java.util.Map.Entry<A, B>"
+        // actual:   "java.util.Entry<A, B>"
+        for (Element element = type.asElement().getEnclosingElement();
+            element.getKind() != ElementKind.PACKAGE;
+            element = element.getEnclosingElement()) {
           annotations = annotations(element.asType());
           name = element.getSimpleName().toString();
           simples.add(0, new ClassType.Simple(annotations, name, List.of()));
-          element = element.getEnclosingElement();
         }
         break;
       }
