@@ -4,6 +4,7 @@ import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.expectThrows;
@@ -77,5 +78,12 @@ class ModifiableTest implements Modifiable {
   @Test
   void validationThrowsNullPointerException() {
     expectThrows(NullPointerException.class, () -> validateModifiers(null, null));
+  }
+
+  @Test
+  void modifiers() {
+    assertEquals("[strictfp]", Modifiable.modifiers(java.lang.reflect.Modifier.STRICT).toString());
+    assertEquals("[transient]", Modifiable.modifiers(java.lang.reflect.Modifier.TRANSIENT).toString());
+    assertEquals("[volatile]", Modifiable.modifiers(java.lang.reflect.Modifier.VOLATILE).toString());
   }
 }
