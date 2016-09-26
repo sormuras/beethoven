@@ -31,6 +31,16 @@ tasks.withType(JavaCompile) {
     targetCompatibility  = 1.9
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'de.sormuras.beethoven.Beethoven',
+                "Implementation-Title": group + '.' + name,
+                "Implementation-Version": version
+        )
+    }
+}
+
 javadoc {
     // options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
     // options.author = true
