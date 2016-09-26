@@ -33,9 +33,9 @@ import javax.lang.model.element.PackageElement;
  * Names are used to refer to entities declared in a program.
  *
  * <p>A declared entity is a package, class type (normal or enum), interface type (normal or
- * annotation type), member (class, interface, field, or method) argument a reference type, type
- * parameter (argument a class, interface, method or constructor), parameter (to a method,
- * constructor, or exception handler), or local variable.
+ * annotation type), member (class, interface, field, or method) of a reference type, type parameter
+ * (of a class, interface, method or constructor), parameter (to a method, constructor, or exception
+ * handler), or local variable.
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
  */
@@ -44,7 +44,11 @@ public class Name implements Listable {
   /** Compiled <code>"."</code> pattern used to split canonical package and type names. */
   public static final Pattern DOT = Pattern.compile("\\.");
 
-  /** Cast/convert any object to an instance argument {@link Name}. */
+  /**
+   * Cast/convert any object to an instance of {@link Name}.
+   *
+   * @return {@link Name}
+   */
   public static Name cast(Object any) {
     if (any == null) {
       return null;
@@ -68,23 +72,35 @@ public class Name implements Listable {
       Collection<?> collection = (Collection<?>) any;
       return name(collection.stream().map(Object::toString).collect(Collectors.toList()));
     }
-    throw new IllegalArgumentException("Can't cast/convert instance argument " + any.getClass());
+    throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
   }
 
-  /** Create name instance for the given class instance. */
+  /**
+   * Create name instance for the given class instance.
+   *
+   * @return {@link Name}
+   */
   public static Name name(Class<?> type) {
     String[] packageNames = DOT.split(type.getName()); // java[.]lang[.]Thread$State
     String[] identifiers = DOT.split(type.getCanonicalName()); // java[.]lang[.]Thread[.]State
     return new Name(packageNames.length - 1, Arrays.asList(identifiers));
   }
 
-  /** Create new Name based on the class type and declared member name. */
+  /**
+   * Create new Name based on the class type and declared member name.
+   *
+   * @return {@link Name}
+   */
   public static Name name(Class<?> declaringType, String declaredMemberName) {
     Name declaringName = name(declaringType);
     return name(declaringName.packageLevel, declaringName.canonical + '.' + declaredMemberName);
   }
 
-  /** Create new Name based on type element instance. */
+  /**
+   * Create new Name based on type element instance.
+   *
+   * @return {@link Name}
+   */
   public static Name name(Element element) {
     List<String> simpleNames = new ArrayList<>();
     for (Element e = element; true; e = e.getEnclosingElement()) {
@@ -101,7 +117,11 @@ public class Name implements Listable {
     }
   }
 
-  /** Create name instance for the given enum constant. */
+  /**
+   * Create name instance for the given enum constant.
+   *
+   * @return {@link Name}
+   */
   public static Name name(Enum<?> constant) {
     return name(constant.getDeclaringClass(), constant.name());
   }
@@ -112,6 +132,8 @@ public class Name implements Listable {
    * <pre>
    * name(2, "abc.xyz.Alphabet")
    * </pre>
+   *
+   * @return {@link Name}
    */
   public static Name name(int packageLevel, String canonical) {
     return name(packageLevel, Arrays.asList(DOT.split(canonical)));
@@ -126,6 +148,7 @@ public class Name implements Listable {
    * name(2, List.of("abc", "xyz", "Alphabet"))
    * </pre>
    *
+   * @return {@link Name}
    * @throws AssertionError if any identifier is not a syntactically valid qualified name.
    */
   public static Name name(int packageLevel, List<String> names) {
@@ -138,7 +161,7 @@ public class Name implements Listable {
   /**
    * Create name instance for the identifiers by delegating to {@link #name(int, List)}.
    *
-   * <p>The package level is determined by the first capital name argument the list.
+   * <p>The package level is determined by the first capital name of the list.
    */
   public static Name name(List<String> names) {
     int size = names.size();
@@ -170,8 +193,7 @@ public class Name implements Listable {
         return name(method);
       }
     }
-    throw new AssertionError(
-        String.format("Member '%s' argument %s not found!", declaredName, type));
+    throw new AssertionError(String.format("Member '%s' of %s not found!", declaredName, type));
   }
 
   private final String canonical;

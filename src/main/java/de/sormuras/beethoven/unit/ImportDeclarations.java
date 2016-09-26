@@ -40,6 +40,7 @@ public class ImportDeclarations implements Listable {
 
   /**
    * Single static (enum) import declaration.
+   *
    * <ul>
    * <li>{@code import static java.lang.Thread.State.NEW;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
@@ -52,6 +53,7 @@ public class ImportDeclarations implements Listable {
 
   /**
    * Single static (member) import declaration.
+   *
    * <ul>
    * <li>{@code import static java.util.Collections.shuffle;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
@@ -64,6 +66,7 @@ public class ImportDeclarations implements Listable {
 
   /**
    * Single static (member) import declaration.
+   *
    * <ul>
    * <li>{@code import static java.util.Collections.shuffle;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
@@ -77,6 +80,7 @@ public class ImportDeclarations implements Listable {
 
   /**
    * Single type.
+   *
    * <ul>
    * <li>{@code import java.util.Collections;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.1
@@ -90,6 +94,7 @@ public class ImportDeclarations implements Listable {
    * A single-type-import declaration imports a single type by giving its canonical name, making it
    * available under a simple name in the class and interface declarations of the compilation unit
    * in which the single-type-import declaration appears.
+   *
    * <ul>
    * <li>{@code import java.util.Collections;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.1
@@ -103,6 +108,7 @@ public class ImportDeclarations implements Listable {
   /**
    * A <i>static-import-on-demand</i> declaration allows all accessible <b>static</b> members of a
    * named type to be imported as needed.
+   *
    * <ul>
    * <li>{@code import static java.util.Collections.*;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.4
@@ -116,6 +122,7 @@ public class ImportDeclarations implements Listable {
   /**
    * A <i>type-import-on-demand</i> declaration allows all accessible types of a named package or
    * type to be imported as needed.
+   *
    * <ul>
    * <li>{@code import java.util.*;}
    * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.2

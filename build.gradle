@@ -31,6 +31,13 @@ tasks.withType(JavaCompile) {
     targetCompatibility  = 1.9
 }
 
+javadoc {
+    // options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+    // options.author = true
+    options.header = project.name
+    options.addStringOption('Xdoclint:html,syntax,reference', '-quiet')
+}
+
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc
