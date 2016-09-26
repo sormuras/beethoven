@@ -62,8 +62,8 @@ uploadArchives {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            def ossrhUsername = rootProject.hasProperty('ossrhUsername') ? rootProject.ossrhUsername : ''
-            def ossrhPassword = rootProject.hasProperty('ossrhPassword') ? rootProject.ossrhPassword : ''
+            //def ossrhUsername = rootProject.hasProperty('ossrhUsername') ? rootProject.ossrhUsername : ''
+            //def ossrhPassword = rootProject.hasProperty('ossrhPassword') ? rootProject.ossrhPassword : ''
 
             repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                 authentication(userName: ossrhUsername, password: ossrhPassword)
@@ -126,7 +126,7 @@ task format(type: JavaExec) {
     mainJavaFiles.removeIf{ file -> file.name.endsWith('module-info.java') }
 
     main '-jar'
-    args =  ['gradle/google-java-format-1.1-20160811.184829-28-all-deps.jar']
+    args =  ['gradle/google-java-format-1.1-20160923.181825-31-all-deps.jar']
     args += ['--replace']
     args += mainJavaFiles // sourceSets.main.allJava.files
     args += sourceSets.test.allJava.files
