@@ -14,6 +14,7 @@ class CompilationTests {
 
   @Test
   void compileString() {
+    assertEquals("€", compile("enum €{}").getName());
     assertEquals("A", compile("enum A {}").getName());
     assertEquals("A", compile("class A {}").getName());
     assertEquals("A", compile("interface A {}").getName());

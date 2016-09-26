@@ -148,12 +148,12 @@ public interface Compilation {
     if (packageMatcher.find()) {
       packageName = packageMatcher.group(1) + ".";
     }
-    Pattern namePattern = Pattern.compile(".*(class|interface|enum)\\s+(\\w*)\\s+.*");
+    Pattern namePattern = Pattern.compile("(class|interface|enum)\\s+(.+)\\s*\\{.*");
     Matcher nameMatcher = namePattern.matcher(charContent);
     if (!nameMatcher.find()) {
       throw new IllegalArgumentException("Expected java compilation unit, but got: " + charContent);
     }
-    String className = nameMatcher.group(2);
+    String className = nameMatcher.group(2).trim();
     return compile(packageName + className, charContent);
   }
 
