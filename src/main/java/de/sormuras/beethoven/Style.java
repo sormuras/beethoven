@@ -28,27 +28,27 @@ package de.sormuras.beethoven;
  * {@link Style#LAST}: Single (type and static) imports only emit last name, like:
  *
  * <pre>
- *    import java.util.Objects                 -> "Objects"
- *    import static java.util.Collections.sort -> "sort"
+ *    import java.util.Objects                 - "Objects"
+ *    import static java.util.Collections.sort - "sort"
  * </pre>
  *
  * {@link Style#LAST}: On-demand _static_ import, like:
  *
  * <pre>
  *   import static java.lang.Thread.State.*
- *     name("java.lang.Thread.State.BLOCKED")   -> "BLOCKED"
- *     name("java.lang.Thread.State.NEW")       -> "NEW"
- *     name("java.lang.Thread.State.WAITING")   -> "WAITING"
+ *     name("java.lang.Thread.State.BLOCKED")   - "BLOCKED"
+ *     name("java.lang.Thread.State.NEW")       - "NEW"
+ *     name("java.lang.Thread.State.WAITING")   - "WAITING"
  * </pre>
  *
  * {@link Style#SIMPLE} On-demand _package_ imports only emit all simple names, like:
  *
  * <pre>
  *   import java.lang.*
- *     name("java.lang.Object")                 -> "Object"
- *     name("java.lang.Thread")                 -> "Thread"
- *     name("java.lang.Thread.State")           -> "Thread.State"
- *     name("java.lang.Thread.State.RUNNABLE")  -> "Thread.State.RUNNABLE"
+ *     name("java.lang.Object")                 - "Object"
+ *     name("java.lang.Thread")                 - "Thread"
+ *     name("java.lang.Thread.State")           - "Thread.State"
+ *     name("java.lang.Thread.State.RUNNABLE")  - "Thread.State.RUNNABLE"
  * </pre>
  */
 public enum Style {

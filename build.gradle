@@ -16,7 +16,8 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
-apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'maven'
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -30,8 +31,66 @@ tasks.withType(JavaCompile) {
     targetCompatibility  = 1.9
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'beethoven'
+                packaging 'jar'
+                description 'Java source created with Java'
+                url 'https://github.com/sormuras/beethoven'
+
+                scm {
+                    connection 'scm:git:git://github.com/sormuras/beethoven.git'
+                    developerConnection 'scm:git:ssh://git@github.com/sormuras/beethoven.git'
+                    url 'https://github.com/sormuras/beethoven'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'sormuras'
+                        name 'Christian Stein'
+                        email 'sormuras@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -60,18 +119,6 @@ task format(type: JavaExec) {
     args += ['--replace']
     args += mainJavaFiles // sourceSets.main.allJava.files
     args += sourceSets.test.allJava.files
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
 }
 
 task wrapper(type: Wrapper) {
