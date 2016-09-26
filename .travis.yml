@@ -7,6 +7,7 @@ jdk: oraclejdk9
 
 before_install:
   - chmod +x gradlew
+  - chmod +x gradle/deploy_snapshot
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -22,5 +23,11 @@ notifications:
     on_success: always # [always|never|change] # default: change
     on_failure: always # [always|never|change] # default: always
 
-# after_success:
+after_success:
+    - gradle/deploy_snapshot.sh
 #   - bash <(curl -s https://codecov.io/bash)
+
+env:
+  global:
+    - secure: "huLLFQGK91CQfH506YhxEicmlVmluYr6aJtXagE/+8PwF3tHFEjMGJZyi/qPVRh/nNn9TjFzwaHMfJ6VZa8voWfZyWuNXQj4sECsL3csNzG/melPODx2dqhZ0jR5Q2PcIN322icsivgvoFJ8ff8Tfx7cy4PUzbdBpPtTEOuhEPxH22Ph0rxeCshQlDmuflWd1z9XpaBT2XxVp9ekmXDnGGWZOT5De0UjVw5dfORkD/zzlDDN6KTHu438u70e+iux/opZ3M8rHkud62B8ep+Yy5YVzUftj9R3LTnx8S+a4YNjUlbdbuHbuHdZYg8r+8WeDYsAMLAtyTl0L2pICh7YiJhhoJnXIN7WL3Mzo5SqI+JjIf0IFmcdHJluArtMerhTJ9sAsQVOHBxq1809lVVwg+94GaIieHCGKySOstkZuQotBoE10Rsq5jOCDhHEXSBbaMxTfx4x44o9QHTlGEa0jWxc0Nthi1cs+J2bCLFo8226VKvBKlZsuNydoRmMt+KQ6fn24Isp6xTkaBTK5auG4MbTSOM16uALeYdxCtQNKZv0fQvubbD9TswAV4phzIYgjQ0EaudBca3GrzCAeRVUUpt3fhSVAjWnlcj6YH/CqYGKipbUdJKCxKtgtSbSVexdo/N3NPeKIYhHzypU+u3mVaCAXYqLWqQJIChdleBD16I="
+    - secure: "V7yYW50cfFhuf13PRJvlMYYEX0NbGZeAwcIzoAmPE38fqvUfgDyE+l/hE+aaQG1RT7NTvvVBR+E7B8zfyGW2yRvXQXtSoFwoWR8hwjQz/8jW+aF5EQCBTDHtfyUSrdp6jxY+caHQ8bFZZ5TtVpTOQ5+NCJkvqxCZ6IZe3vWA0HZvr/V5A65cDWmseoIlkXTMFXI1eQp6XUPHMEa9/IfxbHqSX49n4BIK66p9V/u0gRJ2j2BDXZxD0BtTm4Hti1dZEIk+S1uvBFcUyUXyNm0tfb0iLLoXinXY2e6whWX1Jvy5FjGBrDXrKHPMV3rzfUAXU5wHOM6/1K8GXKaDIU2aiIoCHj855lAP8IZdUxBa9oipSpgRzNLRiv99Bf+V12q1ouO2K/UGqYtsPESAC5VUIt6iyetjwZdR7rdzHOaleWrTAQnImwAwFGIM2u7n8j+tP8NVA8BYpb5camvobG7FmsyQpOTZWlInRQOKyfWnSexOPM0QH/SZ98zRuT2TvZGY7CYVO8vQTSczLA/bWQ1p8yGtI2AJe2UvF51LXXzJ511PHQ8hrpSsQae89umwroohqoJraLKUEU27GMUBxDra9fcMu1QzJiTtt2tCoU5ZO2AVhbH2SNVxm7Nt2EgJS0oqNE3UI6adjj2ICvxgTMw9qD5djPJyyubMGbrxrkrZZkI="
