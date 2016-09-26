@@ -57,9 +57,9 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
   /**
    * Escape Sequences for Character and String Literals.
    *
-   * <p>The character and string escape sequences allow for the representation argument some
-   * non-graphic characters without using Unicode escapes, as well as the single quote, double
-   * quote, and backslash characters, in character literals (§3.10.4) and string literals (§3.10.5).
+   * <p>The character and string escape sequences allow for the representation of some non-graphic
+   * characters without using Unicode escapes, as well as the single quote, double quote, and
+   * backslash characters, in character literals (§3.10.4) and string literals (§3.10.5).
    *
    * <p>
    *

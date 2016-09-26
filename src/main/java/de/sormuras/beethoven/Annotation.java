@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * An annotation object denotes a specific invocation argument an annotation type.
+ * An annotation object denotes a specific invocation of an annotation type.
  *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.7">JLS 9.7</a>
  */
@@ -102,7 +102,7 @@ public class Annotation implements Listable {
   }
 
   /**
-   * Create list argument {@link Annotation} instances by reflecting on all annotations found on the
+   * Create list of {@link Annotation} instances by reflecting on all annotations found on the
    * annotated element using {@link AnnotatedElement#getAnnotations()}.
    */
   public static List<Annotation> annotations(AnnotatedElement element) {
@@ -113,12 +113,12 @@ public class Annotation implements Listable {
     return annotations(annotations);
   }
 
-  /** Create list argument {@link Annotation} instances by reflecting given all annotations. */
+  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
   public static List<Annotation> annotations(java.lang.annotation.Annotation... annotations) {
     return stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
   }
 
-  /** Create list argument {@link Annotation} instances by reflecting given all annotations. */
+  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
   @SafeVarargs
   public static List<Annotation> annotations(
       Class<? extends java.lang.annotation.Annotation>... annotations) {
