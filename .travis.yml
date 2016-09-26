@@ -1,33 +1,25 @@
 sudo: required
 dist: trusty
 group: edge
-
 language: java
 jdk: oraclejdk9
-
 before_install:
-  - chmod +x gradlew
-  - chmod +x gradle/deploy_snapshot
-
+- chmod +x gradlew
+- chmod +x gradle/deploy_snapshot
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 notifications:
   email:
-    on_success: always # [always|never|change] # default: change
-    on_failure: always # [always|never|change] # default: always
-
+    on_success: always
+    on_failure: always
 after_success:
-    - gradle/deploy_snapshot
-#   - bash <(curl -s https://codecov.io/bash)
-
+- gradle/deploy_snapshot
 env:
   global:
-    - secure: "huLLFQGK91CQfH506YhxEicmlVmluYr6aJtXagE/+8PwF3tHFEjMGJZyi/qPVRh/nNn9TjFzwaHMfJ6VZa8voWfZyWuNXQj4sECsL3csNzG/melPODx2dqhZ0jR5Q2PcIN322icsivgvoFJ8ff8Tfx7cy4PUzbdBpPtTEOuhEPxH22Ph0rxeCshQlDmuflWd1z9XpaBT2XxVp9ekmXDnGGWZOT5De0UjVw5dfORkD/zzlDDN6KTHu438u70e+iux/opZ3M8rHkud62B8ep+Yy5YVzUftj9R3LTnx8S+a4YNjUlbdbuHbuHdZYg8r+8WeDYsAMLAtyTl0L2pICh7YiJhhoJnXIN7WL3Mzo5SqI+JjIf0IFmcdHJluArtMerhTJ9sAsQVOHBxq1809lVVwg+94GaIieHCGKySOstkZuQotBoE10Rsq5jOCDhHEXSBbaMxTfx4x44o9QHTlGEa0jWxc0Nthi1cs+J2bCLFo8226VKvBKlZsuNydoRmMt+KQ6fn24Isp6xTkaBTK5auG4MbTSOM16uALeYdxCtQNKZv0fQvubbD9TswAV4phzIYgjQ0EaudBca3GrzCAeRVUUpt3fhSVAjWnlcj6YH/CqYGKipbUdJKCxKtgtSbSVexdo/N3NPeKIYhHzypU+u3mVaCAXYqLWqQJIChdleBD16I="
-    - secure: "V7yYW50cfFhuf13PRJvlMYYEX0NbGZeAwcIzoAmPE38fqvUfgDyE+l/hE+aaQG1RT7NTvvVBR+E7B8zfyGW2yRvXQXtSoFwoWR8hwjQz/8jW+aF5EQCBTDHtfyUSrdp6jxY+caHQ8bFZZ5TtVpTOQ5+NCJkvqxCZ6IZe3vWA0HZvr/V5A65cDWmseoIlkXTMFXI1eQp6XUPHMEa9/IfxbHqSX49n4BIK66p9V/u0gRJ2j2BDXZxD0BtTm4Hti1dZEIk+S1uvBFcUyUXyNm0tfb0iLLoXinXY2e6whWX1Jvy5FjGBrDXrKHPMV3rzfUAXU5wHOM6/1K8GXKaDIU2aiIoCHj855lAP8IZdUxBa9oipSpgRzNLRiv99Bf+V12q1ouO2K/UGqYtsPESAC5VUIt6iyetjwZdR7rdzHOaleWrTAQnImwAwFGIM2u7n8j+tP8NVA8BYpb5camvobG7FmsyQpOTZWlInRQOKyfWnSexOPM0QH/SZ98zRuT2TvZGY7CYVO8vQTSczLA/bWQ1p8yGtI2AJe2UvF51LXXzJ511PHQ8hrpSsQae89umwroohqoJraLKUEU27GMUBxDra9fcMu1QzJiTtt2tCoU5ZO2AVhbH2SNVxm7Nt2EgJS0oqNE3UI6adjj2ICvxgTMw9qD5djPJyyubMGbrxrkrZZkI="
+  - secure: pdHmA6FmOt6sVe/c81kJGVpGZFvqCImslozCc1oCRhlf3PjjM/74Thowe7xuNb99fQZCZA5TG0ou3I47EGNm0jWLTrAx1LO67lAkRDda1iTSCP7KvMOA/3pKc7R4CpullSsJU0057xbXJNP+l+IwOKEVzwAIetu30v4RqlnMmZCdyO3QD2NYAQ7iJPIb3pkWtTSoCsrTaSPY9gopMiSQMaHDyZvEivixY9HJrvS+HHVsO/1pqu/5xWrsnn9zfzaUQgTiuLv/HAXOMczw+1qG97SLVEfB2SMcK3lMYW7sKbXv34/wqSdg3MWnMLakLDSkkrGn4A5GrJDgPWXFDJ/03w+wAm4Ed5Ygnq4KtYX4B8EF2JAvIDdXV3oBITPYkU8WXrrQDMFlyTAch8iGUTIoYfTt9wI8qnTQlmp0z6EtF9/zcW+kV6lT8EjSUkT/UVL+7FIHaCJlJK4Kl5x6KWAzImpjY38rIFuIz4NmgLIqa5m1tU4xbqhGBrGitgrL1dsDuH+7o1QAq8zS8VVyUTJKnJfW/ir0xXN3cgs8EXwHMYX7uyRtK+1t4+3emxrrSfOghSqqk3qan+8l1/qvzFXSv0j90xzRcQw9WzisnTCfVkyMfxAosTKtyVgL1JkGg3TwgnvBNwN10AQ1ukriGMA7+2dcHfe4er/3qk9NLHdw4OI=
+  - secure: AHs5IL9OBy1GNaJp+1HwKHZFTUsb1dcXiAZHcKMGBgFgVDNjOc8H+g1s+/DexmeSpf3BpbQH3mxRP+AZcVxECFPX9NCUrxMO08u+QdwMGCbw+GOj1o5pA9QzXy4/6fNGNbGU2bXobjmvVrjET5Aqs7dK0dsmiM/8mJXgIKtxmZtcwqeXOA9Uosoc+3oO5cN2uj7H3o+AuwjJcxCFySzmXLsurVPeFsOzUae8CC/WuJcmXrZa767/bR1ZR8cno8hshCMEg3XpcZZFQCUEEqy/hKvaEfIhV21UkLdyekpAK4yZpr2locQCxRQYHR+9tpTefOuQ3tO8g/rELAv/iBmTjZ1zZUlT88ZISkyKHCmhTgkoGKcZaOVU0ZPabFYJUxB4G2Mlns/Dsu28T8tqn+4NKnq+cuxIcjWhFDC/Ynj3+6AEYESr5F6gzBXyHvqLil//6f3N6syaMv+c2eDEUkoNJiEhN2De2d+SFkVdhL5kRbZ4b/mZDJwgUGW7aHNSNz6hkHA46JPBwM08p/0XzoKzWdC4CF670/05Ik1CIFYh2s/s2P0aXYaNjqApEFBshbvAZim5nCUuUmLDZDM+a6gRwXcZ3IYm3VPfrkOHgGpemfsbGgzKJNTQeQmRu+CaNiNS7ZK8mWRLDcSWM/ut05ne4NaeKX+TBdU/06UPTv0S7LI=
