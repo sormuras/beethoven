@@ -24,7 +24,7 @@ notifications:
     on_failure: always # [always|never|change] # default: always
 
 after_success:
-    - gradle/deploy_snapshot.sh
+    - gradle/deploy_snapshot
 #   - bash <(curl -s https://codecov.io/bash)
 
 env:
