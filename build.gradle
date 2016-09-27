@@ -14,12 +14,14 @@ buildscript {
 
 repositories {
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'signing'
 apply plugin: 'maven'
+apply from: 'gradle/format.gradle'
 
 Date buildTimeAndDate = new Date()
 ext {
@@ -141,18 +143,6 @@ afterEvaluate {
     junit.systemProperty 'java.util.logging.config.file', 'src/test/resources/logging.properties'
 
     // junit.args = ['-all']
-}
-
-task format(type: JavaExec) {
-
-    def mainJavaFiles = sourceSets.main.allJava.files
-    mainJavaFiles.removeIf{ file -> file.name.endsWith('module-info.java') }
-
-    main '-jar'
-    args =  ['gradle/google-java-format-1.1-20160923.181825-31-all-deps.jar']
-    args += ['--replace']
-    args += mainJavaFiles // sourceSets.main.allJava.files
-    args += sourceSets.test.allJava.files
 }
 
 task wrapper(type: Wrapper) {
