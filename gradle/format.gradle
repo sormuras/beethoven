@@ -6,12 +6,12 @@ dependencies {
     format "com.google.googlejavaformat:google-java-format:1.1-SNAPSHOT"
 }
 
-task copyFormat(type: Copy) {
+task downloadFormat(type: Copy) {
     from configurations.format
     into "$buildDir/format"
 }
 
-task format(type: JavaExec) {
+task runFormat(type: JavaExec) {
 
     def mainJavaFiles = sourceSets.main.allJava.files
     mainJavaFiles.removeIf{ file -> file.name.endsWith('module-info.java') }
@@ -19,9 +19,9 @@ task format(type: JavaExec) {
     classpath = fileTree(dir: "$buildDir/format", include: '*.jar')
 
     main 'com.google.googlejavaformat.java.Main'
-    args += ['--replace']
-    args += mainJavaFiles
-    args += sourceSets.test.allJava.files
+    args '--replace'
+    args mainJavaFiles
+    args sourceSets.test.allJava.files
 }
 
-format.dependsOn copyFormat
+runFormat.dependsOn downloadFormat
