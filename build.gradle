@@ -4,9 +4,11 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M2'
+        classpath 'net.nemerosa:versioning:2.4.0'
     }
 }
 
@@ -16,8 +18,17 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'net.nemerosa.versioning'
 apply plugin: 'signing'
 apply plugin: 'maven'
+
+Date buildTimeAndDate = new Date()
+ext {
+    buildDate = new java.text.SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new java.text.SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    buildRevision = versioning.info.commit
+    // builtByValue = project.hasProperty('builtBy') ? project.builtBy : project.defaultBuiltBy
+}
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -35,8 +46,16 @@ jar {
     manifest {
         attributes(
                 'Main-Class': 'de.sormuras.beethoven.Beethoven',
-                "Implementation-Title": group + '.' + name,
-                "Implementation-Version": version
+                'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+                'Build-Date': buildDate,
+                'Build-Time': buildTime,
+                'Build-Revision': buildRevision,
+                'Specification-Title': project.name,
+                'Specification-Version': '1.0',
+                'Specification-Vendor': 'sormuras.de',
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Implementation-Vendor': 'sormuras.de'
         )
     }
 }
