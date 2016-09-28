@@ -1,15 +1,6 @@
-configurations {
-    jupiter
-}
-
 dependencies {
-    jupiter 'org.junit.platform:junit-platform-console:1.0.0-SNAPSHOT'
-    jupiter 'org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT'
-}
-
-task downloadJupiter(type: Copy) {
-    from configurations.jupiter
-    into "$buildDir/jupiter"
+    testRuntime 'org.junit.platform:junit-platform-console:1.0.0-SNAPSHOT'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT'
 }
 
 task runJupiter(type: JavaExec) {
@@ -17,13 +8,12 @@ task runJupiter(type: JavaExec) {
     jvmArgs '-ea'
     jvmArgs '-Djava.util.logging.config.file=src/test/resources/logging.properties'
 
-    classpath = project.sourceSets.test.runtimeClasspath + fileTree(dir: "$buildDir/jupiter", include: '*.jar')
+    classpath = project.sourceSets.test.runtimeClasspath
 
     main 'org.junit.platform.console.ConsoleLauncher'
     args '--scan-class-path'
     args '--hide-details'
-    args "--reports-dir=$buildDir/jupiter-results"
+    args "--reports-dir=$project.testReportDir"
 }
 
-runJupiter.dependsOn downloadJupiter
 test.dependsOn runJupiter
