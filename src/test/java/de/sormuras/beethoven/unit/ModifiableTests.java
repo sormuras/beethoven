@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
-class ModifiableTest implements Modifiable {
+class ModifiableTests implements Modifiable {
 
   private final Set<Modifier> modifiers = new TreeSet<>();
 

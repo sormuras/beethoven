@@ -27,7 +27,7 @@ class NameTests {
   @SupportedAnnotationTypes({"X", "x.X"})
   @SupportedSourceVersion(SourceVersion.RELEASE_8)
   static class ElementNameProcessor extends AbstractProcessor {
-    public final List<Name> all = new ArrayList<>();
+    final List<Name> all = new ArrayList<>();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {

@@ -1,7 +1,5 @@
 package de.sormuras.beethoven.type;
 
-import static de.sormuras.beethoven.Tests.assertListable;
-import static de.sormuras.beethoven.type.PrimitiveType.primitive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
