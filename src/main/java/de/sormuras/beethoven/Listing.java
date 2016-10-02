@@ -116,6 +116,7 @@ public class Listing {
    * <p>Simple placeholders:
    *
    * <ul>
+   * <li><b>{s}</b> {@link String} <b>without</b> escaping, same as: {@code add(arg)}
    * <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}
    * <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}
    * <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}
@@ -142,6 +143,11 @@ public class Listing {
       sourceIndex = matcher.end();
       // handle simple placeholder
       String placeholder = matcher.group(0);
+      if (placeholder.equals("{s}")) {
+        String string = args[argumentIndex++].toString();
+        add(string);
+        continue;
+      }
       if (placeholder.equals("{S}")) {
         String string = args[argumentIndex++].toString();
         add(Listable.escape(string));
