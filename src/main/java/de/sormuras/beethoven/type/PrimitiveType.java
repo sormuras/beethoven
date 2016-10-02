@@ -28,27 +28,29 @@ public class PrimitiveType extends Type {
 
   /** Builder-like enum of all well-known primitive types defined in the Java language. */
   public enum Primitive {
-    BOOLEAN(boolean.class, 'Z'),
+    BOOLEAN(boolean.class, Boolean.class, 'Z'),
 
-    BYTE(byte.class, 'B'),
+    BYTE(byte.class, Byte.class, 'B'),
 
-    CHAR(char.class, 'C'),
+    CHAR(char.class, Character.class, 'C'),
 
-    DOUBLE(double.class, 'D'),
+    DOUBLE(double.class, Double.class, 'D'),
 
-    FLOAT(float.class, 'F'),
+    FLOAT(float.class, Float.class, 'F'),
 
-    INT(int.class, 'I'),
+    INT(int.class, Integer.class, 'I'),
 
-    LONG(long.class, 'J'),
+    LONG(long.class, Long.class, 'J'),
 
-    SHORT(short.class, 'S');
+    SHORT(short.class, Short.class, 'S');
 
     public final char binary;
     public final Class<?> type;
+    public final Class<?> wrapper;
 
-    Primitive(Class<?> type, char binary) {
+    Primitive(Class<?> type, Class<?> wrapper, char binary) {
       this.type = type;
+      this.wrapper = wrapper;
       this.binary = binary;
     }
 
@@ -107,5 +109,9 @@ public class PrimitiveType extends Type {
 
   public char getTypeChar() {
     return primitive.binary;
+  }
+
+  public ClassType box() {
+    return ClassType.type(primitive.wrapper).annotated(i -> getAnnotations());
   }
 }
