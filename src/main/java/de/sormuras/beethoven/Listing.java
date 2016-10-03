@@ -144,13 +144,11 @@ public class Listing {
       // handle simple placeholder
       String placeholder = matcher.group(0);
       if (placeholder.equals("{s}")) {
-        String string = args[argumentIndex++].toString();
-        add(string);
+        add(String.valueOf(args[argumentIndex++]));
         continue;
       }
       if (placeholder.equals("{S}")) {
-        String string = args[argumentIndex++].toString();
-        add(Listable.escape(string));
+        add(Listable.escape(String.valueOf(args[argumentIndex++])));
         continue;
       }
       if (placeholder.equals("{N}")) {

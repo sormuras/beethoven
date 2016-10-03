@@ -96,8 +96,9 @@ class ListingTests {
   @Test
   void addWithPlaceholder() {
     String expected = "System.out.println(\"123\"); // 0 String";
-    String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}";
-    assertEquals(expected, new Listing().add(source, System.class, "123", "", "$").toString());
+    String source = "{N}.{s}.println({S}); // {hashCode} {getClass.getSimpleName.toString}";
+    String actual = new Listing().add(source, System.class, "out", "123", "", "$").toString();
+    assertEquals(expected, actual);
     assertEquals(" ", new Listing().add("{L}", Listable.SPACE).toString());
     assertEquals("x.Y", new Listing().add("{enclosing}", Name.name("x", "Y", "Z")).toString());
     assertEquals("(:", new Listing().add("{smile}", new Face()).toString());
