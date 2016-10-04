@@ -42,8 +42,8 @@ public class ImportDeclarations implements Listable {
    * Single static (enum) import declaration.
    *
    * <ul>
-   * <li>{@code import static java.lang.Thread.State.NEW;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
+   *   <li>{@code import static java.lang.Thread.State.NEW;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
    * </ul>
    */
   public ImportDeclarations addSingleStaticImport(Enum<?> constant) {
@@ -55,8 +55,8 @@ public class ImportDeclarations implements Listable {
    * Single static (member) import declaration.
    *
    * <ul>
-   * <li>{@code import static java.util.Collections.shuffle;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
+   *   <li>{@code import static java.util.Collections.shuffle;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
    * </ul>
    */
   public ImportDeclarations addSingleStaticImport(Name name) {
@@ -68,8 +68,8 @@ public class ImportDeclarations implements Listable {
    * Single static (member) import declaration.
    *
    * <ul>
-   * <li>{@code import static java.util.Collections.shuffle;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
+   *   <li>{@code import static java.util.Collections.shuffle;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.3
    * </ul>
    */
   public ImportDeclarations addSingleStaticImport(Member member) {
@@ -82,8 +82,8 @@ public class ImportDeclarations implements Listable {
    * Single type.
    *
    * <ul>
-   * <li>{@code import java.util.Collections;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.1
+   *   <li>{@code import java.util.Collections;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.1
    * </ul>
    */
   public ImportDeclarations addSingleTypeImport(Class<?> type) {
@@ -96,8 +96,8 @@ public class ImportDeclarations implements Listable {
    * in which the single-type-import declaration appears.
    *
    * <ul>
-   * <li>{@code import java.util.Collections;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.1
+   *   <li>{@code import java.util.Collections;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.1
    * </ul>
    */
   public ImportDeclarations addSingleTypeImport(Name typeName) {
@@ -110,8 +110,8 @@ public class ImportDeclarations implements Listable {
    * named type to be imported as needed.
    *
    * <ul>
-   * <li>{@code import static java.util.Collections.*;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.4
+   *   <li>{@code import static java.util.Collections.*;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.4
    * </ul>
    */
   public ImportDeclarations addStaticImportOnDemand(Name typeName) {
@@ -124,8 +124,8 @@ public class ImportDeclarations implements Listable {
    * type to be imported as needed.
    *
    * <ul>
-   * <li>{@code import java.util.*;}
-   * <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.2
+   *   <li>{@code import java.util.*;}
+   *   <li>https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.5.2
    * </ul>
    */
   public ImportDeclarations addTypeImportOnDemand(Name packageOrTypeName) {

@@ -2,8 +2,8 @@ package de.sormuras.beethoven.type;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class TypeArgumentTests {
   @Test
   void constructorFailsWithWrongJavaType() {
     AssertionError e =
-        expectThrows(
+        assertThrows(
             AssertionError.class, () -> TypeArgument.argument(PrimitiveType.type(int.class)));
     assertTrue(e.toString().contains("Neither reference nor wildcard"));
   }

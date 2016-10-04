@@ -2,7 +2,7 @@ package de.sormuras.beethoven.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.expectThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.type.ClassType;
@@ -22,7 +22,7 @@ class MethodDeclarationTests {
     assertEquals(true, m.isConstructor());
     assertEquals(false, m.isModified());
     assertEquals(false, m.isVarArgs());
-    Exception expected = expectThrows(IllegalStateException.class, () -> m.setVarArgs(true));
+    Exception expected = assertThrows(IllegalStateException.class, () -> m.setVarArgs(true));
     assertEquals(true, expected.toString().contains("no parameter"));
     // put into context
     //m.setEnclosingDeclaration(NormalClassDeclaration.of("Abc"));
@@ -38,7 +38,7 @@ class MethodDeclarationTests {
     assertEquals(false, m.isConstructor());
     assertEquals(false, m.isModified());
     assertEquals(false, m.isVarArgs());
-    Exception expected = expectThrows(IllegalStateException.class, () -> m.setVarArgs(true));
+    Exception expected = assertThrows(IllegalStateException.class, () -> m.setVarArgs(true));
     assertEquals(true, expected.toString().contains("no parameter"));
   }
 
@@ -70,7 +70,7 @@ class MethodDeclarationTests {
     assertEquals(true, runnable.isModified());
     assertEquals(false, runnable.isVarArgs());
     assertSame(runnable, runnable.getParameters().get(0).getMethodDeclaration().get());
-    Exception expected = expectThrows(IllegalStateException.class, () -> runnable.setVarArgs(true));
+    Exception expected = assertThrows(IllegalStateException.class, () -> runnable.setVarArgs(true));
     assertEquals(true, expected.toString().contains("array type expected"));
   }
 

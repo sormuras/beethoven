@@ -1,7 +1,7 @@
 package de.sormuras.beethoven.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.expectThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Annotation;
 import java.util.List;
@@ -25,13 +25,13 @@ class TypeVariableTests {
 
   @Test
   void constructorFailsWithEmptyName() {
-    Exception e = expectThrows(Exception.class, () -> TypeVariable.variable(""));
+    Exception e = assertThrows(Exception.class, () -> TypeVariable.variable(""));
     assertEquals("TypeVariable identifier must not be empty!", e.getMessage());
   }
 
   @Test
   void binaryIsUnsupported() {
-    Exception e = expectThrows(Exception.class, () -> TypeVariable.variable("T").binary());
+    Exception e = assertThrows(Exception.class, () -> TypeVariable.variable("T").binary());
     assertEquals("Type variables have no binary class name.", e.getMessage());
   }
 }

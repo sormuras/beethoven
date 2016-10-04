@@ -6,8 +6,8 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ class ModifiableTests implements Modifiable {
   @Test
   void addModifiersFails() {
     Modifier invalid = Modifier.VOLATILE;
-    Exception e = expectThrows(IllegalArgumentException.class, () -> addModifier(invalid));
+    Exception e = assertThrows(IllegalArgumentException.class, () -> addModifier(invalid));
     assertTrue(e.getMessage().contains(invalid.toString()));
   }
 
@@ -81,7 +81,7 @@ class ModifiableTests implements Modifiable {
 
   @Test
   void validationThrowsNullPointerException() {
-    expectThrows(NullPointerException.class, () -> validateModifiers(null, null));
+    assertThrows(NullPointerException.class, () -> validateModifiers(null, null));
   }
 
   @TestFactory

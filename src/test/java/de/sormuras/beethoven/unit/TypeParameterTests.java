@@ -1,7 +1,7 @@
 package de.sormuras.beethoven.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.expectThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Name;
@@ -50,6 +50,6 @@ class TypeParameterTests {
 
   @Test
   void constructorFailsWithIllegalName() {
-    expectThrows(AssertionError.class, () -> TypeParameter.of("123"));
+    assertThrows(AssertionError.class, () -> TypeParameter.of("123"));
   }
 }

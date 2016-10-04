@@ -4,8 +4,8 @@ import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Compilation;
@@ -164,12 +164,12 @@ class CompilationUnitTests {
     CompilationUnit unnamed = new CompilationUnit();
     unnamed.declareClass("Unnamed").addModifier(Modifier.PUBLIC);
     assertEquals("Unnamed", unnamed.compile(Object.class).getClass().getTypeName());
-    expectThrows(Error.class, () -> unnamed.compile(Object.class, "unused", "arguments"));
+    assertThrows(Error.class, () -> unnamed.compile(Object.class, "unused", "arguments"));
     // with types supplier...
     Supplier<java.lang.Class<?>[]> types0 = () -> new java.lang.Class<?>[0];
     assertEquals("Unnamed", unnamed.compile(Object.class, types0).getClass().getTypeName());
     Supplier<java.lang.Class<?>[]> types1 = () -> new java.lang.Class<?>[1];
-    expectThrows(Error.class, () -> unnamed.compile(Object.class, types1));
+    assertThrows(Error.class, () -> unnamed.compile(Object.class, types1));
   }
 
   @Test

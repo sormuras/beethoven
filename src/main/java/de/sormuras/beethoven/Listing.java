@@ -116,10 +116,10 @@ public class Listing {
    * <p>Simple placeholders:
    *
    * <ul>
-   * <li><b>{s}</b> {@link String} <b>without</b> escaping, same as: {@code add(arg)}
-   * <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}
-   * <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}
-   * <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}
+   *   <li><b>{s}</b> {@link String} <b>without</b> escaping, same as: {@code add(arg)}
+   *   <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}
+   *   <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}
+   *   <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}
    * </ul>
    *
    * Every unknown placeholder is treated as a method chain call. Example:

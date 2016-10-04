@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ class NameTests {
     assertEquals(Name.name("abc", "X"), Name.cast(new String[] {"abc", "X"}));
     assertEquals(Name.name("abc", "X"), Name.cast(List.of("abc", "X")));
     assertEquals(Name.name(Math.class.getField("PI")), Name.cast(Math.class.getField("PI")));
-    expectThrows(IllegalArgumentException.class, () -> Name.cast(BigInteger.ZERO));
+    assertThrows(IllegalArgumentException.class, () -> Name.cast(BigInteger.ZERO));
   }
 
   @Test
@@ -114,8 +113,8 @@ class NameTests {
   @Test
   void field() {
     assertEquals("java.lang.Math.PI", Name.reflect(Math.class, "PI").canonical());
-    expectThrows(Error.class, () -> Name.reflect(Object.class, "PI"));
-    expectThrows(Error.class, () -> Name.reflect(Class.class, "PO"));
+    assertThrows(Error.class, () -> Name.reflect(Object.class, "PI"));
+    assertThrows(Error.class, () -> Name.reflect(Class.class, "PO"));
   }
 
   @Test
@@ -176,8 +175,8 @@ class NameTests {
     assertFalse(Name.name(Thread.State.NEW).isJavaLangObject());
     assertEquals(5, Name.name(Thread.State.NEW).size());
 
-    expectThrows(AssertionError.class, () -> new Name(-1, List.of("a")));
-    expectThrows(AssertionError.class, () -> new Name(2, List.of("a")));
+    assertThrows(AssertionError.class, () -> new Name(-1, List.of("a")));
+    assertThrows(AssertionError.class, () -> new Name(2, List.of("a")));
   }
 
   @Test

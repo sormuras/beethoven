@@ -1,8 +1,8 @@
 package de.sormuras.beethoven.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.expectThrows;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Listable;
@@ -54,7 +54,7 @@ class PackageDeclarationTests {
 
   @Test
   void unnamedAsStringFails() {
-    Error error = expectThrows(AssertionError.class, () -> PackageDeclaration.of(""));
+    Error error = assertThrows(AssertionError.class, () -> PackageDeclaration.of(""));
     assertTrue(error.getMessage().contains("blank"));
   }
 

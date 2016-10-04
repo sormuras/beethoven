@@ -1,7 +1,7 @@
 package de.sormuras.beethoven.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.expectThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Name;
@@ -22,7 +22,7 @@ class MethodParameterTests {
     assertEquals("final @A T t", parameter.list());
     assertEquals(ElementType.PARAMETER, new MethodParameter().getAnnotationsTarget());
     IllegalStateException expected =
-        expectThrows(
+        assertThrows(
             IllegalStateException.class,
             () -> MethodParameter.of(int.class, "i").setVariable(true));
     assertEquals(true, expected.toString().contains("array type expected"));
