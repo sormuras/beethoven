@@ -1,6 +1,6 @@
 dependencies {
-    testRuntime 'org.junit.platform:junit-platform-console:1.0.0-SNAPSHOT'
-    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT'
+    testRuntime "org.junit.platform:junit-platform-console:${junitPlatformVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
 
 task runJupiter(type: JavaExec) {
