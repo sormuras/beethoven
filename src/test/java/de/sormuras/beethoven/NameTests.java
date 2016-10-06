@@ -180,6 +180,16 @@ class NameTests {
   }
 
   @Test
+  void nameOfLocalClass() {
+    class Local {}
+    assertEquals("Local", Name.name(Local.class).canonical());
+    assertEquals("", Name.name(Local.class).packageName());
+    assertEquals("Local", Name.name(Local.class).simpleNames());
+    assertEquals("Local", Name.name(Local.class).lastName());
+    assertEquals("Local", Name.name(Local.class).topLevelName().orElse("FAIL!"));
+  }
+
+  @Test
   void primitive() {
     assertEquals("boolean", Name.name(boolean.class).canonical());
     assertEquals("byte", Name.name(byte.class).canonical());

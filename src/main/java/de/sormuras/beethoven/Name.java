@@ -81,6 +81,12 @@ public class Name implements Listable {
    * @return {@link Name}
    */
   public static Name name(Class<?> type) {
+    if (type.isAnonymousClass()) {
+      throw new IllegalArgumentException("Anonymous. No name. " + type);
+    }
+    if (type.isLocalClass()) {
+      return new Name(0, List.of(type.getSimpleName()));
+    }
     String[] packageNames = DOT.split(type.getName()); // java[.]lang[.]Thread$State
     String[] identifiers = DOT.split(type.getCanonicalName()); // java[.]lang[.]Thread[.]State
     return new Name(packageNames.length - 1, Arrays.asList(identifiers));
