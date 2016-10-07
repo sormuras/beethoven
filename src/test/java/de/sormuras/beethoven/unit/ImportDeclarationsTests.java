@@ -1,6 +1,5 @@
 package de.sormuras.beethoven.unit;
 
-import static de.sormuras.beethoven.Name.name;
 import static javax.lang.model.element.Modifier.STATIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -73,7 +72,7 @@ public class ImportDeclarationsTests {
     Assertions.assertEquals(Style.CANONICAL, imports.style(Name.name(Test.class)));
     Assertions.assertEquals(Style.CANONICAL, imports.style(Name.name("com", "what", "Ever")));
 
-    Listing listing = new Listing(imports::style);
+    Listing listing = new Listing(23, "  ", "\n", imports::style);
     listing.add(Name.name(STATIC)).newline();
     listing.add(Name.name(Objects.class, "requireNonNull")).newline();
     listing.add(Name.name(Test.class)).newline();

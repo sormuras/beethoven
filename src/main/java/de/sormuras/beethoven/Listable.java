@@ -140,6 +140,10 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
     return list(new Listing());
   }
 
+  default String list(String lineSeparator) {
+    return list(new Listing(lineSeparator));
+  }
+
   default String list(Listing listing) {
     return listing.add(this).toString();
   }

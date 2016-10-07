@@ -40,7 +40,11 @@ public class Listing {
   private final Styling styling;
 
   public Listing() {
-    this(Style::auto);
+    this(System.lineSeparator());
+  }
+
+  public Listing(String lineSeparator) {
+    this(23, "  ", lineSeparator, Style::auto);
   }
 
   public Listing(Style style) {
@@ -48,7 +52,7 @@ public class Listing {
   }
 
   public Listing(Styling styling) {
-    this(23, "  ", "\n", styling);
+    this(23, "  ", System.lineSeparator(), styling);
   }
 
   public Listing(int indentMax, String indent, String lineSeparator, Styling styling) {

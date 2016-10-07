@@ -17,7 +17,7 @@ class MethodDeclarationTests {
   void constructor() {
     MethodDeclaration m = new MethodDeclaration();
     m.setName("<init>");
-    assertEquals("<init>();\n", m.list());
+    assertEquals("<init>();\n", m.list("\n"));
     assertEquals(ElementType.METHOD, m.getAnnotationsTarget());
     assertEquals(true, m.isConstructor());
     assertEquals(false, m.isModified());
@@ -33,7 +33,7 @@ class MethodDeclarationTests {
   void declaration() {
     MethodDeclaration m = new MethodDeclaration();
     m.setName("m");
-    assertEquals("void m();\n", m.list());
+    assertEquals("void m();\n", m.list("\n"));
     assertEquals(ElementType.METHOD, m.getAnnotationsTarget());
     assertEquals(false, m.isConstructor());
     assertEquals(false, m.isModified());
@@ -80,12 +80,12 @@ class MethodDeclarationTests {
     var.setName("var");
     var.addParameter(int[].class, "numbers");
     assertEquals(false, var.isVarArgs());
-    assertEquals("void var(int[] numbers);\n", var.list());
+    assertEquals("void var(int[] numbers);\n", var.list("\n"));
     var.setVarArgs(true);
     assertEquals(true, var.isVarArgs());
-    assertEquals("void var(int... numbers);\n", var.list());
+    assertEquals("void var(int... numbers);\n", var.list("\n"));
     var.setVarArgs(false);
     assertEquals(false, var.isVarArgs());
-    assertEquals("void var(int[] numbers);\n", var.list());
+    assertEquals("void var(int[] numbers);\n", var.list("\n"));
   }
 }

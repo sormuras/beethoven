@@ -16,7 +16,7 @@ class NormalClassDeclarationTests {
   void empty() {
     NormalClassDeclaration declaration = new NormalClassDeclaration();
     declaration.setName("Empty");
-    Assertions.assertEquals("class Empty {\n}\n", declaration.list());
+    Assertions.assertEquals("class Empty {\n}\n", declaration.list("\n"));
     assertTrue(declaration.isEmpty());
     assertFalse(new NormalClassDeclaration().declareInitializer(false).getEnclosing().isEmpty());
     assertFalse(
@@ -31,10 +31,10 @@ class NormalClassDeclarationTests {
     NormalClassDeclaration declaration = new NormalClassDeclaration();
     declaration.setName("G");
     declaration.addTypeParameter(new TypeParameter());
-    Assertions.assertEquals("class G<T> {\n}\n", declaration.list());
+    Assertions.assertEquals("class G<T> {\n}\n", declaration.list("\n"));
     declaration.addTypeParameter(
         TypeParameter.of("I", ClassType.parameterized(Iterable.class, Long.class)));
-    Assertions.assertEquals("class G<T, I extends Iterable<Long>> {\n}\n", declaration.list());
+    Assertions.assertEquals("class G<T, I extends Iterable<Long>> {\n}\n", declaration.list("\n"));
   }
 
   @Test
@@ -42,10 +42,10 @@ class NormalClassDeclarationTests {
     NormalClassDeclaration declaration = new NormalClassDeclaration();
     declaration.setName("I");
     declaration.addInterface(Type.type(Runnable.class));
-    Assertions.assertEquals("class I implements Runnable {\n}\n", declaration.list());
+    Assertions.assertEquals("class I implements Runnable {\n}\n", declaration.list("\n"));
     declaration.addInterface(ClassType.parameterized(Comparable.class, Byte.class));
     Assertions.assertEquals(
-        "class I implements Runnable, Comparable<Byte> {\n}\n", declaration.list());
+        "class I implements Runnable, Comparable<Byte> {\n}\n", declaration.list("\n"));
   }
 
   @Test
@@ -53,7 +53,7 @@ class NormalClassDeclarationTests {
     NormalClassDeclaration declaration = new NormalClassDeclaration();
     declaration.setName("C");
     declaration.setSuperClass(ClassType.type(Object.class));
-    Assertions.assertEquals("class C extends Object {\n}\n", declaration.list());
+    Assertions.assertEquals("class C extends Object {\n}\n", declaration.list("\n"));
   }
 
   @Test

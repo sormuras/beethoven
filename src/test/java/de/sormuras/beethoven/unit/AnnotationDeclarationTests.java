@@ -21,7 +21,7 @@ class AnnotationDeclarationTests {
   void empty() {
     TypeDeclaration declaration = new AnnotationDeclaration();
     declaration.setName("Empty");
-    assertEquals("@interface Empty {\n}\n", declaration.list());
+    assertEquals("@interface Empty {\n}\n", declaration.list("\n"));
     assertTrue(declaration.isEmpty());
     assertFalse(
         new AnnotationDeclaration()

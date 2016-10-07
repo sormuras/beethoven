@@ -35,7 +35,7 @@ class ListingTests {
     assertTrue(empty.getCurrentLine().length() == 0);
     assertTrue(empty.getCollectedLines().isEmpty());
     assertEquals("  ", empty.getIndentationString());
-    assertEquals("\n", empty.getLineSeparator());
+    assertEquals(System.lineSeparator(), empty.getLineSeparator());
     assertEquals("", empty.toString());
   }
 
@@ -70,7 +70,7 @@ class ListingTests {
     list.add(Annotation.value('a'));
     assertEquals("'a'", new Listing().add(list).toString());
     list.add(Annotation.value('z'));
-    assertEquals("'a'\n'z'", new Listing().add(list).toString());
+    assertEquals("'a'\n'z'", new Listing("\n").add(list).toString());
     assertEquals("'a'-'z'", new Listing().add(list, "-").toString());
   }
 
@@ -109,7 +109,7 @@ class ListingTests {
 
   @Test
   void indent() {
-    Listing listing = new Listing();
+    Listing listing = new Listing("\n");
     listing.add("BEGIN").newline();
     listing.indent(1).add("writeln('Hello, world.')").newline().indent(-1);
     listing.add("END.").newline();
@@ -121,7 +121,7 @@ class ListingTests {
 
   @Test
   void newlineProducesOnlyOneSingleBlankLine() {
-    Listing listing = new Listing();
+    Listing listing = new Listing("\n");
     assertEquals(0, listing.getCurrentLine().length());
     listing.newline().newline().newline().newline().newline();
     assertEquals(0, listing.getCurrentLine().length());

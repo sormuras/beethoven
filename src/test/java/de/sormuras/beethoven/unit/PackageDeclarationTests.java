@@ -25,8 +25,8 @@ class PackageDeclarationTests {
     // unnamed
     assertEquals("", new PackageDeclaration().list());
     // simple
-    assertEquals("package abc;\n", PackageDeclaration.of("abc").list());
-    assertEquals("package abc.xyz;\n", PackageDeclaration.of("abc.xyz").list());
+    assertEquals("package abc;\n", PackageDeclaration.of("abc").list("\n"));
+    assertEquals("package abc.xyz;\n", PackageDeclaration.of("abc.xyz").list("\n"));
     // with annotation(s)
     PackageDeclaration annotated = PackageDeclaration.of("abc.xyz");
     annotated.addAnnotation(Annotation.annotation(Name.name("abc", "PackageAnnotation")));

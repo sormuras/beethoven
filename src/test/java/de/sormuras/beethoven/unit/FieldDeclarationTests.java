@@ -14,11 +14,11 @@ class FieldDeclarationTests {
     FieldDeclaration i = new FieldDeclaration();
     i.setType(Type.type(int.class));
     i.setName("i");
-    assertEquals("int i;\n", i.list());
+    assertEquals("int i;\n", i.list("\n"));
     assertEquals(ElementType.FIELD, i.getAnnotationsTarget());
     assertEquals(false, i.isModified());
     assertNull(i.getEnclosingDeclaration());
     i.setInitializer(l -> l.add(Integer.toString(4711)));
-    assertEquals("int i = 4711;\n", i.list());
+    assertEquals("int i = 4711;\n", i.list("\n"));
   }
 }

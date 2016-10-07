@@ -16,7 +16,7 @@ class EnumDeclarationTests {
   void empty() {
     ClassDeclaration declaration = new EnumDeclaration();
     declaration.setName("Empty");
-    assertEquals("enum Empty {\n}\n", declaration.list());
+    assertEquals("enum Empty {\n}\n", declaration.list("\n"));
   }
 
   @Test
@@ -24,13 +24,13 @@ class EnumDeclarationTests {
     EnumDeclaration declaration = new EnumDeclaration();
     declaration.setName("Everything");
     declaration.addInterface(Type.type(Runnable.class));
-    assertEquals("enum Everything implements Runnable {\n}\n", declaration.list());
+    assertEquals("enum Everything implements Runnable {\n}\n", declaration.list("\n"));
     declaration.addInterface(ClassType.parameterized(Comparable.class, Byte.class));
     assertEquals(
-        "enum Everything implements Runnable, Comparable<Byte> {\n}\n", declaration.list());
+        "enum Everything implements Runnable, Comparable<Byte> {\n}\n", declaration.list("\n"));
     declaration.getInterfaces().clear();
     declaration.declareConstant("A");
-    assertEquals("enum Everything {\n\n  A\n}\n", declaration.list());
+    assertEquals("enum Everything {\n\n  A\n}\n", declaration.list("\n"));
     declaration.declareConstant("B", Listable.IDENTITY).addAnnotation(Deprecated.class);
     NormalClassDeclaration cbody = new NormalClassDeclaration();
     MethodDeclaration toString = cbody.declareMethod(String.class, "toString");

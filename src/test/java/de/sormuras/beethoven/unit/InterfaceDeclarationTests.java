@@ -17,7 +17,7 @@ class InterfaceDeclarationTests {
   void empty() {
     TypeDeclaration declaration = new InterfaceDeclaration();
     declaration.setName("Empty");
-    Assertions.assertEquals("interface Empty {\n}\n", declaration.list());
+    Assertions.assertEquals("interface Empty {\n}\n", declaration.list("\n"));
   }
 
   @Test
