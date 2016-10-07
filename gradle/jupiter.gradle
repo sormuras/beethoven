@@ -4,9 +4,8 @@ dependencies {
 }
 
 task runJupiter(type: JavaExec) {
-
     jvmArgs '-ea'
-    jvmArgs '-Djava.util.logging.config.file=src/test/resources/logging.properties'
+    jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
 
     classpath = project.sourceSets.test.runtimeClasspath
 
