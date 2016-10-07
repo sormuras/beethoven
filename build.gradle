@@ -13,7 +13,6 @@ apply from: 'gradle/jupiter.gradle'
 
 dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testCompile 'io.github.lukehutch:fast-classpath-scanner:2.0.3'
 }
 
 Date buildTimeAndDate = new Date()
