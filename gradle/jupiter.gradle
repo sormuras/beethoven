@@ -1,12 +1,28 @@
+//repositories {
+//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+//}
+//
+//configurations {
+//    jupiter
+//}
+
 dependencies {
+//    jupiter "org.junit.platform:junit-platform-console:${junitPlatformVersion}"
+//    jupiter "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     testRuntime "org.junit.platform:junit-platform-console:${junitPlatformVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
+
+//task downloadJupiter(type: Copy) {
+//    from configurations.jupiter
+//    into "$buildDir/jupiter"
+//}
 
 task runJupiter(type: JavaExec) {
     jvmArgs '-ea'
     jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
 
+    // classpath = project.sourceSets.test.runtimeClasspath + fileTree(dir: "$buildDir/jupiter", include: '*.jar')
     classpath = project.sourceSets.test.runtimeClasspath
 
     main 'org.junit.platform.console.ConsoleLauncher'
@@ -15,4 +31,5 @@ task runJupiter(type: JavaExec) {
     args "--reports-dir=$project.testReportDir"
 }
 
+//runJupiter.dependsOn downloadJupiter
 test.dependsOn runJupiter
