@@ -24,7 +24,7 @@ ext {
 compileJava {
     options.encoding = 'UTF-8'
     options.fork = true
-    // options.forkOptions.jvmArgs << '-showversion'
+    options.forkOptions.jvmArgs << '-showversion'
 }
 
 tasks.withType(JavaCompile) {
