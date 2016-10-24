@@ -18,10 +18,10 @@ task runFormat(type: JavaExec) {
 
     classpath = fileTree(dir: "$buildDir/format", include: '*.jar')
 
-    jvmArgs '-XaddExports:jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
-    jvmArgs '-XaddExports:jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
-    jvmArgs '-XaddExports:jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
-    jvmArgs '-XaddExports:jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED'
+    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
+    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
+    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
+    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED'
 
     main 'com.google.googlejavaformat.java.Main'
     args '--replace'
