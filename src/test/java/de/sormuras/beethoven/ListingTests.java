@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +107,32 @@ class ListingTests {
     assertEquals("{{}}", new Listing().add("{{empty}{}}", new Face()).toString());
     assertThrows(Exception.class, () -> new Listing().add("{xxx}", ""));
     assertThrows(Exception.class, () -> new Listing().add("{toString.toString.xxx}", ""));
+  }
+
+  @Test
+  void addMorePlaceholders() {
+    String[] lines = {
+      "try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();",
+      "    ObjectOutputStream stream = new ObjectOutputStream()) {",
+      "  stream.writeObject(object);",
+      "  return stashByteArray(target, bytes.toByteArray());",
+      "} catch (Exception e) {",
+      "  throw new RuntimeException(\"Writing object failed!\", e);",
+      "}",
+      ""
+    };
+    Listing listing = new Listing(Style.SIMPLE);
+    Name bos = Name.name(ByteArrayOutputStream.class);
+    Name oos = Name.name(ObjectOutputStream.class);
+    listing.add("try ({N} bytes = new {N}(){;}", bos, bos);
+    listing.indent(2).add("{N} stream = new {N}()) {", oos, oos).newline();
+    listing.add("{<}stream.writeObject({s}){;}", "object");
+    listing.add("return {s}({s}, bytes.toByteArray()){;}", "stashByteArray", "target");
+    listing.add("{<}} catch ({N} e) {", Exception.class).newline();
+    listing.add("{>}throw new RuntimeException({S}, e){;}", "Writing object failed!");
+    listing.add("{<}}", "").newline();
+    String expected = String.join(listing.getLineSeparator(), lines);
+    assertEquals(expected, listing.toString());
   }
 
   @Test
