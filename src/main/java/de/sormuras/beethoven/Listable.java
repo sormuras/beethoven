@@ -61,8 +61,8 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
    * characters without using Unicode escapes, as well as the single quote, double quote, and
    * backslash characters, in character literals (§3.10.4) and string literals (§3.10.5).
    *
-   * <p>
-   *
+   * @param character Character to escape
+   * @return Escaped character
    * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6">JLS
    *     3.10.6</a>
    */
