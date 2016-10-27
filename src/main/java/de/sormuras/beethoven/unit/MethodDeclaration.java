@@ -101,9 +101,10 @@ public class MethodDeclaration extends ClassMember {
       listing.add(" throws ");
       listing.add(getThrows(), ", ");
     }
-    if (getBody().isPresent()) {
+    Optional<Block> body = getBody();
+    if (body.isPresent()) {
       listing.add(' ');
-      listing.add(getBody().get());
+      listing.add(body.get());
     } else if (!bodyStatements.isEmpty()) {
       listing.add(" {").newline().indent(1);
       listing.add(bodyStatements, Listable.NEWLINE);

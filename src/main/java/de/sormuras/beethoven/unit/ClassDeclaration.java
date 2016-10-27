@@ -31,7 +31,7 @@ import java.util.List;
  */
 public abstract class ClassDeclaration extends TypeDeclaration {
 
-  private List<Listable> classBodyElements = new ArrayList<>();
+  private List<Listable> fields = new ArrayList<>();
   private List<Initializer> initializers = Collections.emptyList();
   private List<ClassType> interfaces = Collections.emptyList();
   private boolean local = false;
@@ -58,7 +58,8 @@ public abstract class ClassDeclaration extends TypeDeclaration {
     if (!isDeclarationsEmpty()) {
       getDeclarations().forEach(listing::add);
     }
-    listing.add(getClassBodyElements());
+    listing.add(getFields());
+    listing.add(getMethods());
     if (!isInitializersEmpty()) {
       getInitializers().forEach(listing::add);
     }
@@ -81,7 +82,7 @@ public abstract class ClassDeclaration extends TypeDeclaration {
     field.setEnclosingDeclaration(this);
     field.setType(type);
     field.setName(name);
-    getClassBodyElements().add(field);
+    getFields().add(field);
     return field;
   }
 
@@ -94,24 +95,8 @@ public abstract class ClassDeclaration extends TypeDeclaration {
     return initializer;
   }
 
-  /** Declare new method. */
-  public MethodDeclaration declareMethod(Class<?> type, String name) {
-    return declareMethod(Type.type(type), name);
-  }
-
-  /** Declare new method. */
-  public MethodDeclaration declareMethod(Type type, String name) {
-    MethodDeclaration method = new MethodDeclaration();
-    method.setCompilationUnit(getCompilationUnit());
-    method.setEnclosingDeclaration(this);
-    method.setReturnType(type);
-    method.setName(name);
-    getClassBodyElements().add(method);
-    return method;
-  }
-
-  public List<Listable> getClassBodyElements() {
-    return classBodyElements;
+  public List<Listable> getFields() {
+    return fields;
   }
 
   public List<Initializer> getInitializers() {
@@ -130,7 +115,7 @@ public abstract class ClassDeclaration extends TypeDeclaration {
 
   @Override
   public boolean isEmpty() {
-    return super.isEmpty() && isInitializersEmpty() && getClassBodyElements().isEmpty();
+    return super.isEmpty() && isInitializersEmpty() && getFields().isEmpty();
   }
 
   public boolean isInitializersEmpty() {

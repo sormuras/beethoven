@@ -18,6 +18,8 @@ import static java.util.Collections.addAll;
 
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.ClassType;
+import de.sormuras.beethoven.type.Type;
+
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,7 @@ import java.util.List;
 public abstract class TypeDeclaration extends ClassMember implements DeclarationContainer {
 
   private List<TypeDeclaration> declarations = Collections.emptyList();
+  private final List<MethodDeclaration> methods = new ArrayList<>();
 
   @Override
   public void assertValidNestedDeclarationName(String name) {
@@ -45,6 +48,22 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
     return declaration;
   }
 
+  /** Declare new method. */
+  public MethodDeclaration declareMethod(Class<?> type, String name) {
+    return declareMethod(Type.type(type), name);
+  }
+
+  /** Declare new method. */
+  public MethodDeclaration declareMethod(Type type, String name) {
+    MethodDeclaration declaration = new MethodDeclaration();
+    declaration.setCompilationUnit(getCompilationUnit());
+    declaration.setEnclosingDeclaration(this);
+    declaration.setReturnType(type);
+    declaration.setName(name);
+    getMethods().add(declaration);
+    return declaration;
+  }
+
   @Override
   public ElementType getAnnotationsTarget() {
     return ElementType.TYPE;
@@ -58,9 +77,13 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
     return declarations;
   }
 
+  public List<MethodDeclaration> getMethods() {
+    return methods;
+  }
+
   @Override
   public boolean isEmpty() {
-    return isDeclarationsEmpty();
+    return isDeclarationsEmpty() && getMethods().isEmpty();
   }
 
   public boolean isDeclarationsEmpty() {

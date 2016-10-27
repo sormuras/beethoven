@@ -34,7 +34,6 @@ public class InterfaceDeclaration extends TypeDeclaration {
 
   private final List<ConstantDeclaration> constants = new ArrayList<>();
   private final List<ClassType> interfaces = new ArrayList<>();
-  private final List<MethodDeclaration> methods = new ArrayList<>();
   private final List<TypeParameter> typeParameters = new ArrayList<>();
 
   public void addInterface(Type interfaceType) {
@@ -89,32 +88,12 @@ public class InterfaceDeclaration extends TypeDeclaration {
     return declareConstant(type, name, Annotation.value(value));
   }
 
-  /** Declare new method. */
-  public MethodDeclaration declareMethod(Class<?> type, String name) {
-    return declareMethod(Type.type(type), name);
-  }
-
-  /** Declare new method. */
-  public MethodDeclaration declareMethod(Type type, String name) {
-    MethodDeclaration declaration = new MethodDeclaration();
-    declaration.setCompilationUnit(getCompilationUnit());
-    declaration.setEnclosingDeclaration(this);
-    declaration.setReturnType(type);
-    declaration.setName(name);
-    getMethods().add(declaration);
-    return declaration;
-  }
-
   public List<ConstantDeclaration> getConstants() {
     return constants;
   }
 
   public List<ClassType> getInterfaces() {
     return interfaces;
-  }
-
-  public List<MethodDeclaration> getMethods() {
-    return methods;
   }
 
   public List<TypeParameter> getTypeParameters() {
