@@ -20,7 +20,9 @@ repositories {
 }
 
 dependencies {
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testCompile group: 'org.junit.jupiter',  name: 'junit-jupiter-api',      version: "${junitJupiterVersion}"
+    testRuntime group: 'org.junit.jupiter',  name: 'junit-jupiter-engine',   version: "${junitJupiterVersion}"
+    testRuntime group: 'org.junit.platform', name: 'junit-platform-console', version: "${junitPlatformVersion}"
 }
 
 Date buildTimeAndDate = new Date()
