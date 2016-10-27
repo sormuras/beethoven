@@ -1,15 +1,23 @@
 import java.text.SimpleDateFormat
 
+plugins {
+    id 'com.diffplug.gradle.spotless' version '2.3.0'
+    id 'java'
+    id 'signing'
+    id 'maven'
+}
+
+spotless {
+    java {
+        googleJavaFormat("${googleFormatVersion}")
+        licenseHeaderFile 'gradle/spotless.license.java'
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
-
-apply plugin: 'java'
-apply plugin: 'signing'
-apply plugin: 'maven'
-apply from: 'gradle/format.gradle'
-apply from: 'gradle/jupiter.gradle'
 
 dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
@@ -28,10 +36,26 @@ compileJava {
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
     sourceCompatibility  = project.sourceCompatibility
     targetCompatibility  = project.targetCompatibility
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
+
+task runJupiter(type: JavaExec) {
+
+    jvmArgs '-ea'
+    jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
+
+    classpath = project.sourceSets.test.runtimeClasspath
+
+    main 'org.junit.platform.console.ConsoleLauncher'
+    args '--scan-class-path'
+    args '--hide-details'
+    args "--reports-dir=$project.testReportDir"
+}
+
+test.dependsOn runJupiter
 
 jar {
     manifest {
