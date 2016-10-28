@@ -189,6 +189,9 @@ class NameTests {
     assertFalse(Name.name(Thread.State.NEW).isJavaLangObject());
     assertEquals(5, Name.name(Thread.State.NEW).size());
 
+    assertEquals("a.b.C", Name.name("a", "b", "C").canonical());
+    assertEquals("a.b.C", Name.name("a.b.C").canonical());
+
     assertThrows(AssertionError.class, () -> new Name(-1, List.of("a")));
     assertThrows(AssertionError.class, () -> new Name(2, List.of("a")));
   }

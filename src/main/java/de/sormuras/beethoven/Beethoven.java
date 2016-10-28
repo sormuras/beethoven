@@ -14,16 +14,11 @@
 
 package de.sormuras.beethoven;
 
-import java.util.Optional;
-
 public interface Beethoven {
-  static String version() {
-    Package p = Beethoven.class.getPackage();
-    Optional<String> implementationVersion = Optional.ofNullable(p.getImplementationVersion());
-    return p.getName() + "-" + implementationVersion.orElse("DEVELOPMENT");
-  }
+
+  String VERSION = "1.0-SNAPSHOT";
 
   static void main(String[] args) {
-    System.out.print(version());
+    System.out.print(Beethoven.class.getPackage().getName() + " " + VERSION);
   }
 }

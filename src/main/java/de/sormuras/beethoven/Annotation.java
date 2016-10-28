@@ -140,11 +140,14 @@ public class Annotation implements Listable {
     if (object instanceof Name) {
       return annotation((Name) object, values);
     }
+    if (object instanceof String) {
+      return annotation(Name.name((String) object), values);
+    }
     if (object instanceof String[]) {
       return annotation(Name.name((String[]) object), values);
     }
     // clutch at straws, try toString split magic
-    return annotation(Name.name(Name.DOT.split(object.toString())), values);
+    return annotation(Name.name(Objects.toString(object)), values);
   }
 
   /** Convert an object to a representation usable as an annotation value literal. */

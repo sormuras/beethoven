@@ -65,6 +65,9 @@ public class Name implements Listable {
     if (any instanceof Member) {
       return name((Member) any);
     }
+    if (any instanceof String) {
+      return name((String) any);
+    }
     if (any instanceof String[]) {
       return name((String[]) any);
     }
@@ -183,6 +186,9 @@ public class Name implements Listable {
 
   /** Create name instance for the identifiers by delegating to {@link #name(List)}. */
   public static Name name(String... identifiers) {
+    if (identifiers.length == 1) {
+      identifiers = DOT.split(identifiers[0]);
+    }
     return name(Arrays.asList(identifiers));
   }
 
