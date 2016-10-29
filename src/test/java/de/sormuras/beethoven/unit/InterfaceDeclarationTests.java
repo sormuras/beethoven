@@ -22,8 +22,8 @@ import de.sormuras.beethoven.type.Type;
 import java.lang.annotation.ElementType;
 import java.math.BigInteger;
 import java.util.function.Consumer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import javax.lang.model.element.Modifier;
 
 class InterfaceDeclarationTests {
 
@@ -31,7 +31,7 @@ class InterfaceDeclarationTests {
   void empty() {
     TypeDeclaration declaration = new InterfaceDeclaration();
     declaration.setName("Empty");
-    Assertions.assertEquals("interface Empty {\n}\n", declaration.list("\n"));
+    assertEquals("interface Empty {\n}\n", declaration.list("\n"));
   }
 
   @Test
@@ -70,5 +70,19 @@ class InterfaceDeclarationTests {
   @Test
   void target() {
     assertEquals(ElementType.TYPE, new InterfaceDeclaration().getAnnotationsTarget());
+  }
+
+  @Test
+  void override() {
+    InterfaceDeclaration base = new InterfaceDeclaration();
+    base.setName("Base");
+    base.declareMethod(Object.class, "method").addParameter(String.class, "text");
+    InterfaceDeclaration next = new InterfaceDeclaration();
+    next.setName("Next");
+    next.addInterface(base.toType());
+    MethodDeclaration over = next.declareOverride(base.getMethods().get(0)); // method from above
+    over.addModifier(Modifier.DEFAULT);
+    over.setBody(new Block());
+    assertEquals("@Override\ndefault Object method(String text) {\n}\n", over.list("\n"));
   }
 }

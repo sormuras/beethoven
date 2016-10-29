@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.lang.model.element.Modifier;
+
 public abstract class TypeDeclaration extends ClassMember implements DeclarationContainer {
 
   private List<TypeDeclaration> declarations = Collections.emptyList();
@@ -56,12 +58,33 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
   /** Declare new method. */
   public MethodDeclaration declareMethod(Type type, String name) {
     MethodDeclaration declaration = new MethodDeclaration();
-    declaration.setCompilationUnit(getCompilationUnit());
-    declaration.setEnclosingDeclaration(this);
     declaration.setReturnType(type);
     declaration.setName(name);
+    return declareMethod(declaration);
+  }
+
+  /** Add passed method declaration to list of declared methods. */
+  public MethodDeclaration declareMethod(MethodDeclaration declaration) {
+    declaration.setCompilationUnit(getCompilationUnit());
+    declaration.setEnclosingDeclaration(this);
     getMethods().add(declaration);
     return declaration;
+  }
+
+  /** Declare new method by overriding. */
+  public MethodDeclaration declareOverride(MethodDeclaration source) {
+    MethodDeclaration declaration = new MethodDeclaration();
+    declaration.addAnnotation(Override.class);
+    declaration.getModifiers().addAll(source.getModifiers());
+    declaration.getModifiers().remove(Modifier.ABSTRACT);
+    declaration.setName(source.getName());
+    declaration.setReturnType(source.getReturnType());
+    if (!source.getParameters().isEmpty()) {
+      source.getParameters().forEach(p -> declaration.addParameter(MethodParameter.of(p)));
+      assert declaration.isVarArgs() == source.isVarArgs();
+    }
+    declaration.getThrows().addAll(source.getThrows());
+    return declareMethod(declaration);
   }
 
   @Override
@@ -94,7 +117,7 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
   public Name toName() {
     List<String> identifiers = new ArrayList<>();
     if (getCompilationUnit() != null) {
-      addAll(identifiers, getCompilationUnit().getPackageName().split("\\."));
+      addAll(identifiers, Name.DOT.split(getCompilationUnit().getPackageName()));
     }
     int packageLevel = identifiers.size();
     for (NamedMember member = this; member != null; member = member.getEnclosingDeclaration()) {
