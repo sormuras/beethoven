@@ -77,6 +77,7 @@ class CompilationUnitTests {
     getter.addAnnotation(Override.class);
     getter.addModifier(Modifier.PUBLIC);
     getter.addStatement("return text + '-' + number");
+    assertEquals("uss.Enterprise", enterprise.toType().list());
 
     Supplier<?> spaceship = unit.compile(Supplier.class, "NCC", (short) 1701);
 
@@ -111,11 +112,12 @@ class CompilationUnitTests {
     unit.declareAnnotation("A").declareAnnotation("X");
     unit.declareEnum("E").declareEnum("X");
     unit.declareClass("C").declareClass("X").declareClass("Z");
-    unit.declareInterface("I").declareInterface("X");
+    TypeDeclaration x = unit.declareInterface("I").declareInterface("X");
     assertEquals(4, unit.getDeclarations().size());
     assertFalse(unit.getDeclarations().get(0).isEmpty()); // A
     assertTrue(unit.getDeclarations().get(0).getDeclarations().get(0).isEmpty()); // A.X
     assertEquals(Tests.load(CompilationUnitTests.class, "top"), unit.list());
+    assertEquals("top.I.X", x.toType().list());
   }
 
   @Test

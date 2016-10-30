@@ -121,7 +121,7 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
     }
     int packageLevel = identifiers.size();
     for (NamedMember member = this; member != null; member = member.getEnclosingDeclaration()) {
-      identifiers.add(0, member.getName());
+      identifiers.add(packageLevel, member.getName());
     }
     return Name.name(packageLevel, identifiers);
   }
