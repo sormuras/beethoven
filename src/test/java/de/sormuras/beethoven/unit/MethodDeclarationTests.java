@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.type.ClassType;
+import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.TypeVariable;
 import java.lang.annotation.ElementType;
 import java.util.List;
@@ -92,7 +93,7 @@ class MethodDeclarationTests {
   void varArgs() {
     MethodDeclaration var = new MethodDeclaration();
     var.setName("var");
-    var.addParameter(int[].class, "numbers");
+    var.addParameter(Type.type(int[].class), "numbers");
     assertEquals(false, var.isVarArgs());
     assertEquals("void var(int[] numbers);\n", var.list("\n"));
     var.setVarArgs(true);

@@ -41,6 +41,10 @@ public class MethodDeclaration extends ClassMember {
   private List<TypeParameter> typeParameters = new ArrayList<>();
 
   public void addParameter(Class<?> type, String name) {
+    addParameter(Type.type(type), name);
+  }
+
+  public void addParameter(Type type, String name) {
     addParameter(MethodParameter.of(type, name));
   }
 
