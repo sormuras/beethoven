@@ -36,6 +36,11 @@ class AnnotatableTests {
     assertFalse(annotatable.isAnnotated());
     annotatable.addAnnotation(Deprecated.class);
     assertTrue(annotatable.isAnnotated());
+    assertFalse(annotatable.isTagged());
+    annotatable.getTags();
+    assertFalse(annotatable.isTagged());
+    annotatable.getTags().put("1", "2");
+    assertTrue(annotatable.isTagged());
   }
 
   @TestFactory

@@ -67,7 +67,7 @@ public abstract class Annotatable extends Annotated {
   }
 
   public Map<Object, Object> getTags() {
-    if (tags == null) {
+    if (tags == Collections.EMPTY_MAP) {
       tags = new HashMap<>();
     }
     return tags;
