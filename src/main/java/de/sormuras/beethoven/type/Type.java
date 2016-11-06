@@ -494,4 +494,8 @@ public abstract class Type extends Annotated {
   public boolean isJavaLangObject() {
     return false;
   }
+
+  public boolean isVoid() {
+    return false;
+  }
 }

@@ -18,6 +18,7 @@ import static de.sormuras.beethoven.Style.SIMPLE;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.All;
 import de.sormuras.beethoven.Annotation;
@@ -87,12 +88,13 @@ class TypeTests<T> {
 
   @Test
   void voidType() {
-    Assertions.assertEquals("void", Type.type(void.class).list());
+    assertEquals("void", Type.type(void.class).list());
+    assertTrue(VoidType.INSTANCE.isVoid());
   }
 
   @Test
   void wildcard() {
-    Assertions.assertEquals(
+    assertEquals(
         "?",
         Type.type(
                 Tests.proxy(
@@ -166,30 +168,30 @@ class TypeTests<T> {
 
   @Test
   void classType() {
-    Assertions.assertEquals("boolean", Type.type(boolean.class).list());
-    Assertions.assertEquals("byte", Type.type(byte.class).list());
-    Assertions.assertEquals("char", Type.type(char.class).list());
-    Assertions.assertEquals("double", Type.type(double.class).list());
-    Assertions.assertEquals("float", Type.type(float.class).list());
-    Assertions.assertEquals("int", Type.type(int.class).list());
-    Assertions.assertEquals("long", Type.type(long.class).list());
-    Assertions.assertEquals("short", Type.type(short.class).list());
+    assertEquals("boolean", Type.type(boolean.class).list());
+    assertEquals("byte", Type.type(byte.class).list());
+    assertEquals("char", Type.type(char.class).list());
+    assertEquals("double", Type.type(double.class).list());
+    assertEquals("float", Type.type(float.class).list());
+    assertEquals("int", Type.type(int.class).list());
+    assertEquals("long", Type.type(long.class).list());
+    assertEquals("short", Type.type(short.class).list());
     Type annotatedInt = PrimitiveType.primitive(U.SINGLETON, int.class);
-    Assertions.assertEquals(U.USE + " int", annotatedInt.list());
+    assertEquals(U.USE + " int", annotatedInt.list());
   }
 
   public List<String> parametrizedFieldType;
 
   @Test
   void object() {
-    Assertions.assertEquals("Object", Type.type(Object.class).list());
+    assertEquals("Object", Type.type(Object.class).list());
   }
 
   @Test
   void type() throws Exception {
-    Assertions.assertEquals(
+    assertEquals(
         "void", Type.type(TypeTests.class.getDeclaredMethod("type").getGenericReturnType()).list());
-    Assertions.assertEquals(
+    assertEquals(
         "java.util.List<String>",
         Type.type(TypeTests.class.getDeclaredField("parametrizedFieldType").getGenericType())
             .list());

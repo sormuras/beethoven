@@ -57,4 +57,9 @@ public class VoidType extends Type {
   public boolean isAnnotated() {
     return false;
   }
+
+  @Override
+  public boolean isVoid() {
+    return true;
+  }
 }
