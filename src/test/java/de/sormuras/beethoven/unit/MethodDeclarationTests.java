@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
@@ -49,6 +50,7 @@ class MethodDeclarationTests {
     MethodDeclaration m = new MethodDeclaration();
     m.setName("m");
     assertEquals("void m();\n", m.list("\n"));
+    assertEquals("m()", m.applyCall(new Listing()).toString());
     assertEquals(ElementType.METHOD, m.getAnnotationsTarget());
     assertEquals(false, m.isConstructor());
     assertEquals(false, m.isModified());
@@ -85,6 +87,7 @@ class MethodDeclarationTests {
     assertEquals(true, runnable.isModified());
     assertEquals(false, runnable.isVarArgs());
     assertSame(runnable, runnable.getParameters().get(0).getMethodDeclaration().get());
+    assertEquals("run(this)", runnable.applyCall(new Listing()).toString());
     Exception expected = assertThrows(IllegalStateException.class, () -> runnable.setVarArgs(true));
     assertEquals(true, expected.toString().contains("array type expected"));
   }
@@ -102,5 +105,30 @@ class MethodDeclarationTests {
     var.setVarArgs(false);
     assertEquals(false, var.isVarArgs());
     assertEquals("void var(int[] numbers);\n", var.list("\n"));
+  }
+
+  @Test
+  void callWithoutArgument() {
+    MethodDeclaration method = new MethodDeclaration();
+    method.setName("noArg");
+    assertEquals("noArg()", method.applyCall(new Listing()).toString());
+  }
+
+  @Test
+  void callWithSingleArgument() {
+    MethodDeclaration method = new MethodDeclaration();
+    method.setName("singleArg");
+    method.addParameter(int.class, "value");
+    assertEquals("singleArg(value)", method.applyCall(new Listing()).toString());
+  }
+
+  @Test
+  void callWithManyArguments() {
+    MethodDeclaration method = new MethodDeclaration();
+    method.setName("manyArgs");
+    method.addParameter(int.class, "a1");
+    method.addParameter(byte.class, "a2");
+    method.addParameter(short.class, "a3");
+    assertEquals("manyArgs(a1, a2, a3)", method.applyCall(new Listing()).toString());
   }
 }

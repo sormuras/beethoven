@@ -24,6 +24,7 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Method declaration.
@@ -171,5 +172,27 @@ public class MethodDeclaration extends ClassMember {
       throw new IllegalStateException("no parameters defined");
     }
     getParameters().get(getParameters().size() - 1).setVariable(variable);
+  }
+
+  public Listing applyCall(Listing listing) {
+    return applyCall(listing, parameter -> parameter.getName());
+  }
+
+  public Listing applyCall(Listing listing, Function<MethodParameter, String> function) {
+    listing.add(getName());
+    listing.add('(');
+    if (!getParameters().isEmpty()) {
+      boolean first = true;
+      for (MethodParameter parameter : getParameters()) {
+        if (first) {
+          first = false;
+        } else {
+          listing.add(", ");
+        }
+        String name = function.apply(parameter);
+        listing.add(name);
+      }
+    }
+    return listing.add(')');
   }
 }
