@@ -15,6 +15,7 @@
 package de.sormuras.beethoven.unit;
 
 import de.sormuras.beethoven.Name;
+import de.sormuras.beethoven.Tests;
 
 import static de.sormuras.beethoven.unit.ModuleDeclaration.Scope.COMPILATION;
 import static de.sormuras.beethoven.unit.ModuleDeclaration.Scope.EXECUTION;
@@ -70,5 +71,28 @@ class ModuleDeclarationTests {
             + "  requires optional service S2;\n" //
             + "}\n",
         module.list("\n"));
+  }
+
+  @Test
+  void jigsaw() {
+    ModuleDeclaration module = new ModuleDeclaration();
+    module.setName("M");
+    module.setVersion("1.0");
+    module.requiresModule("A", ">= 2.0");
+    module.requiresModule("B", null, COMPILATION, REFLECTION);
+    module.requiresService("S1");
+    module.requiresService(true, Name.name("S2"));
+    module.providesModule(Name.name("MI"), "4.0");
+    module.providesService(Name.name("MS"), Name.name("C"));
+    module.exports(Name.name("ME"));
+    module.permits(Name.name("MF"));
+    module.entryPoint(Name.name("MMain"));
+    ModuleView view = module.declareView("N");
+    view.providesModule(Name.name("NI"), "1.0");
+    view.providesService(Name.name("NS"), Name.name("D"));
+    view.exports(Name.name("NE"));
+    view.permits(Name.name("MF"));
+    view.entryPoint(Name.name("NMain"));
+    Tests.assertEquals(getClass(), "jigsaw", module);
   }
 }

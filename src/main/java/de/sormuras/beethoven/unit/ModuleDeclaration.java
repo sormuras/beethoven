@@ -36,6 +36,7 @@ import java.util.Optional;
  * module M @ 1.0 {
  *   requires A @ &gt;= 2.0; // use v2 or above
  *   requires B for compilation, reflection;
+ *
  *   requires service S1;
  *   requires optional service S2;
  *
@@ -57,7 +58,7 @@ import java.util.Optional;
  *
  * @see <a href="http://openjdk.java.net/projects/jigsaw/doc/lang-vm.html#jigsaw-1.3.2">module</a>
  */
-public class ModuleDeclaration implements Listable {
+public class ModuleDeclaration extends ModuleView {
 
   public enum Scope {
     COMPILATION,
@@ -69,19 +70,39 @@ public class ModuleDeclaration implements Listable {
     }
   }
 
-  private Name name;
   private String version;
-  private List<Listable> directives = new ArrayList<>();
+  private List<Listable> requiredModules = new ArrayList<>();
+  private List<Listable> requiredServices = new ArrayList<>();
   private List<Listable> views = new ArrayList<>();
 
   @Override
   public Listing apply(Listing listing) {
-    listing.add("module").add(' ').add(name).add(' ');
+    listing.add("module").add(' ').add(getName()).add(' ');
     getVersion().ifPresent(version -> listing.add('@').add(' ').add(version).add(' '));
     listing.add('{').newline().indent(1);
-    directives.forEach(listing::add);
+    boolean newlineNeeded = false;
+    if (!requiredModules.isEmpty()) {
+      requiredModules.forEach(listing::add);
+      newlineNeeded = true;
+    }
+    if (!requiredServices.isEmpty()) {
+      if (newlineNeeded) {
+        listing.newline();
+      }
+      requiredServices.forEach(listing::add);
+      newlineNeeded = true;
+    }
+    if (!getDirectives().isEmpty()) {
+      if (newlineNeeded) {
+        listing.newline();
+      }
+      getDirectives().forEach(listing::add);
+      newlineNeeded = true;
+    }
     if (!views.isEmpty()) {
-      listing.newline();
+      if (newlineNeeded) {
+        listing.newline();
+      }
       views.forEach(listing::add);
     }
     listing.indent(-1).add('}').newline();
@@ -90,23 +111,11 @@ public class ModuleDeclaration implements Listable {
 
   @Override
   public boolean isEmpty() {
-    return directives.isEmpty() && views.isEmpty();
-  }
-
-  public Name getName() {
-    return name;
+    return super.isEmpty() && views.isEmpty();
   }
 
   public Optional<String> getVersion() {
     return Optional.ofNullable(version);
-  }
-
-  public void setName(Name name) {
-    this.name = name;
-  }
-
-  public void setName(String name) {
-    setName(Name.name(name));
   }
 
   public void setVersion(String version) {
@@ -119,7 +128,7 @@ public class ModuleDeclaration implements Listable {
 
   public void requiresModule(
       boolean localFlag, boolean publicFlag, Name name, String versionQuery, Scope... scopes) {
-    directives.add(
+    requiredModules.add(
         listing -> {
           listing.add("requires ");
           if (localFlag) {
@@ -147,7 +156,7 @@ public class ModuleDeclaration implements Listable {
   }
 
   public void requiresService(boolean optionalFlag, Name name) {
-    directives.add(
+    requiredServices.add(
         listing -> {
           listing.add("requires ");
           if (optionalFlag) {
@@ -159,5 +168,12 @@ public class ModuleDeclaration implements Listable {
           listing.newline();
           return listing;
         });
+  }
+
+  public ModuleView declareView(String name) {
+    ModuleView view = new ModuleView();
+    view.setName(name);
+    views.add(view);
+    return view;
   }
 }
