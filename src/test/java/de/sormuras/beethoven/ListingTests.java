@@ -116,7 +116,9 @@ class ListingTests {
     String actual = new Listing().add(source, System.class, "out", "123", "", "$").toString();
     assertEquals(expected, actual);
     assertEquals(" ", new Listing().add("{L}", Listable.SPACE).toString());
+    assertEquals(" ", new Listing().add("{single space char:L}", Listable.SPACE).toString());
     assertEquals("x.Y", new Listing().add("{enclosing}", Name.name("x", "Y", "Z")).toString());
+    assertEquals("x.Y", new Listing().add("{xxx:enclosing}", Name.name("x", "Y", "Z")).toString());
     assertEquals("(:", new Listing().add("{smile}", new Face()).toString());
     assertEquals("{{}}", new Listing().add("{{empty}{}}", new Face()).toString());
     assertThrows(Exception.class, () -> new Listing().add("{xxx}", ""));

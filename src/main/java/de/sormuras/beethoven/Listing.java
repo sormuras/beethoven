@@ -148,8 +148,12 @@ public class Listing {
         add(source.substring(sourceIndex, matcher.start()));
       }
       sourceIndex = matcher.end();
-      // handle simple placeholder
       String placeholder = matcher.group(0);
+      // strip custom text from placeholder, like "{buffered data:$}"
+      if (placeholder.contains(":")) {
+        placeholder = "{" + placeholder.substring(placeholder.indexOf(':') + 1);
+      }
+      // handle simple placeholder
       if (placeholder.equals("{>}")) {
         indent(1);
         continue;
