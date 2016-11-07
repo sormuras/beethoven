@@ -14,15 +14,21 @@
 
 package de.sormuras.beethoven.unit;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
-
+import de.sormuras.beethoven.Compilation;
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
+
+import java.lang.annotation.ElementType;
+import java.lang.module.ModuleFinder;
+import java.lang.reflect.Module;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Java module declaration.
@@ -33,136 +39,112 @@ import java.util.Optional;
  * <p>Example:
  *
  * <pre>
- * module M @ 1.0 {
- *   requires A @ &gt;= 2.0; // use v2 or above
- *   requires B for compilation, reflection;
+ * ModuleDeclaration:
+ *   {Annotation} [open] module ModuleName { {ModuleStatement} }
  *
- *   requires service S1;
- *   requires optional service S2;
+ * ModuleName:
+ *   Identifier
+ *   ModuleName . Identifier
  *
- *   provides MI @ 4.0;
- *   provides service MS with C;
- *   exports  ME;
- *   permits  MF;
- *   class    MMain;
+ * ModuleStatement:
+ *   requires {RequiresModifier} ModuleName ;
+ *   exports PackageName [to ModuleName {, ModuleName}] ;
+ *   opens PackageName [to ModuleName {, ModuleName}] ;
+ *   uses TypeName ;
+ *   provides TypeName with TypeName {, TypeName} ;
  *
- *   view N {
- *     provides NI @ 1.0;
- *     provides service NS with D;
- *     exports  NE;
- *     permits  MF;
- *     class    NMain;
- *   }
- * }
+ * RequiresModifier: one of
+ *   transitive static
  * </pre>
  *
- * @see <a href="http://openjdk.java.net/projects/jigsaw/doc/lang-vm.html#jigsaw-1.3.2">module</a>
+ * @see <a href="http://cr.openjdk.java.net/~mr/jigsaw/spec/lang-vm.html">JIGSAW SPEC</a>
  */
-public class ModuleDeclaration extends ModuleView {
+public class ModuleDeclaration extends Annotatable {
 
-  public enum Scope {
-    COMPILATION,
-    REFLECTION,
-    EXECUTION;
+  public enum RequiresModifier {
+    STATIC,
+    TRANSITIVE;
 
     public String literal() {
       return name().toLowerCase();
     }
   }
 
-  private String version;
-  private List<Listable> requiredModules = new ArrayList<>();
-  private List<Listable> requiredServices = new ArrayList<>();
-  private List<Listable> views = new ArrayList<>();
+  private boolean open;
+  private Name name;
+  private List<Listable> requires = new ArrayList<>();
+
+  @Override
+  public boolean isEmpty() {
+    return requires.isEmpty();
+  }
 
   @Override
   public Listing apply(Listing listing) {
-    listing.add("module").add(' ').add(getName()).add(' ');
-    getVersion().ifPresent(version -> listing.add('@').add(' ').add(version).add(' '));
-    listing.add('{').newline().indent(1);
+    applyAnnotations(listing);
+    if (isOpen()) {
+      listing.add("open ");
+    }
+    listing.add("module").add(' ').add(getName()).add(' ').add('{').newline();
+    listing.indent(1);
     boolean newlineNeeded = false;
-    if (!requiredModules.isEmpty()) {
-      requiredModules.forEach(listing::add);
+    if (!requires.isEmpty()) {
+      requires.forEach(listing::add);
       newlineNeeded = true;
     }
-    if (!requiredServices.isEmpty()) {
-      if (newlineNeeded) {
-        listing.newline();
-      }
-      requiredServices.forEach(listing::add);
-      newlineNeeded = true;
-    }
-    if (!getDirectives().isEmpty()) {
-      if (newlineNeeded) {
-        listing.newline();
-      }
-      getDirectives().forEach(listing::add);
-      newlineNeeded = true;
-    }
-    if (!views.isEmpty()) {
-      if (newlineNeeded) {
-        listing.newline();
-      }
-      views.forEach(listing::add);
-    }
+    //    if (!requiredServices.isEmpty()) {
+    //      if (newlineNeeded) {
+    //        listing.newline();
+    //      }
+    //      requiredServices.forEach(listing::add);
+    //      newlineNeeded = true;
+    //    }
+    //    if (!getDirectives().isEmpty()) {
+    //      if (newlineNeeded) {
+    //        listing.newline();
+    //      }
+    //      getDirectives().forEach(listing::add);
+    //      newlineNeeded = true;
+    //    }
+    //    if (!views.isEmpty()) {
+    //      if (newlineNeeded) {
+    //        listing.newline();
+    //      }
+    //      views.forEach(listing::add);
+    //    }
     listing.indent(-1).add('}').newline();
     return listing;
   }
 
   @Override
-  public boolean isEmpty() {
-    return super.isEmpty() && views.isEmpty();
+  public ElementType getAnnotationsTarget() {
+    return ElementType.TYPE;
   }
 
-  public Optional<String> getVersion() {
-    return Optional.ofNullable(version);
+  public Name getName() {
+    return name;
   }
 
-  public void setVersion(String version) {
-    this.version = version;
+  public boolean isOpen() {
+    return open;
   }
 
-  public void requiresModule(String name, String versionQuery, Scope... scopes) {
-    requiresModule(false, false, Name.name(name), versionQuery, scopes);
+  public void setName(Name name) {
+    this.name = name;
   }
 
-  public void requiresModule(
-      boolean localFlag, boolean publicFlag, Name name, String versionQuery, Scope... scopes) {
-    requiredModules.add(
+  public void setOpen(boolean open) {
+    this.open = open;
+  }
+
+  public void requires(Name name, RequiresModifier... mods) {
+    requires.add(
         listing -> {
           listing.add("requires ");
-          if (localFlag) {
-            listing.add("local ");
+          if (mods.length > 0) {
+            listing.add(
+                String.join(" ", stream(mods).map(RequiresModifier::literal).collect(toList())));
           }
-          if (publicFlag) {
-            listing.add("public ");
-          }
-          listing.add(name);
-          if (versionQuery != null) {
-            listing.add(' ').add('@').add(' ').add(versionQuery);
-          }
-          if (scopes.length > 0) {
-            listing.add(" for ");
-            listing.add(String.join(", ", stream(scopes).map(Scope::literal).collect(toList())));
-          }
-          listing.add(';');
-          listing.newline();
-          return listing;
-        });
-  }
-
-  public void requiresService(String name) {
-    requiresService(false, Name.name(name));
-  }
-
-  public void requiresService(boolean optionalFlag, Name name) {
-    requiredServices.add(
-        listing -> {
-          listing.add("requires ");
-          if (optionalFlag) {
-            listing.add("optional ");
-          }
-          listing.add("service ");
           listing.add(name);
           listing.add(';');
           listing.newline();
@@ -170,10 +152,7 @@ public class ModuleDeclaration extends ModuleView {
         });
   }
 
-  public ModuleView declareView(String name) {
-    ModuleView view = new ModuleView();
-    view.setName(name);
-    views.add(view);
-    return view;
+  public void compile() throws Exception {
+    ClassLoader loader = Compilation.compile(Compilation.source("/module-info.java", list()));
   }
 }
