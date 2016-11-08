@@ -11,5 +11,6 @@ open module M.N {
   exports R.S to T1.U1, T2.U2;
 
   uses V.W;
+
   provides X.Y with Z1.Z2, Z3.Z4;
 }

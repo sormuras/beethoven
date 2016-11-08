@@ -14,21 +14,17 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.lang.String.join;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
 import de.sormuras.beethoven.Compilation;
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
-
 import java.lang.annotation.ElementType;
-import java.lang.module.ModuleFinder;
-import java.lang.reflect.Module;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Java module declaration.
@@ -73,6 +69,10 @@ public class ModuleDeclaration extends Annotatable {
   private boolean open;
   private Name name;
   private List<Listable> requires = new ArrayList<>();
+  private List<Listable> exports = new ArrayList<>();
+  private List<Listable> opens = new ArrayList<>();
+  private List<Listable> uses = new ArrayList<>();
+  private List<Listable> provides = new ArrayList<>();
 
   @Override
   public boolean isEmpty() {
@@ -88,30 +88,44 @@ public class ModuleDeclaration extends Annotatable {
     listing.add("module").add(' ').add(getName()).add(' ').add('{').newline();
     listing.indent(1);
     boolean newlineNeeded = false;
+    // "requires" statements...
     if (!requires.isEmpty()) {
       requires.forEach(listing::add);
       newlineNeeded = true;
     }
-    //    if (!requiredServices.isEmpty()) {
-    //      if (newlineNeeded) {
-    //        listing.newline();
-    //      }
-    //      requiredServices.forEach(listing::add);
-    //      newlineNeeded = true;
-    //    }
-    //    if (!getDirectives().isEmpty()) {
-    //      if (newlineNeeded) {
-    //        listing.newline();
-    //      }
-    //      getDirectives().forEach(listing::add);
-    //      newlineNeeded = true;
-    //    }
-    //    if (!views.isEmpty()) {
-    //      if (newlineNeeded) {
-    //        listing.newline();
-    //      }
-    //      views.forEach(listing::add);
-    //    }
+    // "exports" statements...
+    if (!exports.isEmpty()) {
+      if (newlineNeeded) {
+        listing.newline();
+      }
+      exports.forEach(listing::add);
+      newlineNeeded = true;
+    }
+    if (!isOpen()) {
+      // "opens" statements...
+      if (!opens.isEmpty()) {
+        if (newlineNeeded) {
+          listing.newline();
+        }
+        opens.forEach(listing::add);
+        newlineNeeded = true;
+      }
+    }
+    // "uses" statements...
+    if (!uses.isEmpty()) {
+      if (newlineNeeded) {
+        listing.newline();
+      }
+      uses.forEach(listing::add);
+      newlineNeeded = true;
+    }
+    // "provides" statements...
+    if (!provides.isEmpty()) {
+      if (newlineNeeded) {
+        listing.newline();
+      }
+      provides.forEach(listing::add);
+    }
     listing.indent(-1).add('}').newline();
     return listing;
   }
@@ -137,15 +151,61 @@ public class ModuleDeclaration extends Annotatable {
     this.open = open;
   }
 
-  public void requires(Name name, RequiresModifier... mods) {
+  public void requires(Name moduleName, RequiresModifier... mods) {
     requires.add(
         listing -> {
           listing.add("requires ");
           if (mods.length > 0) {
-            listing.add(
-                String.join(" ", stream(mods).map(RequiresModifier::literal).collect(toList())));
+            listing.add(join(" ", stream(mods).map(RequiresModifier::literal).collect(toList())));
+            listing.add(' ');
           }
-          listing.add(name);
+          listing.add(moduleName);
+          listing.add(';');
+          listing.newline();
+          return listing;
+        });
+  }
+
+  public void exports(Name packageName, Name... toModuleNames) {
+    exportsOrOpens(exports, packageName, List.of(toModuleNames));
+  }
+
+  public void opens(Name packageName, Name... toModuleNames) {
+    exportsOrOpens(opens, packageName, List.of(toModuleNames));
+  }
+
+  private void exportsOrOpens(List<Listable> list, Name packageName, List<Name> toModuleNames) {
+    String keyword = list == exports ? "exports" : "opens";
+    list.add(
+        listing -> {
+          listing.add(keyword);
+          listing.add(' ');
+          listing.add(packageName);
+          if (!toModuleNames.isEmpty()) {
+            listing.add(" to ");
+            listing.add(toModuleNames, ", ");
+          }
+          listing.add(';');
+          listing.newline();
+          return listing;
+        });
+  }
+
+  public void uses(Name serviceInterfaceName) {
+    uses.add(listing -> listing.add("uses ").add(serviceInterfaceName).add(';').newline());
+  }
+
+  public void provides(Name serviceInterfaceName, Name with, Name... moreWiths) {
+    provides.add(
+        listing -> {
+          listing.add("provides ");
+          listing.add(serviceInterfaceName);
+          listing.add(" with ");
+          listing.add(with);
+          if (moreWiths.length > 0) {
+            listing.add(", ");
+            listing.add(List.of(moreWiths), ", ");
+          }
           listing.add(';');
           listing.newline();
           return listing;
