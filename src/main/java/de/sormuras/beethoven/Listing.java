@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class Listing {
 
-  /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
+  /** Used by a {@code Scanner#useDelimiter(Pattern)} delimiter pattern. */
   public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
 
   /** Used to find placeholders framed by curly braces. */
@@ -114,16 +114,16 @@ public class Listing {
   }
 
   /**
-   * Parse source string and replace placeholders with {@link #add}-calls to this {@link Listing}
+   * Parse source string and replace placeholders with {@code #add}-calls to this {@code Listing}
    * instance.
    *
    * <p>Simple placeholders:
    *
    * <ul>
-   *   <li><b>{$}</b> {@link CharSequence} <b>without</b> escaping, same as: {@code add(arg)}
-   *   <li><b>{S}</b> {@link String} with escaping, same as: {@code add(escape(arg))}
-   *   <li><b>{N}</b> {@link Name} same as: {@code add(Name.cast(arg))}
-   *   <li><b>{L}</b> {@link Listable} same as: {@code add((Listable)(arg))}
+   *   <li><b>{$}</b> {@code CharSequence} <b>without</b> escaping, same as: {@code add(arg)}
+   *   <li><b>{S}</b> {@code String} with escaping, same as: {@code add(escape(arg))}
+   *   <li><b>{N}</b> {@code Name} same as: {@code add(Name.cast(arg))}
+   *   <li><b>{L}</b> {@code Listable} same as: {@code add((Listable)(arg))}
    *   <li><b>{&gt;}</b> same as: {@code indent(1)}
    *   <li><b>{&lt;}</b> same as: {@code indent(-1)}
    *   <li><b>{;}</b> same as: {@code add(';').newline()}
@@ -233,7 +233,7 @@ public class Listing {
     return currentLine;
   }
 
-  /** Used by {@link #newline()} to get the next line of this listing. */
+  /** Used by {@code #newline()} to get the next line of this listing. */
   public String getCurrentLineAsString() {
     return currentLine.toString();
   }

@@ -57,14 +57,14 @@ import javax.lang.model.util.SimpleTypeVisitor8;
  * objects. All objects, including arrays, support the methods of class Object (§4.3.2). String
  * literals are represented by String objects (§4.3.3).
  *
- * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html">JLS 4</a>
+ * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html">JLS 4</a>
  */
 public abstract class Type extends Annotated {
 
-  /** Common {@link Type} factory collection parsing {@link javax.lang.model.type.TypeMirror}s. */
+  /** Common {@code Type} factory collection parsing {@code javax.lang.model.type.TypeMirror}s. */
   public interface Mirrors {
 
-    /** Annotation value visitor adding members to the {@link Annotation} instance. */
+    /** Annotation value visitor adding members to the {@code Annotation} instance. */
     class AnnotationVisitor extends SimpleAnnotationValueVisitor8<Annotation, String> {
       private final Annotation annotation;
 
@@ -152,7 +152,7 @@ public abstract class Type extends Annotated {
       return mirrors.stream().map(Mirrors::annotation).collect(toList());
     }
 
-    /** Create {@link Annotation} based on {@link AnnotationMirror} instance. */
+    /** Create {@code Annotation} based on {@code AnnotationMirror} instance. */
     static Annotation annotation(AnnotationMirror mirror) {
       Element element = mirror.getAnnotationType().asElement();
       Annotation annotation = Annotation.annotation(Name.name(element));
@@ -170,7 +170,7 @@ public abstract class Type extends Annotated {
       return annotation;
     }
 
-    /** Create {@link ArrayType} based on {@link javax.lang.model.type.ArrayType} instance. */
+    /** Create {@code ArrayType} based on {@code javax.lang.model.type.ArrayType} instance. */
     static ArrayType mirror(javax.lang.model.type.ArrayType type) {
       List<ArrayType.Dimension> dimensions = new ArrayList<>();
       TypeMirror mirror = type;
@@ -182,7 +182,7 @@ public abstract class Type extends Annotated {
       return ArrayType.array(type(mirror), dimensions);
     }
 
-    /** Create {@link ClassType} based on {@link javax.lang.model.type.DeclaredType} instance. */
+    /** Create {@code ClassType} based on {@code javax.lang.model.type.DeclaredType} instance. */
     static ClassType mirror(javax.lang.model.type.DeclaredType type) {
       // extract package name
       Element packageElement = type.asElement();
@@ -223,7 +223,7 @@ public abstract class Type extends Annotated {
       return new ClassType(packageName, simples);
     }
 
-    /** Create {@link Type} based on {@link javax.lang.model.type.NoType} instance. */
+    /** Create {@code Type} based on {@code javax.lang.model.type.NoType} instance. */
     static Type mirror(javax.lang.model.type.NoType type) {
       if (type.getKind() == TypeKind.VOID) {
         return VoidType.INSTANCE;
@@ -231,18 +231,18 @@ public abstract class Type extends Annotated {
       throw new AssertionError("Unsupported no type: " + type.getKind());
     }
 
-    /** Create {@link PrimitiveType} based on {@link javax.lang.model.type.PrimitiveType} type. */
+    /** Create {@code PrimitiveType} based on {@code javax.lang.model.type.PrimitiveType} type. */
     static PrimitiveType mirror(javax.lang.model.type.PrimitiveType mirror) {
       return primitive(annotations(mirror), mirror.getKind());
     }
 
-    /** Create {@link TypeVariable} based on {@link javax.lang.model.type.TypeVariable} mirror. */
+    /** Create {@code TypeVariable} based on {@code javax.lang.model.type.TypeVariable} mirror. */
     static TypeVariable mirror(javax.lang.model.type.TypeVariable mirror) {
       List<Annotation> annotations = annotations(mirror);
       return TypeVariable.variable(annotations, mirror.asElement().getSimpleName().toString());
     }
 
-    /** Create {@link WildcardType} based on {@link javax.lang.model.type.WildcardType} instance. */
+    /** Create {@code WildcardType} based on {@code javax.lang.model.type.WildcardType} instance. */
     static WildcardType mirror(javax.lang.model.type.WildcardType mirror) {
       List<Annotation> annotations = annotations(mirror);
       TypeMirror extendsBound = mirror.getExtendsBound();
@@ -256,7 +256,7 @@ public abstract class Type extends Annotated {
       return WildcardType.wildcard(annotations);
     }
 
-    /** Create {@link PrimitiveType} based on {@link TypeKind kind} type. */
+    /** Create {@code PrimitiveType} based on {@code TypeKind kind} type. */
     static PrimitiveType primitive(List<Annotation> annotations, TypeKind kind) {
       return PrimitiveType.primitive(annotations, kind.name());
     }
@@ -264,7 +264,7 @@ public abstract class Type extends Annotated {
 
   public interface Reflection {
 
-    /** Create {@link Type} based on {@link AnnotatedArrayType} instance. */
+    /** Create {@code Type} based on {@code AnnotatedArrayType} instance. */
     static ArrayType reflect(AnnotatedArrayType annotatedType) {
       List<ArrayType.Dimension> dimensions = new ArrayList<>();
       AnnotatedType component = annotatedType;
@@ -276,7 +276,7 @@ public abstract class Type extends Annotated {
       return ArrayType.array(type(component), dimensions);
     }
 
-    /** Create {@link Type} based on {@link AnnotatedParameterizedType} instance. */
+    /** Create {@code Type} based on {@code AnnotatedParameterizedType} instance. */
     static ClassType reflect(AnnotatedParameterizedType annotatedType) {
       List<ClassType.Simple> simples = new ArrayList<>();
       while (true) {
@@ -296,7 +296,7 @@ public abstract class Type extends Annotated {
       }
     }
 
-    /** Create {@link Type} based on {@link AnnotatedTypeVariable} instance. */
+    /** Create {@code Type} based on {@code AnnotatedTypeVariable} instance. */
     static TypeVariable reflect(AnnotatedTypeVariable annotatedType) {
       // TODO consider/ignore bounds at type use location
       // AnnotatedTypeVariable atv = (AnnotatedTypeVariable) annotatedType;
@@ -308,7 +308,7 @@ public abstract class Type extends Annotated {
       return TypeVariable.variable(Annotation.annotations(annotatedType), name);
     }
 
-    /** Create {@link Type} based on {@link AnnotatedWildcardType} instance. */
+    /** Create {@code Type} based on {@code AnnotatedWildcardType} instance. */
     static WildcardType reflect(AnnotatedWildcardType annotatedType) {
       List<Annotation> annotations = Annotation.annotations(annotatedType);
       // ? super lower bound
@@ -327,7 +327,7 @@ public abstract class Type extends Annotated {
       return WildcardType.wildcard(annotations);
     }
 
-    /** Create {@link Type} based on {@link java.lang.reflect.GenericArrayType} instance. */
+    /** Create {@code Type} based on {@code java.lang.reflect.GenericArrayType} instance. */
     static ArrayType reflect(java.lang.reflect.GenericArrayType type) {
       List<ArrayType.Dimension> dimensions = new ArrayList<>();
       java.lang.reflect.Type component = type;
@@ -338,7 +338,7 @@ public abstract class Type extends Annotated {
       return ArrayType.array(Type.type(component), dimensions);
     }
 
-    /** Create {@link Type} based on {@link java.lang.reflect.ParameterizedType} instance. */
+    /** Create {@code Type} based on {@code java.lang.reflect.ParameterizedType} instance. */
     static ClassType reflect(java.lang.reflect.ParameterizedType type) {
       List<ClassType.Simple> simples = new ArrayList<>();
       java.lang.reflect.ParameterizedType owner = type;
@@ -355,12 +355,12 @@ public abstract class Type extends Annotated {
       return new ClassType(packageName, simples);
     }
 
-    /** Create {@link Type} based on {@link java.lang.reflect.TypeVariable} instance. */
+    /** Create {@code Type} based on {@code java.lang.reflect.TypeVariable} instance. */
     static TypeVariable reflect(java.lang.reflect.TypeVariable<?> type) {
       return TypeVariable.variable(type.getName());
     }
 
-    /** Create {@link Type} based on {@link java.lang.reflect.WildcardType} instance. */
+    /** Create {@code Type} based on {@code java.lang.reflect.WildcardType} instance. */
     static WildcardType reflect(java.lang.reflect.WildcardType type) {
       // ? super lower bound
       java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
@@ -379,7 +379,7 @@ public abstract class Type extends Annotated {
     }
   }
 
-  /** Create {@link Type} based on {@link AnnotatedType} instance. */
+  /** Create {@code Type} based on {@code AnnotatedType} instance. */
   public static Type type(AnnotatedType annotatedType) {
     if (annotatedType instanceof AnnotatedArrayType) {
       return reflect((AnnotatedArrayType) annotatedType);
@@ -397,7 +397,7 @@ public abstract class Type extends Annotated {
     return withAnnotations(type(annotatedType.getType()), Annotation.annotations(annotatedType));
   }
 
-  /** Create {@link Type} based on {@link Class} instance. */
+  /** Create {@code Type} based on {@code Class} instance. */
   public static Type type(Class<?> classType) {
     // handle primitive types like: boolean, byte ... short, void included
     if (classType.isPrimitive()) {
@@ -421,7 +421,7 @@ public abstract class Type extends Annotated {
     return ClassType.type(classType);
   }
 
-  /** Create {@link Type} based on {@link java.lang.reflect.Type} instance. */
+  /** Create {@code Type} based on {@code java.lang.reflect.Type} instance. */
   public static Type type(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return reflect((java.lang.reflect.GenericArrayType) type);
@@ -438,13 +438,13 @@ public abstract class Type extends Annotated {
     return type((Class<?>) type);
   }
 
-  /** Create {@link Type} based on {@link javax.lang.model.type.TypeMirror} instance. */
+  /** Create {@code Type} based on {@code javax.lang.model.type.TypeMirror} instance. */
   public static Type type(javax.lang.model.type.TypeMirror mirror) {
     Mirrors.TypeVisitor visitor = new Mirrors.TypeVisitor();
     return mirror.accept(visitor, null);
   }
 
-  /** Create list of types based on variable array of {@link java.lang.reflect.Type}s. */
+  /** Create list of types based on variable array of {@code java.lang.reflect.Type}s. */
   public static List<Type> types(java.lang.reflect.Type... types) {
     return stream(types).map(Type::type).collect(toList());
   }
@@ -465,7 +465,7 @@ public abstract class Type extends Annotated {
     return (T) type.annotated(i -> List.of());
   }
 
-  /** Initialize this {@link Type} instance. */
+  /** Initialize this {@code Type} instance. */
   Type(List<Annotation> annotations) {
     super(annotations);
   }
@@ -477,8 +477,8 @@ public abstract class Type extends Annotated {
    * Return the binary name of this type as a String.
    *
    * @return (binary) class name
-   * @see Class#getName()
-   * @see Class#forName(String)
+   *     <p>see Class#getName()
+   *     <p>see Class#forName(String)
    */
   public abstract String binary();
 

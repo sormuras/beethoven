@@ -40,8 +40,8 @@ import java.util.stream.Collectors;
 public class Annotation implements Listable {
 
   /**
-   * Create new {@link Annotation} instance by reflecting on the annotation found on given annotated
-   * element calling {@link AnnotatedElement#getAnnotation(Class)}.
+   * Create new {@code Annotation} instance by reflecting on the annotation found on given annotated
+   * element calling {@code AnnotatedElement#getAnnotation(Class)}.
    */
   public static Annotation annotation(
       AnnotatedElement element, Class<? extends java.lang.annotation.Annotation> annotationClass) {
@@ -49,14 +49,14 @@ public class Annotation implements Listable {
   }
 
   /**
-   * Create new {@link Annotation} instance by reflecting on the given annotation omitting default
+   * Create new {@code Annotation} instance by reflecting on the given annotation omitting default
    * values.
    */
   public static Annotation annotation(java.lang.annotation.Annotation annotation) {
     return annotation(annotation, false);
   }
 
-  /** Create new {@link Annotation} instance by reflecting on the given annotation. */
+  /** Create new {@code Annotation} instance by reflecting on the given annotation. */
   public static Annotation annotation(
       java.lang.annotation.Annotation annotation, boolean includeDefaultValues) {
     Annotation result = annotation(annotation.annotationType());
@@ -102,8 +102,8 @@ public class Annotation implements Listable {
   }
 
   /**
-   * Create list of {@link Annotation} instances by reflecting on all annotations found on the
-   * annotated element using {@link AnnotatedElement#getAnnotations()}.
+   * Create list of {@code Annotation} instances by reflecting on all annotations found on the
+   * annotated element using {@code AnnotatedElement#getAnnotations()}.
    */
   public static List<Annotation> annotations(AnnotatedElement element) {
     java.lang.annotation.Annotation[] annotations = element.getAnnotations();
@@ -113,12 +113,12 @@ public class Annotation implements Listable {
     return annotations(annotations);
   }
 
-  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
+  /** Create list of {@code Annotation} instances by reflecting given all annotations. */
   public static List<Annotation> annotations(java.lang.annotation.Annotation... annotations) {
     return stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
   }
 
-  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
+  /** Create list of {@code Annotation} instances by reflecting given all annotations. */
   @SafeVarargs
   public static List<Annotation> annotations(
       Class<? extends java.lang.annotation.Annotation>... annotations) {

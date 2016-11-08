@@ -19,12 +19,10 @@ import static java.util.Collections.addAll;
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
-
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.lang.model.element.Modifier;
 
 public abstract class TypeDeclaration extends ClassMember implements DeclarationContainer {
@@ -113,7 +111,7 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
     return declarations.isEmpty();
   }
 
-  /** Return simple {@link Name} representation of this type declaration. */
+  /** Return simple {@code Name} representation of this type declaration. */
   public Name toName() {
     List<String> identifiers = new ArrayList<>();
     if (getCompilationUnit() != null) {

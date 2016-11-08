@@ -18,6 +18,7 @@ task runFormat(type: JavaExec) {
 
     classpath = fileTree(dir: "$buildDir/format", include: '*.jar')
 
+    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
     jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
     jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
     jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'

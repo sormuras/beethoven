@@ -33,8 +33,8 @@ import java.util.function.IntFunction;
 /**
  * Class or interface type.
  *
- * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-ClassType">JLS
- *     ClassType</a>
+ * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-ClassType">JLS
+ * ClassType</a>
  */
 public class ClassType extends ReferenceType {
 
@@ -80,7 +80,7 @@ public class ClassType extends ReferenceType {
 
   public static final ClassType OBJECT = ClassType.type(Object.class);
 
-  /** Create simple {@link Name} for the given {@link ClassType} instance. */
+  /** Create simple {@code Name} for the given {@code ClassType} instance. */
   public static Name name(ClassType type) {
     List<String> identifiers = new ArrayList<>();
     if (!type.getPackageName().isEmpty()) {
@@ -91,7 +91,7 @@ public class ClassType extends ReferenceType {
     return Name.name(packageLevel, identifiers);
   }
 
-  /** Create {@link ClassType} using raw type and attach type arguments to last simple name. */
+  /** Create {@code ClassType} using raw type and attach type arguments to last simple name. */
   public static ClassType parameterized(Class<?> raw, java.lang.reflect.Type... arguments) {
     assert raw.getTypeParameters().length == arguments.length;
     ClassType rawClassType = type(raw);
@@ -108,7 +108,7 @@ public class ClassType extends ReferenceType {
     return new ClassType(name.packageName(), simples(name.simpleNames()));
   }
 
-  /** Create {@link ClassType} with elements given as simple name strings. */
+  /** Create {@code ClassType} with elements given as simple name strings. */
   public static ClassType type(String packageName, String topLevelName, String... nested) {
     if (nested.length == 0) {
       return new ClassType(packageName, List.of(simple(topLevelName)));
@@ -242,7 +242,7 @@ public class ClassType extends ReferenceType {
         && simples.get(0).getName().equals("Object");
   }
 
-  /** Create new {@link ClassType} copied from this instance with supplied type arguments. */
+  /** Create new {@code ClassType} copied from this instance with supplied type arguments. */
   public ClassType parameterized(IntFunction<List<Type>> typeArgumentsSupplier) {
     List<Simple> newSimples = new ArrayList<>();
     for (int i = 0; i < simples.size(); i++) {

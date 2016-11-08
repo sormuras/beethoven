@@ -22,8 +22,8 @@ import de.sormuras.beethoven.type.Type;
 import java.lang.annotation.ElementType;
 import java.math.BigInteger;
 import java.util.function.Consumer;
-import org.junit.jupiter.api.Test;
 import javax.lang.model.element.Modifier;
+import org.junit.jupiter.api.Test;
 
 class InterfaceDeclarationTests {
 

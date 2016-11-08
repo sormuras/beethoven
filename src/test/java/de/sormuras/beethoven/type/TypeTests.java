@@ -42,7 +42,6 @@ import java.util.List;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class TypeTests<T> {

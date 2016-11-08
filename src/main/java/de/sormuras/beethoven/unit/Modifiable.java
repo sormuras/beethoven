@@ -23,10 +23,10 @@ import java.util.EnumSet;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
 
-/** Default {@link Modifier} set support. */
+/** Default {@code Modifier} set support. */
 public interface Modifiable {
 
-  /** Convert an integer consisting of modification bits into a set of {@link Modifier}s. */
+  /** Convert an integer consisting of modification bits into a set of {@code Modifier}s. */
   static Set<Modifier> modifiers(int mod) {
     Set<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
     if (java.lang.reflect.Modifier.isAbstract(mod)) {
@@ -99,7 +99,7 @@ public interface Modifiable {
   /**
    * Returns all modifiers that are applicable to this element kind.
    *
-   * @return All modifiers defined in {@link Modifier}.
+   * @return All modifiers defined in {@code Modifier}.
    */
   default Set<Modifier> getModifierValidationSet() {
     return EnumSet.allOf(Modifier.class);
@@ -108,12 +108,12 @@ public interface Modifiable {
   /** Return {@code true} if modifier set is not empty, else {@code false}. */
   boolean isModified();
 
-  /** Return {@code true} if {@link Modifier#PUBLIC} is part of modifier set, else {@code false}. */
+  /** Return {@code true} if {@code Modifier#PUBLIC} is part of modifier set, else {@code false}. */
   default boolean isPublic() {
     return isModified() && getModifiers().contains(Modifier.PUBLIC);
   }
 
-  /** Return {@code true} if {@link Modifier#STATIC} is part of modifier set, else {@code false}. */
+  /** Return {@code true} if {@code Modifier#STATIC} is part of modifier set, else {@code false}. */
   default boolean isStatic() {
     return isModified() && getModifiers().contains(Modifier.STATIC);
   }
@@ -147,7 +147,7 @@ public interface Modifiable {
    * Tests whether modifiers are applicable to this element kind.
    *
    * @param modifiers Modifiers to test.
-   * @see #getModifierValidationSet()
+   *     <p>see #getModifierValidationSet()
    */
   default void validateModifiers(Modifier... modifiers) {
     Set<Modifier> set = getModifierValidationSet();

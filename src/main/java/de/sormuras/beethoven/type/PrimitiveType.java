@@ -22,7 +22,7 @@ import java.util.function.IntFunction;
 /**
  * A primitive type is predefined by the Java language and named by its reserved keyword.
  *
- * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
+ * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
  */
 public class PrimitiveType extends Type {
 
@@ -63,12 +63,12 @@ public class PrimitiveType extends Type {
     }
   }
 
-  /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
+  /** Create new {@code PrimitiveType} instance for passed primitive class <code>type</code>. */
   public static PrimitiveType primitive(Class<?> type) {
     return primitive(List.of(), type);
   }
 
-  /** Create new {@link PrimitiveType} instance for passed primitive class <code>type</code>. */
+  /** Create new {@code PrimitiveType} instance for passed primitive class <code>type</code>. */
   public static PrimitiveType primitive(List<Annotation> annotations, Class<?> type) {
     if (!type.isPrimitive() || type.equals(Void.TYPE)) {
       throw new AssertionError("Expected primitive type, got " + type);
@@ -76,7 +76,7 @@ public class PrimitiveType extends Type {
     return primitive(annotations, type.getName().toUpperCase());
   }
 
-  /** Create new {@link PrimitiveType} instance for passed primitive type name. */
+  /** Create new {@code PrimitiveType} instance for passed primitive type name. */
   public static PrimitiveType primitive(List<Annotation> annotations, String name) {
     return Primitive.valueOf(name).build(annotations);
   }

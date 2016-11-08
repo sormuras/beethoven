@@ -1,18 +1,10 @@
-import java.text.SimpleDateFormat
-
 plugins {
-    id 'com.diffplug.gradle.spotless' version '2.4.0'
     id 'java'
     id 'signing'
     id 'maven'
 }
 
-spotless {
-    java {
-        googleJavaFormat("${googleFormatVersion}")
-        licenseHeaderFile 'gradle/spotless.license.java'
-    }
-}
+apply from: 'gradle/format.gradle'
 
 repositories {
     mavenCentral()
@@ -27,8 +19,8 @@ dependencies {
 
 Date buildTimeAndDate = new Date()
 ext {
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    buildDate = new java.text.SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new java.text.SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
 }
 
 compileJava {

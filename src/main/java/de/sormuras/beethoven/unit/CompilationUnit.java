@@ -58,7 +58,7 @@ public class CompilationUnit implements DeclarationContainer {
     return listing;
   }
 
-  /** Compile and return {@link Class} instance. */
+  /** Compile and return {@code Class} instance. */
   public Class<?> compile() throws ClassNotFoundException {
     ClassLoader loader = Compilation.compile(toJavaFileObject());
     TypeDeclaration declaration = getEponymousDeclaration().orElseThrow(IllegalStateException::new);

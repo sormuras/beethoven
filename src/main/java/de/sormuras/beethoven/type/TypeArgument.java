@@ -29,7 +29,7 @@ public class TypeArgument implements Listable {
     return argument(Type.type(argument));
   }
 
-  /** Initializes this {@link TypeArgument} instance. */
+  /** Initializes this {@code TypeArgument} instance. */
   public static TypeArgument argument(Type argument) {
     Objects.requireNonNull(argument, "argument");
     if (argument instanceof WildcardType) {

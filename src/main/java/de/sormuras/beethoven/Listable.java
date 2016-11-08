@@ -17,16 +17,19 @@ package de.sormuras.beethoven;
 import java.util.function.UnaryOperator;
 
 /**
- * The functional {@link Listable} interface should be implemented by any class whose instances are
- * intended to be applied to a {@link Listing} instance.
+ * The functional {@code Listable} interface should be implemented by any class whose instances are
+ * intended to be applied to a {@code Listing} instance.
  *
  * <p>The class must define a method called {@code apply(Listing)}. This interface is designed to
  * provide a common protocol for objects that wish to contribute source code snippets.
  *
- * @see Listing
- * @see #IDENTITY
- * @see #NEWLINE
- * @see #SPACE
+ * <p>see Listing
+ *
+ * <p>see #IDENTITY
+ *
+ * <p>see #NEWLINE
+ *
+ * <p>see #SPACE
  */
 @FunctionalInterface
 public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
@@ -63,7 +66,8 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
    *
    * @param character Character to escape
    * @return Escaped character
-   * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6">JLS
+   *     <p>see <a
+   *     href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6">JLS
    *     3.10.6</a>
    */
   static String escape(char character) {

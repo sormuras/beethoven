@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Local @{@link javax.annotation.Generated} replacement due to JDK9.
+ * Local {@code javax.annotation.Generated} replacement due to JDK9.
  *
  * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8152842">DK-8152842</a>
  */
