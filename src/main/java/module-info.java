@@ -16,6 +16,6 @@ module de.sormuras.beethoven {
   requires jdk.compiler;
 
   exports de.sormuras.beethoven;
-  exports de.sormuras.beethoven.unit;
   exports de.sormuras.beethoven.type;
+  exports de.sormuras.beethoven.unit;
 }
