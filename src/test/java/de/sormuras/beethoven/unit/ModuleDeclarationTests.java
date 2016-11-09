@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Tests;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ModuleDeclarationTests {
@@ -37,9 +38,16 @@ class ModuleDeclarationTests {
     module.setName(Name.name("com.foo.bar"));
     assertEquals("module com.foo.bar {\n}\n", module.list("\n"));
     module.compile();
+  }
+
+  @Test
+  @Disabled("until more jigsaw features are merged into main EA builds")
+  void open() throws Exception {
+    ModuleDeclaration module = new ModuleDeclaration();
+    module.setName(Name.name("com.foo.bar"));
     module.setOpen(true);
     assertEquals("open module com.foo.bar {\n}\n", module.list("\n"));
-    // Fails?! module.compile();
+    module.compile();
   }
 
   @Test
