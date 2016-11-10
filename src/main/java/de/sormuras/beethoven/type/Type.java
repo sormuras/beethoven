@@ -57,7 +57,7 @@ import javax.lang.model.util.SimpleTypeVisitor8;
  * objects. All objects, including arrays, support the methods of class Object (§4.3.2). String
  * literals are represented by String objects (§4.3.3).
  *
- * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html">JLS 4</a>
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html">JLS 4</a>
  */
 public abstract class Type extends Annotated {
 
@@ -477,8 +477,8 @@ public abstract class Type extends Annotated {
    * Return the binary name of this type as a String.
    *
    * @return (binary) class name
-   *     <p>see Class#getName()
-   *     <p>see Class#forName(String)
+   * @see Class#getName()
+   * @see Class#forName(String)
    */
   public abstract String binary();
 

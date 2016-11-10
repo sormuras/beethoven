@@ -33,8 +33,8 @@ import java.util.function.IntFunction;
 /**
  * Class or interface type.
  *
- * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-ClassType">JLS
- * ClassType</a>
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-ClassType">JLS
+ *     ClassType</a>
  */
 public class ClassType extends ReferenceType {
 

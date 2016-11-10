@@ -147,7 +147,7 @@ public interface Modifiable {
    * Tests whether modifiers are applicable to this element kind.
    *
    * @param modifiers Modifiers to test.
-   *     <p>see #getModifierValidationSet()
+   * @see #getModifierValidationSet()
    */
   default void validateModifiers(Modifier... modifiers) {
     Set<Modifier> set = getModifierValidationSet();

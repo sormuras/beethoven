@@ -17,19 +17,16 @@ package de.sormuras.beethoven;
 import java.util.function.UnaryOperator;
 
 /**
- * The functional {@code Listable} interface should be implemented by any class whose instances are
- * intended to be applied to a {@code Listing} instance.
+ * The functional {@link Listable} interface should be implemented by any class whose instances are
+ * intended to be applied to a {@link Listing} instance.
  *
- * <p>The class must define a method called {@code apply(Listing)}. This interface is designed to
+ * <p>The class must define a method called {@link #apply(Listing)}. This interface is designed to
  * provide a common protocol for objects that wish to contribute source code snippets.
  *
- * <p>see Listing
- *
- * <p>see #IDENTITY
- *
- * <p>see #NEWLINE
- *
- * <p>see #SPACE
+ * @see Listing
+ * @see #IDENTITY
+ * @see #NEWLINE
+ * @see #SPACE
  */
 @FunctionalInterface
 public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
@@ -66,8 +63,7 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
    *
    * @param character Character to escape
    * @return Escaped character
-   *     <p>see <a
-   *     href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6">JLS
+   * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.6">JLS
    *     3.10.6</a>
    */
   static String escape(char character) {
@@ -126,6 +122,9 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
   Listable NEWLINE = Listing::newline;
 
   Listable SPACE = listing -> listing.add(' ');
+
+  @Override
+  Listing apply(Listing listing);
 
   @Override
   default int compareTo(Listable other) {

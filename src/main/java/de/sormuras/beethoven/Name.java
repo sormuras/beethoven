@@ -37,7 +37,7 @@ import javax.lang.model.element.PackageElement;
  * (of a class, interface, method or constructor), parameter (to a method, constructor, or exception
  * handler), or local variable.
  *
- * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html">JLS 6</a>
  */
 public class Name implements Listable {
 
@@ -157,8 +157,8 @@ public class Name implements Listable {
    * name(2, List.of("abc", "xyz", "Alphabet"))
    * </pre>
    *
-   * @return {@code Name}
-   *     <p>see AssertionError if any identifier is not a syntactically valid qualified name.
+   * @return {@link Name}
+   * @throws AssertionError if any identifier is not a syntactically valid qualified name.
    */
   public static Name name(int packageLevel, List<String> names) {
     assert packageLevel >= 0 : "Package level must not be < 0, but is " + packageLevel;

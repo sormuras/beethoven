@@ -11,23 +11,22 @@ task downloadFormat(type: Copy) {
     into "$buildDir/format"
 }
 
-task runFormat(type: JavaExec) {
+task runFormat(type: Exec) {
+    def mainJavaFilesWithoutModuleInfo = sourceSets.main.allJava.files
+    mainJavaFilesWithoutModuleInfo.removeIf{ file -> file.name.endsWith('module-info.java') }
 
-    def mainJavaFiles = sourceSets.main.allJava.files
-    mainJavaFiles.removeIf{ file -> file.name.endsWith('module-info.java') }
+    executable System.getenv("JAVA_HOME_8") + '/bin/java'
 
-    classpath = fileTree(dir: "$buildDir/format", include: '*.jar')
+    args '-showversion'
+    args '-cp'
+    args "$buildDir/format/*"
 
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED'
+    args 'com.google.googlejavaformat.java.Main'
 
-    main 'com.google.googlejavaformat.java.Main'
     args '--replace'
-    args mainJavaFiles
-    args sourceSets.test.allJava.files
+    args mainJavaFilesWithoutModuleInfo
+    // args sourceSets.main.allJava.files
+    args sourceSets.test.getAllJava().files
 }
 
 runFormat.dependsOn downloadFormat

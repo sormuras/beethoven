@@ -22,7 +22,7 @@ import java.util.function.IntFunction;
 /**
  * A primitive type is predefined by the Java language and named by its reserved keyword.
  *
- * <p>see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
+ * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2">JLS 4.2</a>
  */
 public class PrimitiveType extends Type {
 
