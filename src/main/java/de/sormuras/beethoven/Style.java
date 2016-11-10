@@ -17,7 +17,7 @@ package de.sormuras.beethoven;
 /**
  * Name emission style.
  *
- * <p>{@code Style#CANONICAL}: Canonical, like:
+ * <p>{@link Style#CANONICAL}: Canonical, like:
  *
  * <pre>
  *    "java.util.Objects"
@@ -25,14 +25,14 @@ package de.sormuras.beethoven;
  *    "java.util.Collections.sort"
  * </pre>
  *
- * {@code Style#LAST}: Single (type and static) imports only emit last name, like:
+ * {@link Style#LAST}: Single (type and static) imports only emit last name, like:
  *
  * <pre>
  *    import java.util.Objects                 - "Objects"
  *    import static java.util.Collections.sort - "sort"
  * </pre>
  *
- * {@code Style#LAST}: On-demand _static_ import, like:
+ * {@link Style#LAST}: On-demand _static_ import, like:
  *
  * <pre>
  *   import static java.lang.Thread.State.*
@@ -41,7 +41,7 @@ package de.sormuras.beethoven;
  *     name("java.lang.Thread.State.WAITING")   - "WAITING"
  * </pre>
  *
- * {@code Style#SIMPLE} On-demand _package_ imports only emit all simple names, like:
+ * {@link Style#SIMPLE} On-demand _package_ imports only emit all simple names, like:
  *
  * <pre>
  *   import java.lang.*
@@ -71,8 +71,8 @@ public enum Style {
    * automatically imports all of the public types declared in the predefined package {@code
    * java.lang}.
    *
-   * @return {@code #SIMPLE} if the package names match or of the name points to a type declared in
-   *     {@code java.lang} package. Else, {@code #CANONICAL} is returned.
+   * @return {@link #SIMPLE} if the package names match or of the name points to a type declared in
+   *     {@code java.lang} package. Else, {@link #CANONICAL} is returned.
    * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html">JLS 7</a>
    */
   public static Style auto(String contextPackageName, Name name) {

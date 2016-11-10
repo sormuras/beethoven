@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,8 +41,8 @@ import java.util.stream.Collectors;
 public class Annotation implements Listable {
 
   /**
-   * Create new {@code Annotation} instance by reflecting on the annotation found on given annotated
-   * element calling {@code AnnotatedElement#getAnnotation(Class)}.
+   * Create new {@link Annotation} instance by reflecting on the annotation found on given annotated
+   * element calling {@link AnnotatedElement#getAnnotation(Class)}.
    */
   public static Annotation annotation(
       AnnotatedElement element, Class<? extends java.lang.annotation.Annotation> annotationClass) {
@@ -49,20 +50,20 @@ public class Annotation implements Listable {
   }
 
   /**
-   * Create new {@code Annotation} instance by reflecting on the given annotation omitting default
+   * Create new {@link Annotation} instance by reflecting on the given annotation omitting default
    * values.
    */
   public static Annotation annotation(java.lang.annotation.Annotation annotation) {
     return annotation(annotation, false);
   }
 
-  /** Create new {@code Annotation} instance by reflecting on the given annotation. */
+  /** Create new {@link Annotation} instance by reflecting on the given annotation. */
   public static Annotation annotation(
       java.lang.annotation.Annotation annotation, boolean includeDefaultValues) {
     Annotation result = annotation(annotation.annotationType());
     try {
       Method[] methods = annotation.annotationType().getDeclaredMethods();
-      sort(methods, (m1, m2) -> m1.getName().compareTo(m2.getName()));
+      sort(methods, Comparator.comparing(Method::getName));
       for (Method method : methods) {
         Object value = method.invoke(annotation);
         if (!includeDefaultValues) {
@@ -102,8 +103,8 @@ public class Annotation implements Listable {
   }
 
   /**
-   * Create list of {@code Annotation} instances by reflecting on all annotations found on the
-   * annotated element using {@code AnnotatedElement#getAnnotations()}.
+   * Create list of {@link Annotation} instances by reflecting on all annotations found on the
+   * annotated element using {@link AnnotatedElement#getAnnotations()}.
    */
   public static List<Annotation> annotations(AnnotatedElement element) {
     java.lang.annotation.Annotation[] annotations = element.getAnnotations();
@@ -113,12 +114,12 @@ public class Annotation implements Listable {
     return annotations(annotations);
   }
 
-  /** Create list of {@code Annotation} instances by reflecting given all annotations. */
+  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
   public static List<Annotation> annotations(java.lang.annotation.Annotation... annotations) {
     return stream(annotations).map(Annotation::annotation).collect(Collectors.toList());
   }
 
-  /** Create list of {@code Annotation} instances by reflecting given all annotations. */
+  /** Create list of {@link Annotation} instances by reflecting given all annotations. */
   @SafeVarargs
   public static List<Annotation> annotations(
       Class<? extends java.lang.annotation.Annotation>... annotations) {
@@ -197,12 +198,7 @@ public class Annotation implements Listable {
 
   /** Add the listable to the member specified by its name. */
   public void addMember(String name, Listable listable) {
-    List<Listable> values = getMembers().get(name);
-    if (values == null) {
-      values = new ArrayList<>();
-      getMembers().put(name, values);
-    }
-    values.add(listable);
+    getMembers().computeIfAbsent(name, k -> new ArrayList<>()).add(listable);
   }
 
   public void addObject(String memberName, Object object) {

@@ -45,9 +45,9 @@ public class Name implements Listable {
   public static final Pattern DOT = Pattern.compile("\\.");
 
   /**
-   * Cast/convert any object to an instance of {@code Name}.
+   * Cast/convert any object to an instance of {@link Name}.
    *
-   * @return {@code Name}
+   * @return {@link Name}
    */
   public static Name cast(Object any) {
     if (any == null) {
@@ -81,7 +81,7 @@ public class Name implements Listable {
   /**
    * Create name instance for the given class instance.
    *
-   * @return {@code Name}
+   * @return {@link Name}
    */
   public static Name name(Class<?> type) {
     if (type.isAnonymousClass()) {
@@ -98,7 +98,7 @@ public class Name implements Listable {
   /**
    * Create new Name based on the class type and declared member name.
    *
-   * @return {@code Name}
+   * @return {@link Name}
    */
   public static Name name(Class<?> declaringType, String declaredMemberName) {
     Name declaringName = name(declaringType);
@@ -108,7 +108,7 @@ public class Name implements Listable {
   /**
    * Create new Name based on type element instance.
    *
-   * @return {@code Name}
+   * @return {@link Name}
    */
   public static Name name(Element element) {
     List<String> simpleNames = new ArrayList<>();
@@ -129,7 +129,7 @@ public class Name implements Listable {
   /**
    * Create name instance for the given enum constant.
    *
-   * @return {@code Name}
+   * @return {@link Name}
    */
   public static Name name(Enum<?> constant) {
     return name(constant.getDeclaringClass(), constant.name());
@@ -142,7 +142,7 @@ public class Name implements Listable {
    * name(2, "abc.xyz.Alphabet")
    * </pre>
    *
-   * @return {@code Name}
+   * @return {@link Name}
    */
   public static Name name(int packageLevel, String canonical) {
     return name(packageLevel, Arrays.asList(DOT.split(canonical)));
@@ -168,7 +168,7 @@ public class Name implements Listable {
   }
 
   /**
-   * Create name instance for the identifiers by delegating to {@code #name(int, List)}.
+   * Create name instance for the identifiers by delegating to {@link #name(int, List)}.
    *
    * <p>The package level is determined by the first capital name of the list.
    */
@@ -184,7 +184,7 @@ public class Name implements Listable {
     return name(member.getDeclaringClass(), member.getName());
   }
 
-  /** Create name instance for the identifiers by delegating to {@code #name(List)}. */
+  /** Create name instance for the identifiers by delegating to {@link #name(List)}. */
   public static Name name(String... identifiers) {
     if (identifiers.length == 1) {
       identifiers = DOT.split(identifiers[0]);
@@ -251,7 +251,7 @@ public class Name implements Listable {
     return canonical;
   }
 
-  /** Create new enclosing {@code Name} instance based on this identifiers. */
+  /** Create new enclosing {@link Name} instance based on this identifiers. */
   public Name enclosing() {
     if (!isEnclosed()) {
       throw new IllegalStateException(String.format("Not enclosed: '%s'", this));

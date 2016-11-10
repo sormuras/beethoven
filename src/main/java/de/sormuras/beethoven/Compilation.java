@@ -171,7 +171,7 @@ public interface Compilation {
     return compile(null, emptyList(), emptyList(), asList(units));
   }
 
-  /** Convenient {@code JavaCompiler} facade returning a ClassLoader with all compiled units. */
+  /** Convenient {@link JavaCompiler} facade returning a ClassLoader with all compiled units. */
   static ClassLoader compile(
       ClassLoader parent,
       List<String> options,

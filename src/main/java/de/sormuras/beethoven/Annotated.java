@@ -20,7 +20,7 @@ import static java.util.Collections.unmodifiableList;
 import java.lang.annotation.ElementType;
 import java.util.List;
 
-/** Base {@code Annotation}-collection implementation. */
+/** Base {@link Annotation}-collection implementation. */
 public abstract class Annotated implements Listable {
 
   protected List<Annotation> annotations;
@@ -35,7 +35,7 @@ public abstract class Annotated implements Listable {
     this.annotations = annotations.isEmpty() ? emptyList() : unmodifiableList(annotations);
   }
 
-  /** Add all annotations to the given {@code Listing} instance. */
+  /** Add all annotations to the given {@link Listing} instance. */
   protected Listing applyAnnotations(Listing listing) {
     if (isAnnotated()) {
       Listable annotationsSeparator = getAnnotationsSeparator();
@@ -77,7 +77,7 @@ public abstract class Annotated implements Listable {
   /** The designated target element type of the annotations. */
   public abstract ElementType getAnnotationsTarget();
 
-  /** Used by {@code #toString()} as an instance description hint. */
+  /** Used by {@link #toString()} as an instance description hint. */
   public String getDescription() {
     return list() + " // 0x" + Integer.toHexString(System.identityHashCode(this));
   }

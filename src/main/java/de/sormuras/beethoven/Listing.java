@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class Listing {
 
-  /** Used by a {@code Scanner#useDelimiter(Pattern)} delimiter pattern. */
+  /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
   public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
 
   /** Used to find placeholders framed by curly braces. */
