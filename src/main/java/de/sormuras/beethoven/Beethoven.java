@@ -14,11 +14,19 @@
 
 package de.sormuras.beethoven;
 
+import java.lang.module.ModuleDescriptor;
+
 public interface Beethoven {
 
   String VERSION = "1.0-SNAPSHOT";
 
   static void main(String[] args) {
-    System.out.print(Beethoven.class.getPackage().getName() + " " + VERSION);
+    System.out.println("# Base package name and version constant");
+    System.out.println(Beethoven.class.getPackage().getName() + " " + VERSION);
+    System.out.println("# Module description");
+    ModuleDescriptor descriptor = Beethoven.class.getModule().getDescriptor();
+    System.out.format("Name and version: %s%n", descriptor.toNameAndVersion());
+    System.out.format("Requires modules: %s%n", descriptor.requires());
+    System.out.format("Exports packages: %s%n", descriptor.exports());
   }
 }
