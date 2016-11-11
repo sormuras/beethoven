@@ -29,7 +29,6 @@ import java.util.function.Function;
 /**
  * Method declaration.
  *
- * @author Christian Stein
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.4">JLS 8.4</a>
  */
 public class MethodDeclaration extends ClassMember {

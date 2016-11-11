@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Default {@code Annotation}-collecting support. */
+/** Default {@link Annotation}-collecting support. */
 public abstract class Annotatable extends Annotated {
 
   private Map<Object, Object> tags = Collections.emptyMap();

@@ -66,7 +66,7 @@ public class TypeParameter extends Annotatable {
       return;
     }
     Collections.addAll(getBounds(), bounds);
-    getBounds().removeIf(ct -> ct.isJavaLangObject());
+    getBounds().removeIf(ClassType::isJavaLangObject);
   }
 
   /** Add bound(s) to the list of bounds and clears bound type variable. */

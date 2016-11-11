@@ -111,7 +111,7 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
     return declarations.isEmpty();
   }
 
-  /** Return simple {@code Name} representation of this type declaration. */
+  /** Return simple {@link Name} representation of this type declaration. */
   public Name toName() {
     List<String> identifiers = new ArrayList<>();
     if (getCompilationUnit() != null) {

@@ -24,7 +24,7 @@ import java.util.List;
  * Package declaration.
  *
  * <pre>
- * PackageDeclaration:<br>
+ * PackageDeclaration:
  * {PackageModifier} package Identifier {. Identifier} ;
  * </pre>
  *

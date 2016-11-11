@@ -20,13 +20,13 @@ import javax.lang.model.SourceVersion;
 
 public interface DeclarationContainer extends Listable {
 
-  /** Validate if the given name can be used a nested declaration name. */
+  /** Validate if the given name can be used as nested declaration name. */
   default void assertValidNestedDeclarationName(String name) {
     if (!SourceVersion.isName(name)) {
       throw new IllegalArgumentException("expected valid name, but got: \"" + name + "\"");
     }
-    if (getDeclarations().stream().filter(d -> d.getName().equals(name)).findAny().isPresent()) {
-      throw new IllegalArgumentException("duplicate nested type " + name);
+    if (getDeclarations().stream().anyMatch(d -> d.getName().equals(name))) {
+      throw new IllegalArgumentException("duplicate name for nested type " + name);
     }
   }
 

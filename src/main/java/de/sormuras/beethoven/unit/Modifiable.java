@@ -23,10 +23,10 @@ import java.util.EnumSet;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
 
-/** Default {@code Modifier} set support. */
+/** Default {@link Modifier} set support. */
 public interface Modifiable {
 
-  /** Convert an integer consisting of modification bits into a set of {@code Modifier}s. */
+  /** Convert an integer consisting of modification bits into a set of {@link Modifier}s. */
   static Set<Modifier> modifiers(int mod) {
     Set<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
     if (java.lang.reflect.Modifier.isAbstract(mod)) {
@@ -99,7 +99,7 @@ public interface Modifiable {
   /**
    * Returns all modifiers that are applicable to this element kind.
    *
-   * @return All modifiers defined in {@code Modifier}.
+   * @return All modifiers defined in {@link Modifier}.
    */
   default Set<Modifier> getModifierValidationSet() {
     return EnumSet.allOf(Modifier.class);

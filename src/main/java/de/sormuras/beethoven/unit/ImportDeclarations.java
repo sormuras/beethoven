@@ -187,11 +187,7 @@ public class ImportDeclarations implements Listable {
     }
     // on demand type hit?
     //   "java.util.*" hits "Map" and also "Map.Entry".
-    if (onDemandTypeImports
-        .stream()
-        .filter(n -> n.packageName().equals(name.packageName()))
-        .findAny()
-        .isPresent()) {
+    if (onDemandTypeImports.stream().anyMatch(n -> n.packageName().equals(name.packageName()))) {
       return Style.SIMPLE;
     }
     return Style.CANONICAL;

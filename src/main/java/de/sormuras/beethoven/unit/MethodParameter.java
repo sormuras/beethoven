@@ -27,7 +27,6 @@ import java.util.Optional;
  * preceded by the final modifier and/or one or more annotations) and an identifier (optionally
  * followed by brackets) that specifies the name of the parameter.
  *
- * @author Christian Stein
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.4.1">JLS
  *     8.4.1</a>
  */
