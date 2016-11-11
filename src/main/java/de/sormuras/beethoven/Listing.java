@@ -14,6 +14,7 @@
 
 package de.sormuras.beethoven;
 
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -27,10 +28,10 @@ import java.util.regex.Pattern;
 public class Listing {
 
   /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
-  public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|}");
+  public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{\\{|\\.|}}");
 
-  /** Used to find placeholders framed by curly braces. */
-  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{[^{^}]+?}");
+  /** Used to find placeholders framed by double curly braces. */
+  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{[^{^}]+?}}");
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private int currentIndentationDepth = 0;
@@ -113,29 +114,29 @@ public class Listing {
   }
 
   /**
-   * Parse source string and replace placeholders with {@code #add}-calls to this {@code Listing}
-   * instance.
+   * Parse source string and replace placeholders with {@link #add(CharSequence)}-calls to this
+   * {@link Listing} instance.
    *
    * <p>Simple placeholders:
    *
    * <ul>
-   *   <li><b>{$}</b> {@code CharSequence} <b>without</b> escaping, same as: {@code add(arg)}
-   *   <li><b>{S}</b> {@code String} with escaping, same as: {@code add(escape(arg))}
-   *   <li><b>{N}</b> {@code Name} same as: {@code add(Name.cast(arg))}
-   *   <li><b>{L}</b> {@code Listable} same as: {@code add((Listable)(arg))}
-   *   <li><b>{&gt;}</b> same as: {@code indent(1)}
-   *   <li><b>{&lt;}</b> same as: {@code indent(-1)}
-   *   <li><b>{;}</b> same as: {@code add(';').newline()}
+   *   <li><b>{{S}}</b> {@link String} <b>without</b> escaping, same as: {@link #add(CharSequence)}
+   *   <li><b>{{E}}</b> {@link String} with escaping, same as: {@code add(escape(arg))}
+   *   <li><b>{{L}}</b> {@link Listable} same as: {@code add((Listable)(arg))}
+   *   <li><b>{{N}}</b> {@link Name} same as: {@code add(Name.cast(arg))}
    * </ul>
    *
-   * Every unknown placeholder is treated as a method chain call. Example:
+   * <p>Layout placeholders:
    *
-   * <pre>
-   * String source = "{N}.out.println({S}); // {hashCode} {getClass.getSimpleName.toString}"
-   * new Listing().add(source, System.class, "123", "", "$").toString()
-   * </pre>
+   * <ul>
+   *   <li><b>{{&gt;}}</b> same as: {@code indent(1)}
+   *   <li><b>{{&lt;}}</b> same as: {@code indent(-1)}
+   *   <li><b>{{&gt;...n-times}}</b> same as: {@code indent(n)}
+   *   <li><b>{{&lt;...n-times}}</b> same as: {@code indent(-n)}
+   *   <li><b>{{;}}</b> same as: {@code add(';').newline()}
+   * </ul>
    *
-   * produces: {@code java.lang.System.out.println(\"123\"); // 0 String}
+   * Every unknown placeholder is treated as a zero-argument method chain call.
    */
   public Listing eval(String source, Object... args) {
     Matcher matcher = PLACEHOLDER_PATTERN.matcher(source);
@@ -148,36 +149,45 @@ public class Listing {
       }
       sourceIndex = matcher.end();
       String placeholder = matcher.group(0);
-      // strip custom text from placeholder, like "{buffered data:$}"
-      if (placeholder.contains(":")) {
-        placeholder = "{" + placeholder.substring(placeholder.indexOf(':') + 1);
+      // strip custom text from placeholder, like "{{$ // comments are ignored }}"
+      if (placeholder.contains("//")) {
+        placeholder = placeholder.substring(0, placeholder.indexOf("//")).trim() + "}}";
       }
-      // handle simple placeholder
-      if (placeholder.equals("{>}")) {
-        indent(1);
+      // handle indentation
+      if (placeholder.startsWith("{{>")) {
+        if (placeholder.equals("{{>}}")) {
+          indent(1);
+        } else {
+          indent((int) placeholder.chars().filter(c -> c == '>').count());
+        }
         continue;
       }
-      if (placeholder.equals("{<}")) {
-        indent(-1);
+      if (placeholder.startsWith("{{<")) {
+        if (placeholder.equals("{{<}}")) {
+          indent(-1);
+        } else {
+          indent((int) placeholder.chars().filter(c -> c == '<').count());
+        }
         continue;
       }
-      if (placeholder.equals("{;}")) {
+      // handle simple placeholders
+      if (placeholder.equals("{{;}}")) {
         add(';').newline();
         continue;
       }
-      if (placeholder.equals("{$}") || placeholder.equals("{s}")) {
+      if (placeholder.equals("{{S}}")) {
         add(String.valueOf(args[argumentIndex++]));
         continue;
       }
-      if (placeholder.equals("{S}")) {
+      if (placeholder.equals("{{E}}")) {
         add(Listable.escape(String.valueOf(args[argumentIndex++])));
         continue;
       }
-      if (placeholder.equals("{N}")) {
+      if (placeholder.equals("{{N}}")) {
         add(Name.cast(args[argumentIndex++]));
         continue;
       }
-      if (placeholder.equals("{L}")) {
+      if (placeholder.equals("{{L}}")) {
         add((Listable) args[argumentIndex++]);
         continue;
       }
@@ -188,7 +198,15 @@ public class Listing {
         scanner.useDelimiter(METHODCHAIN_PATTERN);
         Object result = argument;
         while (scanner.hasNext()) {
-          result = result.getClass().getMethod(scanner.next()).invoke(result);
+          String name = scanner.next();
+          Method method;
+          try {
+            method = result.getClass().getMethod(name);
+          } catch (NoSuchMethodException e) {
+            name = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+            method = result.getClass().getMethod(name);
+          }
+          result = method.invoke(result);
         }
         if (result instanceof Optional) {
           Optional<?> optional = (Optional<?>) result;

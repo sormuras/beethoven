@@ -69,7 +69,7 @@ class MethodDeclarationTests {
     emptyList.addTypeParameter(new TypeParameter());
     emptyList.setReturnType(listOfT);
     emptyList.setName("emptyList");
-    emptyList.addStatement("return ({L}) EMPTY_LIST", listOfT);
+    emptyList.addStatement("return ({{L}}) EMPTY_LIST", listOfT);
     Tests.assertEquals(getClass(), "emptyList", emptyList);
   }
 
@@ -82,7 +82,7 @@ class MethodDeclarationTests {
     runnable.addParameter(getClass(), "this");
     runnable.addThrows(RuntimeException.class);
     runnable.addThrows(TypeVariable.variable("X"));
-    runnable.addStatement("System.out.println({S})", "Running!");
+    runnable.addStatement("System.out.println({{E}})", "Running!");
     Tests.assertEquals(getClass(), "runnable", runnable);
     assertEquals(true, runnable.isModified());
     assertEquals(false, runnable.isVarArgs());

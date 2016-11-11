@@ -232,7 +232,7 @@ class CompilationUnitTests {
     MethodDeclaration run = simple.declareMethod(void.class, "run");
     run.addAnnotation(Override.class);
     run.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-    run.addStatement("System.out.println({S})", "Hallo Welt!");
+    run.addStatement("System.out.println({{E}})", "Hallo Welt!");
     MethodDeclaration calc = simple.declareMethod(TypeVariable.variable("N"), "calc");
     calc.addModifier(Modifier.STATIC);
     calc.addTypeParameter(TypeParameter.of("N", Type.type(Number.class)));
