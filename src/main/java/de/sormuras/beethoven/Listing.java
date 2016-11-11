@@ -227,7 +227,7 @@ public class Listing {
         scanner.close();
       } catch (Exception exception) {
         throw new IllegalArgumentException(
-            "Error parsing: '" + placeholder + "' source='" + source + "'", exception);
+            "Error parsing: '" + placeholder + "'\n  source='" + source + "'", exception);
       }
     }
     add(source.substring(sourceIndex));
