@@ -82,11 +82,7 @@ public class WildcardType extends Type {
     if (!getBoundExtends().isJavaLangObject()) {
       return listing.add(" extends ").add(getBoundExtends());
     }
-    Optional<ReferenceType> bound = getBoundSuper();
-    if (bound.isPresent()) {
-      return listing.add(" super ").add(bound.get());
-    }
-    return listing;
+    return getBoundSuper().map(bound -> listing.add(" super ").add(bound)).orElse(listing);
   }
 
   @Override

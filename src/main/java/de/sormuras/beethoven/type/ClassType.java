@@ -228,11 +228,11 @@ public class ClassType extends ReferenceType {
 
   @Override
   public boolean isAnnotated() {
-    return simples.stream().filter(Annotated::isAnnotated).findAny().isPresent();
+    return simples.stream().anyMatch(Annotated::isAnnotated);
   }
 
   public boolean isGeneric() {
-    return simples.stream().filter(Simple::isGeneric).findAny().isPresent();
+    return simples.stream().anyMatch(Simple::isGeneric);
   }
 
   @Override

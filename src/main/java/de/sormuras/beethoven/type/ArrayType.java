@@ -104,7 +104,7 @@ public class ArrayType extends ReferenceType {
   @Override
   public String binary() {
     StringBuilder builder = new StringBuilder();
-    IntStream.range(0, getDimensions().size()).forEach(i -> builder.append('['));
+    getDimensions().forEach(dimension -> builder.append('['));
     Type componentType = getComponentType();
     if (componentType instanceof PrimitiveType) {
       return builder.append(((PrimitiveType) componentType).getTypeChar()).toString();
@@ -127,7 +127,7 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public boolean isAnnotated() {
-    return dimensions.stream().filter(Annotated::isAnnotated).findAny().isPresent();
+    return dimensions.stream().anyMatch(Annotated::isAnnotated);
   }
 
   @Override

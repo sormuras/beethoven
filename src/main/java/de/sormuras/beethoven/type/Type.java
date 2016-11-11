@@ -379,6 +379,26 @@ public abstract class Type extends Annotated {
     }
   }
 
+  /** Cast/convert object to type instance. */
+  public static Type cast(Object any) {
+    if (any == null) {
+      return null;
+    }
+    if (any instanceof Type) {
+      return (Type) any;
+    }
+    if (any instanceof AnnotatedType) {
+      return type((AnnotatedType) any);
+    }
+    if (any instanceof java.lang.reflect.Type) {
+      return type((java.lang.reflect.Type) any);
+    }
+    if (any instanceof TypeMirror) {
+      return type((TypeMirror) any);
+    }
+    throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
+  }
+
   /** Create {@code Type} based on {@code AnnotatedType} instance. */
   public static Type type(AnnotatedType annotatedType) {
     if (annotatedType instanceof AnnotatedArrayType) {

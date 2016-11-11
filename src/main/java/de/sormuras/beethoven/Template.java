@@ -15,11 +15,19 @@
 package de.sormuras.beethoven;
 
 import de.sormuras.beethoven.type.Type;
+import java.util.Scanner;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 /** Simple placeholder template script evaluation support. */
 public interface Template {
+
+  /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
+  Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{\\{|\\.|}}");
+
+  /** Used to find placeholders framed by double curly braces. */
+  Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{[^{^}]+?}}");
 
   enum Tag {
     LITERAL("$", Template::addLiteral),
@@ -33,20 +41,37 @@ public interface Template {
     ;
 
     final String keyword;
-
     final UnaryOperator<Listing> operator;
     final BiFunction<Listing, Object, Listing> function;
 
     Tag(String keyword, UnaryOperator<Listing> operator) {
       this.keyword = keyword;
-      this.function = (listing, o) -> listing; // identity
+      this.function = null;
       this.operator = operator;
     }
 
     Tag(String keyword, BiFunction<Listing, Object, Listing> function) {
       this.keyword = keyword;
       this.function = function;
-      this.operator = UnaryOperator.identity();
+      this.operator = null;
+    }
+
+    public String eval(Object value) {
+      return eval(new Listing(), value).toString();
+    }
+
+    public Listing eval(Listing listing) {
+      return operator.apply(listing);
+    }
+
+    public Listing eval(Listing listing, Object value) {
+      if (operator != null) {
+        return operator.apply(listing);
+      }
+      if (function != null) {
+        return function.apply(listing, value);
+      }
+      throw new AssertionError();
     }
   }
 
@@ -71,29 +96,10 @@ public interface Template {
   }
 
   static Listing addType(Listing listing, Object type) {
-    return listing.add(Type.type((java.lang.reflect.Type) type));
+    return listing.add(Type.cast(type));
   }
 
   static Listing addBinary(Listing listing, Object type) {
-    return listing.add(Type.type((java.lang.reflect.Type) type).binary());
-  }
-
-  static Listing add(Listing listing, Tag tag) {
-    return tag.operator.apply(listing);
-  }
-
-  static Listing add(Listing listing, Tag tag, Object value) {
-    return tag.function.apply(listing, value);
-  }
-
-  static void main(String... args) {
-    System.out.println(add(new Listing(), Tag.LITERAL, "\"1\" + 3"));
-    System.out.println(add(new Listing(), Tag.ESCAPED, "\"1\" + 3"));
-    System.out.println(add(new Listing(), Tag.NAME, Thread.State.BLOCKED));
-    System.out.println(add(new Listing(), Tag.TYPE, int[][][].class));
-    System.out.println(add(new Listing(), Tag.BINARY, Object[].class));
-    System.out.println(add(new Listing(), Tag.BINARY, int[][][].class));
-    System.out.println(add(new Listing(), Tag.INDENT_INC).getCurrentIndentationDepth());
-    System.out.println(add(new Listing().indent(2), Tag.INDENT_DEC).getCurrentIndentationDepth());
+    return listing.add(Type.cast(type).binary());
   }
 }
