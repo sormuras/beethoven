@@ -58,8 +58,8 @@ public abstract class ClassDeclaration extends TypeDeclaration {
     if (!isDeclarationsEmpty()) {
       getDeclarations().forEach(listing::add);
     }
-    listing.add(getFields());
-    listing.add(getMethods());
+    listing.addAll(getFields());
+    listing.addAll(getMethods());
     if (!isInitializersEmpty()) {
       getInitializers().forEach(listing::add);
     }

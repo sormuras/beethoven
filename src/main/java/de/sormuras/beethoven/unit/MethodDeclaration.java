@@ -58,7 +58,7 @@ public class MethodDeclaration extends ClassMember {
   }
 
   public void addStatement(String source, Object... args) {
-    bodyStatements.add(l -> l.add(source, args).add(';'));
+    bodyStatements.add(l -> l.eval(source, args).add(';'));
   }
 
   public void addThrows(Class<?> type) {
@@ -84,7 +84,7 @@ public class MethodDeclaration extends ClassMember {
     applyModifiers(listing);
     if (!getTypeParameters().isEmpty()) {
       listing.add('<');
-      listing.add(getTypeParameters(), ", ");
+      listing.addAll(getTypeParameters(), ", ");
       listing.add("> ");
     }
     if (isConstructor()) {
@@ -99,11 +99,11 @@ public class MethodDeclaration extends ClassMember {
       listing.add(getName());
     }
     listing.add('(');
-    listing.add(getParameters(), ", ");
+    listing.addAll(getParameters(), ", ");
     listing.add(')');
     if (!getThrows().isEmpty()) {
       listing.add(" throws ");
-      listing.add(getThrows(), ", ");
+      listing.addAll(getThrows(), ", ");
     }
     Optional<Block> body = getBody();
     if (body.isPresent()) {
@@ -111,7 +111,7 @@ public class MethodDeclaration extends ClassMember {
       listing.add(body.get());
     } else if (!bodyStatements.isEmpty()) {
       listing.add(" {").newline().indent(1);
-      listing.add(bodyStatements, Listable.NEWLINE);
+      listing.addAll(bodyStatements, Listable.NEWLINE);
       listing.newline();
       listing.indent(-1).add('}');
       listing.newline();
@@ -174,7 +174,7 @@ public class MethodDeclaration extends ClassMember {
   }
 
   public Listing applyCall(Listing listing) {
-    return applyCall(listing, parameter -> parameter.getName());
+    return applyCall(listing, MethodParameter::getName);
   }
 
   public Listing applyCall(Listing listing, Function<MethodParameter, String> function) {

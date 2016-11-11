@@ -86,7 +86,7 @@ public class ImportDeclarationsTests {
     Assertions.assertEquals(Style.CANONICAL, imports.style(Name.name(Test.class)));
     Assertions.assertEquals(Style.CANONICAL, imports.style(Name.name("com", "what", "Ever")));
 
-    Listing listing = new Listing(23, "  ", "\n", imports::style);
+    Listing listing = new Listing("  ", "\n", imports::style);
     listing.add(Name.name(STATIC)).newline();
     listing.add(Name.name(Objects.class, "requireNonNull")).newline();
     listing.add(Name.name(Test.class)).newline();

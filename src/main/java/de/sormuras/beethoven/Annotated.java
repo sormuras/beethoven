@@ -39,7 +39,7 @@ public abstract class Annotated implements Listable {
   protected Listing applyAnnotations(Listing listing) {
     if (isAnnotated()) {
       Listable annotationsSeparator = getAnnotationsSeparator();
-      listing.add(annotations, annotationsSeparator);
+      listing.addAll(annotations, annotationsSeparator);
       listing.add(annotationsSeparator);
     }
     return listing;

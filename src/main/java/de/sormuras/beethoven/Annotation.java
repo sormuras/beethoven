@@ -185,7 +185,7 @@ public class Annotation implements Listable {
     if (values.size() == 1) {
       return values.get(0);
     }
-    return listing -> listing.add('{').add(values, ", ").add('}');
+    return listing -> listing.add('{').addAll(values, ", ").add('}');
   }
 
   private Map<String, List<Listable>> members;

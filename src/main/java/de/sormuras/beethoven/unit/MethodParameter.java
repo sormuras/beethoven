@@ -66,7 +66,7 @@ public class MethodParameter extends Annotatable {
       ArrayType arrayType = (ArrayType) type; // throws ClassCastException
       int toIndex = arrayType.getDimensions().size() - 1;
       listing.add(arrayType.getComponentType());
-      listing.add(arrayType.getDimensions().subList(0, toIndex), Listable.IDENTITY);
+      listing.addAll(arrayType.getDimensions().subList(0, toIndex), Listable.IDENTITY);
       listing.add("...");
     } else {
       listing.add(getType());

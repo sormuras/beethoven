@@ -56,7 +56,7 @@ public class ClassType extends ReferenceType {
       if (typeArguments.isEmpty()) {
         return listing.add(getName());
       }
-      listing.add(getName()).add('<').add(getTypeArguments(), ", ").add('>');
+      listing.add(getName()).add('<').addAll(getTypeArguments(), ", ").add('>');
       return listing;
     }
 
@@ -181,13 +181,13 @@ public class ClassType extends ReferenceType {
       return listing.add(getLastSimple());
     }
     if (style == Style.SIMPLE) {
-      return listing.add(getSimples(), ".");
+      return listing.addAll(getSimples(), ".");
     }
     assert style == Style.CANONICAL : "Unknown style: " + style;
     if (!getPackageName().isEmpty()) {
       listing.add(getPackageName()).add('.');
     }
-    return listing.add(getSimples(), ".");
+    return listing.addAll(getSimples(), ".");
   }
 
   @Override

@@ -45,7 +45,7 @@ public class NormalClassDeclaration extends ClassDeclaration {
     listing.add("class").add(' ').add(getName());
     // [TypeParameters]
     if (!isTypeParametersEmpty()) {
-      listing.add('<').add(getTypeParameters(), ", ").add('>');
+      listing.add('<').addAll(getTypeParameters(), ", ").add('>');
     }
     // [Superclass]
     if (getSuperClass() != null) {
@@ -53,7 +53,7 @@ public class NormalClassDeclaration extends ClassDeclaration {
     }
     // [Superinterfaces]
     if (!isInterfacesEmpty()) {
-      listing.add(" implements ").add(getInterfaces(), ", ");
+      listing.add(" implements ").addAll(getInterfaces(), ", ");
     }
     applyClassBody(listing);
     return listing;

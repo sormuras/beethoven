@@ -183,7 +183,7 @@ public class ModuleDeclaration extends Annotatable {
           listing.add(packageName);
           if (!toModuleNames.isEmpty()) {
             listing.add(" to ");
-            listing.add(toModuleNames, ", ");
+            listing.addAll(toModuleNames, ", ");
           }
           listing.add(';');
           listing.newline();
@@ -204,7 +204,7 @@ public class ModuleDeclaration extends Annotatable {
           listing.add(with);
           if (moreWiths.length > 0) {
             listing.add(", ");
-            listing.add(List.of(moreWiths), ", ");
+            listing.addAll(List.of(moreWiths), ", ");
           }
           listing.add(';');
           listing.newline();

@@ -27,15 +27,15 @@ import java.util.regex.Pattern;
 public class Listing {
 
   /** Used by a {@link Scanner#useDelimiter(Pattern)} delimiter pattern. */
-  public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|\\}");
+  public static final Pattern METHODCHAIN_PATTERN = Pattern.compile("\\{|\\.|}");
 
   /** Used to find placeholders framed by curly braces. */
-  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{[^{^}]+?\\}");
+  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{[^{^}]+?}");
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
   private int currentIndentationDepth = 0;
   private final StringBuilder currentLine = new StringBuilder(256);
-  private final String[] indentationLookupTable;
+  private final String[] indentationLookupTable = new String[23];
   private final String lineSeparator;
   private final Styling styling;
 
@@ -44,7 +44,7 @@ public class Listing {
   }
 
   public Listing(String lineSeparator) {
-    this(23, "  ", lineSeparator, Style::auto);
+    this("  ", lineSeparator, Style::auto);
   }
 
   public Listing(Style style) {
@@ -52,16 +52,15 @@ public class Listing {
   }
 
   public Listing(Styling styling) {
-    this(23, "  ", System.lineSeparator(), styling);
+    this("  ", System.lineSeparator(), styling);
   }
 
-  public Listing(int indentMax, String indent, String lineSeparator, Styling styling) {
+  public Listing(String indent, String lineSeparator, Styling styling) {
     this.lineSeparator = lineSeparator;
     this.styling = styling;
-    this.indentationLookupTable = new String[indentMax];
     // populate indentation lookup table
     indentationLookupTable[0] = "";
-    for (int i = 1; i < indentMax; i++) {
+    for (int i = 1; i < indentationLookupTable.length; i++) {
       indentationLookupTable[i] = indentationLookupTable[i - 1] + indent;
     }
   }
@@ -76,13 +75,30 @@ public class Listing {
     return this;
   }
 
+  /** Applies the passed listable instance to this listing. */
+  public Listing add(Listable listable) {
+    if (listable == null) {
+      return this;
+    }
+    return listable.apply(this);
+  }
+
   /** Add list of listables using newline separator. */
-  public Listing add(List<? extends Listable> listables) {
-    return add(listables, Listable.NEWLINE);
+  public Listing addAll(List<? extends Listable> listables) {
+    return addAll(listables, Listable.NEWLINE);
+  }
+
+  /**
+   * Add list of listables using given textual separator inline.
+   *
+   * <p>For example: {@code "a, b, c"}, {@code "a & b & c"} or {@code "[][][]"}
+   */
+  public Listing addAll(List<? extends Listable> listables, CharSequence separator) {
+    return addAll(listables, listing -> listing.add(separator));
   }
 
   /** Add list of listables using given listable separator. */
-  public Listing add(List<? extends Listable> listables, Listable separator) {
+  public Listing addAll(List<? extends Listable> listables, Listable separator) {
     if (listables.isEmpty()) {
       return this;
     }
@@ -94,23 +110,6 @@ public class Listing {
     spliterator.tryAdvance(this::add);
     spliterator.forEachRemaining(listable -> separator.apply(this).add(listable));
     return this;
-  }
-
-  /**
-   * Add list of listables using given textual separator inline.
-   *
-   * <p>For example: {@code "a, b, c"}, {@code "a & b & c"} or {@code "[][][]"}
-   */
-  public Listing add(List<? extends Listable> listables, CharSequence separator) {
-    return add(listables, listing -> listing.add(separator));
-  }
-
-  /** Applies the passed listable instance to this listing. */
-  public Listing add(Listable listable) {
-    if (listable == null) {
-      return this;
-    }
-    return listable.apply(this);
   }
 
   /**
@@ -138,7 +137,7 @@ public class Listing {
    *
    * produces: {@code java.lang.System.out.println(\"123\"); // 0 String}
    */
-  public Listing add(String source, Object... args) {
+  public Listing eval(String source, Object... args) {
     Matcher matcher = PLACEHOLDER_PATTERN.matcher(source);
 
     int argumentIndex = 0;
@@ -238,12 +237,12 @@ public class Listing {
     return currentLine.toString();
   }
 
-  public String getIndentationString() {
-    return indentationLookupTable[1];
-  }
-
   public int getCurrentIndentationDepth() {
     return currentIndentationDepth;
+  }
+
+  public String getIndentationString() {
+    return indentationLookupTable[1];
   }
 
   /** The separator separating joined lines. */

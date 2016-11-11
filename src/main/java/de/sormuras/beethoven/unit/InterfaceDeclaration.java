@@ -54,11 +54,11 @@ public class InterfaceDeclaration extends TypeDeclaration {
     listing.add("interface").add(' ').add(getName());
     // [TypeParameters]
     if (!getTypeParameters().isEmpty()) {
-      listing.add('<').add(getTypeParameters(), ", ").add('>');
+      listing.add('<').addAll(getTypeParameters(), ", ").add('>');
     }
     // [ExtendsInterfaces]
     if (!getInterfaces().isEmpty()) {
-      listing.add(" extends ").add(getInterfaces(), ", ");
+      listing.add(" extends ").addAll(getInterfaces(), ", ");
     }
     // InterfaceBody
     listing.add(' ').add('{').newline();

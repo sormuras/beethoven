@@ -82,12 +82,12 @@ class ListingTests {
   @Test
   void addListOfListables() {
     List<Listable> list = new ArrayList<>();
-    assertEquals("", new Listing().add(list).toString());
+    assertEquals("", new Listing().addAll(list).toString());
     list.add(Annotation.value('a'));
-    assertEquals("'a'", new Listing().add(list).toString());
+    assertEquals("'a'", new Listing().addAll(list).toString());
     list.add(Annotation.value('z'));
-    assertEquals("'a'\n'z'", new Listing("\n").add(list).toString());
-    assertEquals("'a'-'z'", new Listing().add(list, "-").toString());
+    assertEquals("'a'\n'z'", new Listing("\n").addAll(list).toString());
+    assertEquals("'a'-'z'", new Listing().addAll(list, "-").toString());
   }
 
   @Test
@@ -106,27 +106,27 @@ class ListingTests {
     assertEquals("Object", new Listing(LAST).add(object).toString());
     assertEquals("Map", new Listing(LAST).add(map).toString());
     assertEquals("Entry", new Listing(LAST).add(entry).toString());
-    assertThrows(AssertionError.class, () -> new Listing(1, " ", "\n", name -> null).add(pi));
+    assertThrows(AssertionError.class, () -> new Listing(" ", "\n", name -> null).add(pi));
   }
 
   @Test
-  void addWithPlaceholder() {
+  void eval() {
     String expected = "System.out.println(\"123\"); // 0 String";
     String source = "{N}.{s}.println({S}); // {hashCode} {getClass.getSimpleName.toString}";
-    String actual = new Listing().add(source, System.class, "out", "123", "", "$").toString();
+    String actual = new Listing().eval(source, System.class, "out", "123", "", "$").toString();
     assertEquals(expected, actual);
-    assertEquals(" ", new Listing().add("{L}", Listable.SPACE).toString());
-    assertEquals(" ", new Listing().add("{single space char:L}", Listable.SPACE).toString());
-    assertEquals("x.Y", new Listing().add("{enclosing}", Name.name("x", "Y", "Z")).toString());
-    assertEquals("x.Y", new Listing().add("{xxx:enclosing}", Name.name("x", "Y", "Z")).toString());
-    assertEquals("(:", new Listing().add("{smile}", new Face()).toString());
-    assertEquals("{{}}", new Listing().add("{{empty}{}}", new Face()).toString());
-    assertThrows(Exception.class, () -> new Listing().add("{xxx}", ""));
-    assertThrows(Exception.class, () -> new Listing().add("{toString.toString.xxx}", ""));
+    assertEquals(" ", new Listing().eval("{L}", Listable.SPACE).toString());
+    assertEquals(" ", new Listing().eval("{single space char:L}", Listable.SPACE).toString());
+    assertEquals("x.Y", new Listing().eval("{enclosing}", Name.name("x", "Y", "Z")).toString());
+    assertEquals("x.Y", new Listing().eval("{xxx:enclosing}", Name.name("x", "Y", "Z")).toString());
+    assertEquals("(:", new Listing().eval("{smile}", new Face()).toString());
+    assertEquals("{{}}", new Listing().eval("{{empty}{}}", new Face()).toString());
+    assertThrows(Exception.class, () -> new Listing().eval("{xxx}", ""));
+    assertThrows(Exception.class, () -> new Listing().eval("{toString.toString.xxx}", ""));
   }
 
   @Test
-  void addMorePlaceholders() {
+  void evalMultiline() {
     String[] lines = {
       "try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();",
       "    ObjectOutputStream stream = new ObjectOutputStream()) {",
@@ -140,13 +140,13 @@ class ListingTests {
     Listing listing = new Listing(Style.SIMPLE);
     Name bos = Name.name(ByteArrayOutputStream.class);
     Name oos = Name.name(ObjectOutputStream.class);
-    listing.add("try ({N} bytes = new {N}(){;}", bos, bos);
-    listing.indent(2).add("{N} stream = new {N}()) {", oos, oos).newline();
-    listing.add("{<}stream.writeObject({s}){;}", "object");
-    listing.add("return {s}({s}, bytes.toByteArray()){;}", "stashByteArray", "target");
-    listing.add("{<}} catch ({N} e) {", Exception.class).newline();
-    listing.add("{>}throw new RuntimeException({S}, e){;}", "Writing object failed!");
-    listing.add("{<}}", "").newline();
+    listing.eval("try ({N} bytes = new {N}(){;}", bos, bos);
+    listing.eval("{>}{>}{N} stream = new {N}()) {", oos, oos).newline();
+    listing.eval("{<}stream.writeObject({s}){;}", "object");
+    listing.eval("return {s}({s}, bytes.toByteArray()){;}", "stashByteArray", "target");
+    listing.eval("{<}} catch ({N} e) {", Exception.class).newline();
+    listing.eval("{>}throw new RuntimeException({S}, e){;}", "Writing object failed!");
+    listing.eval("{<}}", "").newline();
     String expected = String.join(listing.getLineSeparator(), lines);
     assertEquals(expected, listing.toString());
   }
@@ -180,10 +180,10 @@ class ListingTests {
   @Test
   void script() throws Exception {
     Listing listing = new Listing();
-    listing.add("var fun = function(name) { return \"Hi \" + name; };").newline();
+    listing.eval("var hi = function(name) { return {S} + name; };", "Ho ").newline();
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
     engine.eval(listing.toString());
     Invocable invocable = (Invocable) engine;
-    assertEquals("Hi Bob", invocable.invokeFunction("fun", "Bob"));
+    assertEquals("Ho Bob", invocable.invokeFunction("hi", "Bob"));
   }
 }

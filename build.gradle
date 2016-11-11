@@ -70,7 +70,7 @@ jar {
 
 javadoc {
     options.header = project.name
-    options.addStringOption('Xdoclint:html,syntax,reference', '-quiet')
+    options.addStringOption('Xdoclint:none' , '-quiet')
 }
 
 task javadocJar(type: Jar) {

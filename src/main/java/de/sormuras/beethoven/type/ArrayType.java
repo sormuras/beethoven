@@ -98,7 +98,7 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
-    return listing.add(getComponentType()).add(getDimensions(), Listable.IDENTITY);
+    return listing.add(getComponentType()).addAll(getDimensions(), Listable.IDENTITY);
   }
 
   @Override

@@ -40,13 +40,13 @@ public class EnumDeclaration extends ClassDeclaration {
     listing.add("enum").add(' ').add(getName());
     // [Superinterfaces]
     if (!isInterfacesEmpty()) {
-      listing.add(" implements ").add(getInterfaces(), ", ");
+      listing.add(" implements ").addAll(getInterfaces(), ", ");
     }
     listing.add(' ').add('{').newline();
     listing.indent(1);
     // TODO listing.push(getName());
     // [EnumConstantList]
-    listing.add(getConstants(), l -> l.add(",").newline());
+    listing.addAll(getConstants(), l -> l.add(',').newline());
     if (!isEmpty()) {
       listing.add(';');
       listing.newline();

@@ -59,7 +59,7 @@ public class TypeParameter extends Annotatable {
   private TypeVariable boundTypeVariable = null;
   private String name = "T";
 
-  /** Add bound(s) to the list of bounds and clears bound type variable. */
+  /** Add bound(s) to the list of bounds and clear bound type variable. */
   public void addBounds(ClassType... bounds) {
     this.boundTypeVariable = null;
     if (bounds.length == 0) {
@@ -69,7 +69,7 @@ public class TypeParameter extends Annotatable {
     getBounds().removeIf(ClassType::isJavaLangObject);
   }
 
-  /** Add bound(s) to the list of bounds and clears bound type variable. */
+  /** Add bound(s) to the list of bounds and clear bound type variable. */
   public void addBounds(Type... bounds) {
     this.boundTypeVariable = null;
     if (bounds.length == 0) {
@@ -89,7 +89,7 @@ public class TypeParameter extends Annotatable {
     if (boundTypeVariable != null) {
       listing.add(boundTypeVariable);
     } else {
-      listing.add(bounds, " & ");
+      listing.addAll(bounds, " & ");
     }
     return listing;
   }
@@ -114,12 +114,12 @@ public class TypeParameter extends Annotatable {
     return name;
   }
 
-  /** Set single type variable as bound and clears all other bounds. */
+  /** Set single type variable as bound and clear all other bounds. */
   public void setBoundTypeVariable(String typeVariableName) {
     setBoundTypeVariable(TypeVariable.variable(typeVariableName));
   }
 
-  /** Set single type variable as bound and clears all other bounds. */
+  /** Set single type variable as bound and clear all other bounds. */
   public void setBoundTypeVariable(TypeVariable boundTypeVariable) {
     this.boundTypeVariable = boundTypeVariable;
     if (!bounds.isEmpty()) {
