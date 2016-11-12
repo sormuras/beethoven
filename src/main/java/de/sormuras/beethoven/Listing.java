@@ -302,10 +302,15 @@ public class Listing {
 
   @Override
   public String toString() {
+    // prepend indentation pattern in front of the non-empty current (and now last) line
+    String lastLine = currentLine.toString();
+    if (!lastLine.isEmpty()) {
+      lastLine = indentationLookupTable[currentIndentationDepth] + lastLine;
+    }
     if (collectedLines.isEmpty()) {
-      return currentLine.toString();
+      return lastLine;
     }
     String lineSeparator = getLineSeparator();
-    return String.join(lineSeparator, collectedLines) + lineSeparator + currentLine.toString();
+    return String.join(lineSeparator, collectedLines) + lineSeparator + lastLine;
   }
 }

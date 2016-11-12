@@ -164,6 +164,16 @@ class ListingTests {
   }
 
   @Test
+  void indentLastLineIfNotEmpty() {
+    Listing listing = new Listing("\n");
+    assertEquals("", listing.toString());
+    assertEquals("", listing.indent(3).toString());
+    assertEquals("      1", listing.add('1').toString());
+    assertEquals("      1\n      2", listing.newline().add('2').toString());
+    assertEquals("      1\n      2\n", listing.newline().toString());
+  }
+
+  @Test
   void newlineProducesOnlyOneSingleBlankLine() {
     Listing listing = new Listing("\n");
     assertEquals(0, listing.getCurrentLine().length());
