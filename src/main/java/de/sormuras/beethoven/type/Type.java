@@ -396,7 +396,7 @@ public abstract class Type extends Annotated {
     if (any instanceof TypeMirror) {
       return type((TypeMirror) any);
     }
-    throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
+    throw new IllegalArgumentException("Can't cast/convert " + any.getClass() + " to Type!");
   }
 
   /** Create {@code Type} based on {@code AnnotatedType} instance. */

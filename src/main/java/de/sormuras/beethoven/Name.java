@@ -75,7 +75,7 @@ public class Name implements Listable {
       Collection<?> collection = (Collection<?>) any;
       return name(collection.stream().map(Object::toString).collect(Collectors.toList()));
     }
-    throw new IllegalArgumentException("Can't cast/convert instance of " + any.getClass());
+    throw new IllegalArgumentException("Can't cast/convert " + any.getClass() + " to Name!");
   }
 
   /**
