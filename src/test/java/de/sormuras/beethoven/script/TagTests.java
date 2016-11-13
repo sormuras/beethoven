@@ -12,25 +12,31 @@
  * the License.
  */
 
-package de.sormuras.beethoven;
+package de.sormuras.beethoven.script;
 
-import static de.sormuras.beethoven.Template.Tag.BINARY;
-import static de.sormuras.beethoven.Template.Tag.ESCAPED;
-import static de.sormuras.beethoven.Template.Tag.INDENT_DEC;
-import static de.sormuras.beethoven.Template.Tag.INDENT_INC;
-import static de.sormuras.beethoven.Template.Tag.LITERAL;
-import static de.sormuras.beethoven.Template.Tag.NAME;
-import static de.sormuras.beethoven.Template.Tag.TYPE;
+import static de.sormuras.beethoven.script.Tag.BINARY;
+import static de.sormuras.beethoven.script.Tag.ESCAPED;
+import static de.sormuras.beethoven.script.Tag.INDENT_DEC;
+import static de.sormuras.beethoven.script.Tag.INDENT_INC;
+import static de.sormuras.beethoven.script.Tag.LISTABLE;
+import static de.sormuras.beethoven.script.Tag.LITERAL;
+import static de.sormuras.beethoven.script.Tag.NAME;
+import static de.sormuras.beethoven.script.Tag.NEWLINE;
+import static de.sormuras.beethoven.script.Tag.SEMICOLON_NEWLINE;
+import static de.sormuras.beethoven.script.Tag.TYPE;
 import static de.sormuras.beethoven.type.ClassType.parameterized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.sormuras.beethoven.Listable;
+import de.sormuras.beethoven.Listing;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class TemplateTests {
+class TagTests {
 
   @Test
-  void tagIndent() {
+  void indent() {
+    assertEquals(0, NEWLINE.eval().getCurrentIndentationDepth());
     Listing listing = new Listing();
     assertEquals(0, INDENT_DEC.eval(listing).getCurrentIndentationDepth());
     assertEquals(1, INDENT_INC.eval(listing).getCurrentIndentationDepth());
@@ -40,7 +46,14 @@ class TemplateTests {
   }
 
   @Test
-  void tagWithValue() {
+  void newlines() {
+    Listing listing = new Listing("\n").add('o');
+    assertEquals("o\n", NEWLINE.eval(listing).toString());
+    assertEquals("o\n;\n", SEMICOLON_NEWLINE.eval(listing).toString());
+  }
+
+  @Test
+  void value() {
     assertEquals("\"1\" + 3", LITERAL.eval("\"1\" + 3"));
     assertEquals("\"\\\"1\\\" + 3\"", ESCAPED.eval("\"1\" + 3"));
     assertEquals("Thread.State.BLOCKED", NAME.eval(Thread.State.BLOCKED));
@@ -50,5 +63,7 @@ class TemplateTests {
     assertEquals("java.lang.Object", BINARY.eval(Object.class));
     assertEquals("[Ljava.lang.Object;", BINARY.eval(Object[].class));
     assertEquals("[[[Z", BINARY.eval(boolean[][][].class));
+    assertEquals(" ", LISTABLE.eval(Listable.SPACE));
+    assertEquals("1234", LISTABLE.eval((Listable) listing -> listing.add("123").add('4')));
   }
 }
