@@ -113,6 +113,23 @@ public class Listing {
     return this;
   }
 
+  /** Guess and use add method by reflecting on the given object instance. */
+  public Listing addAny(Object object) {
+    if (object instanceof Optional) {
+      Optional<?> optional = (Optional<?>) object;
+      if (optional.isPresent()) {
+        object = optional.get();
+      }
+    }
+    if (object instanceof CharSequence) {
+      return add((CharSequence) object);
+    }
+    if (object instanceof Listable) {
+      return add((Listable) object);
+    }
+    return add(String.valueOf(object));
+  }
+
   /**
    * Parse source string and replace placeholders with {@link #add(CharSequence)}-calls to this
    * {@link Listing} instance.

@@ -17,40 +17,50 @@ package de.sormuras.beethoven.script;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ScriptTests {
 
-  @Test
-  void dynamicIndent() {
-    assertEquals("`>` -> INDENT_INC[:null]", Script.compile("{{>}}").parts.get(0).toString());
-    assertEquals("`>>` -> UNKNOWN[:null]", Script.compile("{{>>}}").parts.get(0).toString());
-    assertEquals("    @", Script.eval("{{>>}}@"));
-    assertEquals("    @", Script.eval("{{>>>>}}{{<<}}@"));
-  }
+  //  @Test
+  //  void indent() {
+  //    assertEquals("`>` -> INDENT_INC[:null]", Script.compile("{{>}}").parts.get(0).toString());
+  //    assertEquals("`>>` -> UNKNOWN[:0]", Script.compile("{{>>}}").parts.get(0).toString());
+  //    assertEquals("    @", Script.eval("{{>>}}@"));
+  //    assertEquals("    @", Script.eval("{{>>>>}}{{<<}}@"));
+  //  }
 
-  @Test
-  void evalPosition() {
-    String[] expected = {"String hello = ", "  \"world\";", "  //(-:"};
-    String source = "{{T}} {{N}} = {{¶}}{{>}}{{E}}{{;}}//(-:";
-    String actual = Script.eval(source, String.class, "hello", "world");
-    assertEquals(String.join(System.lineSeparator(), expected), actual);
-  }
+  //  @Test
+  //  void evalPosition() {
+  //    String[] expected = {"String hello = ", "  \"world\";", "  //(-:"};
+  //    String source = "{{T}} {{N}} = {{¶}}{{>}}{{E}}{{;}}//(-:";
+  //    String actual = Script.eval(source, String.class, "hello", "world");
+  //    assertEquals(String.join(System.lineSeparator(), expected), actual);
+  //  }
 
-  @Test
-  void evalCustomIndex() {
-    String[] expected = {"String hello = ", "  \"hello\";", ""};
-    String source = "{{T:0}} {{$:1}} = {{¶}}{{>}}{{E:1}}{{;}}";
-    String actual = Script.eval(source, String.class, "hello");
-    assertEquals(String.join(System.lineSeparator(), expected), actual);
-  }
+  //  @Test
+  //  void evalCustomIndex() {
+  //    String[] expected = {"String hello = ", "  \"hello\";", ""};
+  //    String source = "{{T:0}} {{$:1}} = {{¶}}{{>}}{{E:1}}{{;}}";
+  //    String actual = Script.eval(source, String.class, "hello");
+  //    assertEquals(String.join(System.lineSeparator(), expected), actual);
+  //  }
 
+  //  }
+
+  //  @Test
+  //  void evalNamed() {
+  //    String[] expected = {"String hello = ", "  \"world\";", ""};
+  //    String source = "{{T:type}} {{N:variable}} = {{¶}}{{>}}{{E:value}}{{;}}";
+  //    Map<String, Object> map = Map.of("type", String.class, "variable", "hello", "value", "world");
+  //    String actual = Script.eval(source, map);
+  //    assertEquals(String.join(System.lineSeparator(), expected), actual);
+
+  @Disabled
   @Test
-  void evalNamed() {
-    String[] expected = {"String hello = ", "  \"world\";", ""};
-    String source = "{{T:type}} {{N:variable}} = {{¶}}{{>}}{{E:value}}{{;}}";
-    Map<String, Object> map = Map.of("type", String.class, "variable", "hello", "value", "world");
-    String actual = Script.eval(source, map);
-    assertEquals(String.join(System.lineSeparator(), expected), actual);
+  void reflection() {
+    assertEquals("1 2 3", Script.eval("1 {{toString // auto-index map w/ position }} 3", 2));
+    assertEquals("1 2 3", Script.eval("1 {{toString:0 // auto-index map w/ selector }} 3", 2));
+    assertEquals("1 2 3", Script.eval("1 {{toString:II // named selector }} 3", Map.of("II", 2)));
   }
 }
