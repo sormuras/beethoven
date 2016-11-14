@@ -26,9 +26,9 @@ task runJupiter(type: JavaExec) {
     classpath = project.sourceSets.test.runtimeClasspath
 
     main 'org.junit.platform.console.ConsoleLauncher'
-    args '--scan-class-path'
-    args '--hide-details'
-    args "--reports-dir=$project.testReportDir"
+    args = ['--scan-class-path']
+    args += '--hide-details'
+    args += "--reports-dir=$project.testReportDir"
 }
 
 //runJupiter.dependsOn downloadJupiter

@@ -17,16 +17,16 @@ task runFormat(type: Exec) {
 
     executable System.getenv("JAVA_HOME_8") + '/bin/java'
 
-    args '-showversion'
-    args '-cp'
-    args "$buildDir/format/*"
+    args = ['-showversion']
+    args += '-cp'
+    args += "$buildDir/format/*"
 
-    args 'com.google.googlejavaformat.java.Main'
+    args += 'com.google.googlejavaformat.java.Main'
 
-    args '--replace'
-    args mainJavaFilesWithoutModuleInfo
-    // args sourceSets.main.allJava.files
-    args sourceSets.test.getAllJava().files
+    args += '--replace'
+    args += mainJavaFilesWithoutModuleInfo
+    // args += sourceSets.main.allJava.files
+    args += sourceSets.test.getAllJava().files
 }
 
 runFormat.dependsOn downloadFormat
