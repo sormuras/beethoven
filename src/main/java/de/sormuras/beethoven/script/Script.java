@@ -15,14 +15,9 @@
 package de.sormuras.beethoven.script;
 
 import de.sormuras.beethoven.Listing;
-import de.sormuras.beethoven.Name;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Scanner;
 import java.util.stream.IntStream;
 
 public class Script {
@@ -64,34 +59,13 @@ public class Script {
         }
         argument = map.get(key);
       }
-      //      Optional<Object> result = reflect(command.snippet, argument);
-      //      if (result.isPresent()) {
-      //        return listing.addAny(result.get());
-      //      }
       command.execute(listing, argument);
     }
     return listing;
   }
 
-  // convert unknown snippet to chained method call sequence
-  protected Optional<Object> reflect(String snippet, Object argument) {
-    Objects.requireNonNull(argument, "argument must not be null");
-    try (Scanner scanner = new Scanner(snippet)) {
-      scanner.useDelimiter(Name.DOT);
-      while (scanner.hasNext()) {
-        String name = scanner.next();
-        Method method;
-        try {
-          method = argument.getClass().getMethod(name);
-        } catch (NoSuchMethodException e) {
-          name = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
-          method = argument.getClass().getMethod(name);
-        }
-        argument = method.invoke(argument);
-      }
-      return Optional.ofNullable(argument);
-    } catch (Exception exception) {
-      return Optional.empty();
-    }
+  @Override
+  public String toString() {
+    return "Script [source=" + source + ", commands=" + commands + "]";
   }
 }

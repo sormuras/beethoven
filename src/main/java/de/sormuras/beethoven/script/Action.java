@@ -18,11 +18,11 @@ import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.Type;
+import java.lang.reflect.Method;
+import java.util.Objects;
+import java.util.Scanner;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
-
-//  // unknown, but argument is required, like ("{{getClass.getSimpleName.toString}}", "123")
-//  UNKNOWN
 
 @FunctionalInterface
 public interface Action {
@@ -55,7 +55,7 @@ public interface Action {
   }
 
   /** Argument consuming actions. */
-  enum Arg implements Action {
+  enum Consumer implements Action {
     LITERAL("$", (listing, object) -> listing.add(String.valueOf(object))),
     STRING("S", (listing, object) -> listing.add(Listable.escape(String.valueOf(object)))),
     LISTABLE("L", (listing, object) -> listing.add(Listable.class.cast(object))),
@@ -67,7 +67,7 @@ public interface Action {
     final String identifier;
     final BiFunction<Listing, Object, Listing> function;
 
-    Arg(String identifier, BiFunction<Listing, Object, Listing> function) {
+    Consumer(String identifier, BiFunction<Listing, Object, Listing> function) {
       this.identifier = identifier;
       this.function = function;
     }
@@ -113,13 +113,43 @@ public interface Action {
     }
   }
 
+  enum Variable implements Action {
+    CHAINED_GETTER_CALL(
+        "#.*",
+        (listing, snippet, argument) -> listing.addAny(reflect(snippet.substring(1), argument))),
+    ;
+
+    final Pattern pattern;
+    final Action action;
+
+    Variable(String regex, Action action) {
+      this.pattern = Pattern.compile(regex);
+      this.action = action;
+    }
+
+    @Override
+    public boolean consumesArgument() {
+      return true;
+    }
+
+    @Override
+    public Listing execute(Listing listing, String snippet, Object argument) {
+      return action.execute(listing, snippet, argument);
+    }
+
+    @Override
+    public boolean handles(String snippet) {
+      return pattern.matcher(snippet).matches();
+    }
+  }
+
   static Action action(String snippet) {
     for (Action action : Simple.values()) {
       if (action.handles(snippet)) {
         return action;
       }
     }
-    for (Action action : Arg.values()) {
+    for (Action action : Consumer.values()) {
       if (action.handles(snippet)) {
         return action;
       }
@@ -129,7 +159,34 @@ public interface Action {
         return action;
       }
     }
-    return null;
+    for (Action action : Variable.values()) {
+      if (action.handles(snippet)) {
+        return action;
+      }
+    }
+    throw new IllegalArgumentException(String.format("No action handles: `%s`", snippet));
+  }
+
+  // convert unknown snippet to chained method call sequence
+  static Object reflect(String snippet, Object argument) {
+    Objects.requireNonNull(argument, "argument must not be null");
+    try (Scanner scanner = new Scanner(snippet)) {
+      scanner.useDelimiter(Name.DOT);
+      while (scanner.hasNext()) {
+        String name = scanner.next();
+        Method method;
+        try {
+          method = argument.getClass().getMethod(name);
+        } catch (NoSuchMethodException e) {
+          name = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+          method = argument.getClass().getMethod(name);
+        }
+        argument = method.invoke(argument);
+      }
+      return argument;
+    } catch (ReflectiveOperationException exception) {
+      throw new IllegalArgumentException("Can't reflect over: " + snippet, exception);
+    }
   }
 
   Listing execute(Listing listing, String snippet, Object argument);

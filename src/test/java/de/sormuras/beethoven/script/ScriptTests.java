@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 import java.util.function.UnaryOperator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ScriptTests {
@@ -62,11 +61,10 @@ class ScriptTests {
     assertEquals(String.join(System.lineSeparator(), expected), actual);
   }
 
-  @Disabled
   @Test
   void reflection() {
-    assertEquals("1 2 3", Script.eval("1 {{toString // auto-index map w/ position }} 3", 2));
-    assertEquals("1 2 3", Script.eval("1 {{toString:0 // auto-index map w/ selector }} 3", 2));
-    assertEquals("1 2 3", Script.eval("1 {{toString:II // named selector }} 3", Map.of("II", 2)));
+    assertEquals("1 2 3", Script.eval("1 {{#toString // auto-index map w/ position }} 3", 2));
+    assertEquals("1 2 3", Script.eval("1 {{#toString:0 // auto-index map w/ selector }} 3", 2));
+    assertEquals("1 2 3", Script.eval("1 {{#toString:II // named selector }} 3", Map.of("II", 2)));
   }
 }

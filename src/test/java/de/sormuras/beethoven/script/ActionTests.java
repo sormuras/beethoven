@@ -14,16 +14,17 @@
 
 package de.sormuras.beethoven.script;
 
-import static de.sormuras.beethoven.script.Action.Arg.BINARY;
-import static de.sormuras.beethoven.script.Action.Arg.LISTABLE;
-import static de.sormuras.beethoven.script.Action.Arg.LITERAL;
-import static de.sormuras.beethoven.script.Action.Arg.NAME;
-import static de.sormuras.beethoven.script.Action.Arg.STRING;
-import static de.sormuras.beethoven.script.Action.Arg.TYPE;
+import static de.sormuras.beethoven.script.Action.Consumer.BINARY;
+import static de.sormuras.beethoven.script.Action.Consumer.LISTABLE;
+import static de.sormuras.beethoven.script.Action.Consumer.LITERAL;
+import static de.sormuras.beethoven.script.Action.Consumer.NAME;
+import static de.sormuras.beethoven.script.Action.Consumer.STRING;
+import static de.sormuras.beethoven.script.Action.Consumer.TYPE;
 import static de.sormuras.beethoven.script.Action.Simple.END_OF_STATEMENT;
 import static de.sormuras.beethoven.script.Action.Simple.INDENT;
 import static de.sormuras.beethoven.script.Action.Simple.NEWLINE;
 import static de.sormuras.beethoven.script.Action.Simple.UNINDENT;
+import static de.sormuras.beethoven.script.Action.Variable.CHAINED_GETTER_CALL;
 import static de.sormuras.beethoven.type.ClassType.parameterized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,7 +42,11 @@ class ActionTests {
   }
 
   private String execute(Action action, Object argument) {
-    return action.execute(new Listing("\n"), null, argument).toString();
+    return execute(action, null, argument);
+  }
+
+  private String execute(Action action, String snippet, Object argument) {
+    return action.execute(new Listing("\n"), snippet, argument).toString();
   }
 
   @Test
@@ -50,8 +55,8 @@ class ActionTests {
     assertEquals(Action.Simple.UNINDENT, Action.action("<"));
     assertEquals(Action.Simple.NEWLINE, Action.action("¶"));
     assertEquals(Action.Simple.END_OF_STATEMENT, Action.action(";"));
-    assertEquals(Action.Arg.LITERAL, Action.action("$"));
-    assertEquals(Action.Arg.STRING, Action.action("S"));
+    assertEquals(Action.Consumer.LITERAL, Action.action("$"));
+    assertEquals(Action.Consumer.STRING, Action.action("S"));
     assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>"));
     assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>>"));
     assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<"));
@@ -88,5 +93,6 @@ class ActionTests {
     assertEquals("[[[Z", execute(BINARY, boolean[][][].class));
     assertEquals(" ", execute(LISTABLE, Listable.SPACE));
     assertEquals("1234", execute(LISTABLE, (Listable) listing -> listing.add("123").add('4')));
+    assertEquals("Byte", execute(CHAINED_GETTER_CALL, "#class.simpleName", Byte.MAX_VALUE));
   }
 }
