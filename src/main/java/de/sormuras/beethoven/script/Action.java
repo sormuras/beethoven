@@ -115,7 +115,7 @@ public interface Action {
 
   enum Variable implements Action {
     CHAINED_GETTER_CALL(
-        "#.*",
+        "#.+",
         (listing, snippet, argument) -> listing.addAny(reflect(snippet.substring(1), argument))),
     ;
 
@@ -141,30 +141,6 @@ public interface Action {
     public boolean handles(String snippet) {
       return pattern.matcher(snippet).matches();
     }
-  }
-
-  static Action action(String snippet) {
-    for (Action action : Simple.values()) {
-      if (action.handles(snippet)) {
-        return action;
-      }
-    }
-    for (Action action : Consumer.values()) {
-      if (action.handles(snippet)) {
-        return action;
-      }
-    }
-    for (Action action : Dynamic.values()) {
-      if (action.handles(snippet)) {
-        return action;
-      }
-    }
-    for (Action action : Variable.values()) {
-      if (action.handles(snippet)) {
-        return action;
-      }
-    }
-    throw new IllegalArgumentException(String.format("No action handles: `%s`", snippet));
   }
 
   // convert unknown snippet to chained method call sequence

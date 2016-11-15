@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.sormuras.beethoven.Listing;
 import java.util.Map;
-import java.util.function.UnaryOperator;
 import org.junit.jupiter.api.Test;
 
 class ScriptTests {
@@ -33,11 +32,6 @@ class ScriptTests {
 
   @Test
   void indent() {
-    UnaryOperator<String> operator = source -> new Parser().parse(source).get(0).toString();
-    assertEquals("`>` -> INDENT", operator.apply("{{>}}"));
-    assertEquals("`>>` -> INDENT_INC", operator.apply("{{>>}}"));
-    assertEquals("`<` -> UNINDENT", operator.apply("{{<}}"));
-    assertEquals("`<<` -> INDENT_DEC", operator.apply("{{<<}}"));
     assertEquals("@", eval("@"));
     assertEquals("  @", eval("{{>}}@"));
     assertEquals("    @", eval("{{>>}}@"));

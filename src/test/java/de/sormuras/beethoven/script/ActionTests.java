@@ -50,20 +50,6 @@ class ActionTests {
   }
 
   @Test
-  void action() {
-    assertEquals(Action.Simple.INDENT, Action.action(">"));
-    assertEquals(Action.Simple.UNINDENT, Action.action("<"));
-    assertEquals(Action.Simple.NEWLINE, Action.action("¶"));
-    assertEquals(Action.Simple.END_OF_STATEMENT, Action.action(";"));
-    assertEquals(Action.Consumer.LITERAL, Action.action("$"));
-    assertEquals(Action.Consumer.STRING, Action.action("S"));
-    assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>"));
-    assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>>"));
-    assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<"));
-    assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<<"));
-  }
-
-  @Test
   void indent() {
     assertEquals(0, execute(NEWLINE).getCurrentIndentationDepth());
     assertEquals(0, execute(UNINDENT).getCurrentIndentationDepth());

@@ -15,10 +15,22 @@
 package de.sormuras.beethoven.script;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Parser {
+
+  private static final List<Action> actions = buildActions();
+
+  private static List<Action> buildActions() {
+    List<Action> actions = new ArrayList<>(50);
+    actions.addAll(Arrays.asList(Action.Simple.values()));
+    actions.addAll(Arrays.asList(Action.Consumer.values()));
+    actions.addAll(Arrays.asList(Action.Dynamic.values()));
+    actions.addAll(Arrays.asList(Action.Variable.values()));
+    return Collections.unmodifiableList(actions);
+  }
 
   private final String actionBeginMarker;
   private final String actionEndMarker;
@@ -30,6 +42,15 @@ public class Parser {
   public Parser(String actionBeginMarker, String actionEndMarker) {
     this.actionBeginMarker = actionBeginMarker;
     this.actionEndMarker = actionEndMarker;
+  }
+
+  protected Action action(String snippet) {
+    for (Action action : actions) {
+      if (action.handles(snippet)) {
+        return action;
+      }
+    }
+    throw new IllegalArgumentException(String.format("No action handles: `%s`", snippet));
   }
 
   public List<Command> parse(String source) {
@@ -70,7 +91,7 @@ public class Parser {
         pattern = pattern.substring(0, indexOfDoublePoint).trim();
       }
       // identify action
-      commands.add(new Command(pattern, selector, Action.action(pattern)));
+      commands.add(new Command(pattern, selector, action(pattern)));
 
       // prepare next round
       currentIndex = endIndex;
