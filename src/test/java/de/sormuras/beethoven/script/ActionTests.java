@@ -64,14 +64,14 @@ class ActionTests {
 
   @Test
   void action() {
+    assertEquals(Action.Simple.INDENT, Action.action(">"));
+    assertEquals(Action.Simple.UNINDENT, Action.action("<"));
     assertEquals(Action.Simple.NEWLINE, Action.action("¶"));
     assertEquals(Action.Simple.END_OF_STATEMENT, Action.action(";"));
     assertEquals(Action.Arg.LITERAL, Action.action("$"));
     assertEquals(Action.Arg.STRING, Action.action("S"));
-    assertEquals(Action.Dynamic.INDENT_INC, Action.action(">"));
     assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>"));
     assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>>"));
-    assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<"));
     assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<"));
     assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<<"));
   }

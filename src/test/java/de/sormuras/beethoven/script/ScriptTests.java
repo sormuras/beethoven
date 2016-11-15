@@ -22,13 +22,22 @@ import org.junit.jupiter.api.Test;
 
 class ScriptTests {
 
-  //  @Test
-  //  void indent() {
-  //    assertEquals("`>` -> INDENT_INC[:null]", Script.compile("{{>}}").parts.get(0).toString());
-  //    assertEquals("`>>` -> UNKNOWN[:0]", Script.compile("{{>>}}").parts.get(0).toString());
-  //    assertEquals("    @", Script.eval("{{>>}}@"));
-  //    assertEquals("    @", Script.eval("{{>>>>}}{{<<}}@"));
-  //  }
+  private static String parseAndGetFirstCommand(String source) {
+    return new Parser().parse(source).get(0).toString();
+  }
+
+  @Test
+  void indent() {
+    assertEquals("`>` -> INDENT", parseAndGetFirstCommand("{{>}}"));
+    assertEquals("`>>` -> INDENT_INC", parseAndGetFirstCommand("{{>>}}"));
+    assertEquals("`<` -> UNINDENT", parseAndGetFirstCommand("{{<}}"));
+    assertEquals("`<<` -> INDENT_DEC", parseAndGetFirstCommand("{{<<}}"));
+    assertEquals("@", Script.eval("@"));
+    assertEquals("  @", Script.eval("{{>}}@"));
+    assertEquals("    @", Script.eval("{{>>}}@"));
+    assertEquals("  @", Script.eval("{{>>>}}{{<<}}@"));
+    assertEquals("@", Script.eval("{{>>>>}}{{<<<<<<<<<<<<<<}}@"));
+  }
 
   //  @Test
   //  void evalPosition() {
