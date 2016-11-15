@@ -22,14 +22,6 @@ import java.util.stream.IntStream;
 
 public class Script {
 
-  public static String eval(String source, Object... args) {
-    return new Script(source).eval(new Listing(), args).toString();
-  }
-
-  public static String eval(String source, Map<String, Object> map) {
-    return new Script(source).eval(new Listing(), map).toString();
-  }
-
   private final String source;
   private final List<Command> commands;
 
