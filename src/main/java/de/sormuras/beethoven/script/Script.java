@@ -49,10 +49,15 @@ public class Script {
   }
 
   public Listing eval(Listing listing, Map<String, Object> map) {
+    int argumentConsumingCommandCounter = 0;
     for (Command command : commands) {
       Object argument = null;
       if (command.selectArgument()) {
-        argument = map.get(command.selector);
+        String key = command.selector;
+        if (key == null) {
+          key = String.valueOf(argumentConsumingCommandCounter++);
+        }
+        argument = map.get(key);
       }
       command.execute(listing, argument);
     }
