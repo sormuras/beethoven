@@ -14,11 +14,22 @@
 
 package de.sormuras.beethoven.script;
 
+import static de.sormuras.beethoven.script.Action.Arg.BINARY;
+import static de.sormuras.beethoven.script.Action.Arg.LISTABLE;
+import static de.sormuras.beethoven.script.Action.Arg.LITERAL;
+import static de.sormuras.beethoven.script.Action.Arg.NAME;
+import static de.sormuras.beethoven.script.Action.Arg.STRING;
+import static de.sormuras.beethoven.script.Action.Arg.TYPE;
 import static de.sormuras.beethoven.script.Action.Simple.END_OF_STATEMENT;
+import static de.sormuras.beethoven.script.Action.Simple.INDENT;
 import static de.sormuras.beethoven.script.Action.Simple.NEWLINE;
+import static de.sormuras.beethoven.script.Action.Simple.UNINDENT;
+import static de.sormuras.beethoven.type.ClassType.parameterized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ActionTests {
@@ -29,38 +40,9 @@ class ActionTests {
     return action.execute(listing, null, null);
   }
 
-  @Test
-  void indent() {
-    assertEquals(0, execute(NEWLINE).getCurrentIndentationDepth());
-    //    assertEquals(0, INDENT_DEC.eval(listing).getCurrentIndentationDepth());
-    //    assertEquals(1, INDENT_INC.eval(listing).getCurrentIndentationDepth());
-    //    assertEquals(2, INDENT_INC.eval(listing).getCurrentIndentationDepth());
-    //    assertEquals(1, INDENT_DEC.eval(listing).getCurrentIndentationDepth());
-    //    assertEquals(0, INDENT_DEC.eval(listing).getCurrentIndentationDepth());
+  private String execute(Action action, Object argument) {
+    return action.execute(new Listing("\n"), null, argument).toString();
   }
-
-  @Test
-  void newlines() {
-    listing.add('o');
-    assertEquals("o", listing.toString());
-    assertEquals("o\n", execute(NEWLINE).toString());
-    assertEquals("o\n;\n", execute(END_OF_STATEMENT).toString());
-  }
-
-  //  @Test
-  //  void value() {
-  //    assertEquals("\"1\" + 3", LITERAL.eval("\"1\" + 3"));
-  //    assertEquals("\"\\\"1\\\" + 3\"", ESCAPED.eval("\"1\" + 3"));
-  //    assertEquals("Thread.State.BLOCKED", NAME.eval(Thread.State.BLOCKED));
-  //    assertEquals("int[][][]", TYPE.eval(int[][][].class));
-  //    assertEquals("java.util.List<Byte>", TYPE.eval(parameterized(List.class, Byte.class)));
-  //    assertEquals("long", BINARY.eval(long.class));
-  //    assertEquals("java.lang.Object", BINARY.eval(Object.class));
-  //    assertEquals("[L" + "java.lang.Object" + ";", BINARY.eval(Object[].class));
-  //    assertEquals("[[[Z", BINARY.eval(boolean[][][].class));
-  //    assertEquals(" ", LISTABLE.eval(Listable.SPACE));
-  //    assertEquals("1234", LISTABLE.eval((Listable) listing -> listing.add("123").add('4')));
-  //  }
 
   @Test
   void action() {
@@ -74,5 +56,37 @@ class ActionTests {
     assertEquals(Action.Dynamic.INDENT_INC, Action.action(">>>"));
     assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<"));
     assertEquals(Action.Dynamic.INDENT_DEC, Action.action("<<<"));
+  }
+
+  @Test
+  void indent() {
+    assertEquals(0, execute(NEWLINE).getCurrentIndentationDepth());
+    assertEquals(0, execute(UNINDENT).getCurrentIndentationDepth());
+    assertEquals(1, execute(INDENT).getCurrentIndentationDepth());
+    assertEquals(2, execute(INDENT).getCurrentIndentationDepth());
+    assertEquals(1, execute(UNINDENT).getCurrentIndentationDepth());
+    assertEquals(0, execute(UNINDENT).getCurrentIndentationDepth());
+  }
+
+  @Test
+  void newlines() {
+    assertEquals("o", listing.add('o').toString());
+    assertEquals("o\n", execute(NEWLINE).toString());
+    assertEquals("o\n;\n", execute(END_OF_STATEMENT).toString());
+  }
+
+  @Test
+  void value() {
+    assertEquals("\"1\" + 3", execute(LITERAL, "\"1\" + 3"));
+    assertEquals("\"\\\"1\\\" + 3\"", execute(STRING, "\"1\" + 3"));
+    assertEquals("Thread.State.BLOCKED", execute(NAME, Thread.State.BLOCKED));
+    assertEquals("int[][][]", execute(TYPE, int[][][].class));
+    assertEquals("java.util.List<Byte>", execute(TYPE, parameterized(List.class, Byte.class)));
+    assertEquals("long", execute(BINARY, long.class));
+    assertEquals("java.lang.Object", execute(BINARY, Object.class));
+    assertEquals("[L" + "java.lang.Object" + ";", execute(BINARY, Object[].class));
+    assertEquals("[[[Z", execute(BINARY, boolean[][][].class));
+    assertEquals(" ", execute(LISTABLE, Listable.SPACE));
+    assertEquals("1234", execute(LISTABLE, (Listable) listing -> listing.add("123").add('4')));
   }
 }

@@ -16,29 +16,14 @@ package de.sormuras.beethoven.script;
 
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
+import de.sormuras.beethoven.Name;
+import de.sormuras.beethoven.type.Type;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 //  // unknown, but argument is required, like ("{{getClass.getSimpleName.toString}}", "123")
-//  UNKNOWN,
-//
-//  // no-arg
-//  INDENT_INC(">", listing -> listing.indent(1)),
-//  INDENT_DEC("<", listing -> listing.indent(-1)),
-//  NEWLINE("¶", Listing::newline),
-//  SEMICOLON_NEWLINE(";", listing -> listing.add(';').newline()),
-//
-//  // consuming single argument
-//  LITERAL("$", (listing, object) -> listing.add(String.valueOf(object))),
-//  ESCAPED("E", (listing, object) -> listing.add(Listable.escape(String.valueOf(object)))),
-//  LISTABLE("X", (listing, object) -> listing.add((Listable) object)),
-//  NAME("N", (listing, object) -> listing.add(Name.cast(object))),
-//  TYPE("T", (listing, object) -> listing.add(Type.cast(object))),
-//  BINARY("B", (listing, object) -> listing.add(Type.cast(object).binary())),
-//
-//  // dynamic and well-known, no argument is permitted
-//  DYNAMIC_INDENT_INC_N("// n-times `>>[...>]` increase indentation", UnaryOperator.identity()),
-//  DYNAMIC_INDENT_DEC_N("// n-times `<<[...<]` decrease indentation", UnaryOperator.identity());
+//  UNKNOWN
+
 @FunctionalInterface
 public interface Action {
 
@@ -73,6 +58,10 @@ public interface Action {
   enum Arg implements Action {
     LITERAL("$", (listing, object) -> listing.add(String.valueOf(object))),
     STRING("S", (listing, object) -> listing.add(Listable.escape(String.valueOf(object)))),
+    LISTABLE("L", (listing, object) -> listing.add(Listable.class.cast(object))),
+    NAME("N", (listing, object) -> listing.add(Name.cast(object))),
+    TYPE("T", (listing, object) -> listing.add(Type.cast(object))),
+    BINARY("B", (listing, object) -> listing.add(Type.cast(object).binary())),
     ;
 
     final String identifier;
