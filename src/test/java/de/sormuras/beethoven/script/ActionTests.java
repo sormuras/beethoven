@@ -14,17 +14,17 @@
 
 package de.sormuras.beethoven.script;
 
-import static de.sormuras.beethoven.script.Action.Tag.BINARY;
-import static de.sormuras.beethoven.script.Action.Tag.CHAINED_GETTER_CALL;
-import static de.sormuras.beethoven.script.Action.Tag.CLOSE_STATEMENT;
-import static de.sormuras.beethoven.script.Action.Tag.INDENT;
-import static de.sormuras.beethoven.script.Action.Tag.LISTABLE;
-import static de.sormuras.beethoven.script.Action.Tag.LITERAL;
-import static de.sormuras.beethoven.script.Action.Tag.NAME;
-import static de.sormuras.beethoven.script.Action.Tag.NEWLINE;
-import static de.sormuras.beethoven.script.Action.Tag.STRING;
-import static de.sormuras.beethoven.script.Action.Tag.TYPE;
-import static de.sormuras.beethoven.script.Action.Tag.UNINDENT;
+import static de.sormuras.beethoven.script.Tag.BINARY;
+import static de.sormuras.beethoven.script.Tag.CLOSE_STATEMENT;
+import static de.sormuras.beethoven.script.Tag.INDENT;
+import static de.sormuras.beethoven.script.Tag.LISTABLE;
+import static de.sormuras.beethoven.script.Tag.LITERAL;
+import static de.sormuras.beethoven.script.Tag.NAME;
+import static de.sormuras.beethoven.script.Tag.NEWLINE;
+import static de.sormuras.beethoven.script.Tag.REFLECT;
+import static de.sormuras.beethoven.script.Tag.STRING;
+import static de.sormuras.beethoven.script.Tag.TYPE;
+import static de.sormuras.beethoven.script.Tag.UNINDENT;
 import static de.sormuras.beethoven.type.ClassType.parameterized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -79,6 +79,6 @@ class ActionTests {
     assertEquals("[[[Z", execute(BINARY, boolean[][][].class));
     assertEquals(" ", execute(LISTABLE, Listable.SPACE));
     assertEquals("1234", execute(LISTABLE, (Listable) listing -> listing.add("123").add('4')));
-    assertEquals("Byte", execute(CHAINED_GETTER_CALL, "#class.simpleName", Byte.MAX_VALUE));
+    assertEquals("Byte", execute(REFLECT, "#class.simpleName", Byte.MAX_VALUE));
   }
 }

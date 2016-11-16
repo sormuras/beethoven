@@ -44,7 +44,7 @@ public class Script {
     int argumentConsumingCommandCounter = 0;
     for (Command command : commands) {
       Object argument = null;
-      if (command.selectArgument()) {
+      if (command.consumesArgument()) {
         String key = command.selector;
         if (key == null) {
           key = String.valueOf(argumentConsumingCommandCounter++);

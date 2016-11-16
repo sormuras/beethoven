@@ -19,41 +19,41 @@ import de.sormuras.beethoven.Listing;
 /** Compiled script execution command. */
 public class Command {
 
-  final String snippet;
+  final String tag;
   final String selector;
   final Action action;
 
   public Command(String text) {
-    this.snippet = text;
+    this.tag = text;
     this.selector = null;
     this.action = null;
   }
 
-  public Command(String snippet, String selector, Action action) {
-    this.snippet = snippet;
+  public Command(String tag, String selector, Action action) {
+    this.tag = tag;
     this.selector = selector;
     this.action = action;
   }
 
   public Listing execute(Listing listing, Object argument) {
     if (action == null) {
-      return listing.add(snippet);
+      return listing.add(tag);
     }
-    return action.execute(listing, snippet, argument);
+    return action.execute(listing, tag, argument);
   }
 
-  public boolean selectArgument() {
-    return action != null && action.consumesArgument();
+  public boolean consumesArgument() {
+    return action != null && action.consumes().arg();
   }
 
   @Override
   public String toString() {
-    String quoted = "`" + snippet + "`";
+    String quoted = "`" + tag + "`";
     if (action == null) {
       return quoted;
     }
     String quotedAndAction = quoted + " -> " + action;
-    if (!selectArgument()) {
+    if (!consumesArgument()) {
       return quotedAndAction;
     }
     return quotedAndAction + "[:" + selector + "]";

@@ -33,7 +33,7 @@ public class Parser {
   }
 
   protected Action action(String snippet) {
-    for (Action action : Action.Tag.values()) {
+    for (Action action : Tag.values()) {
       if (action.handles(snippet)) {
         return action;
       }
@@ -57,29 +57,29 @@ public class Parser {
       if (endIndex < beginIndex) {
         throw new IllegalArgumentException("action marker syntax error: " + source);
       }
-      String pattern = source.substring(beginIndex, endIndex);
+      String tag = source.substring(beginIndex, endIndex);
       // strip markers from start and end and trim content
       int patternStartIndex = actionBeginMarker.length();
-      int patternEndIndex = pattern.length() - actionEndMarker.length();
-      pattern = pattern.substring(patternStartIndex, patternEndIndex).trim();
-      // strip custom text from pattern, like "$:2 // comments are ignored"
-      if (pattern.contains("//")) {
-        pattern = pattern.substring(0, pattern.indexOf("//")).trim();
+      int patternEndIndex = tag.length() - actionEndMarker.length();
+      tag = tag.substring(patternStartIndex, patternEndIndex).trim();
+      // strip custom text from tag, like "$:2 // comments are ignored"
+      if (tag.contains("//")) {
+        tag = tag.substring(0, tag.indexOf("//")).trim();
       }
       // extract custom selector, like "$:1" or "$:hello"
       String selector = null;
-      if (pattern.contains(":")) {
-        int indexOfDoublePoint = pattern.indexOf(":");
-        selector = pattern.substring(indexOfDoublePoint + 1).trim();
+      if (tag.contains(":")) {
+        int indexOfDoublePoint = tag.indexOf(":");
+        selector = tag.substring(indexOfDoublePoint + 1).trim();
         try {
           selector = Integer.toString(Integer.parseInt(selector));
         } catch (NumberFormatException e) {
           // ignore
         }
-        pattern = pattern.substring(0, indexOfDoublePoint).trim();
+        tag = tag.substring(0, indexOfDoublePoint).trim();
       }
       // identify action
-      commands.add(new Command(pattern, selector, action(pattern)));
+      commands.add(new Command(tag, selector, action(tag)));
 
       // prepare next round
       currentIndex = endIndex;

@@ -14,29 +14,23 @@
 
 package de.sormuras.beethoven.script;
 
-import de.sormuras.beethoven.Listing;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@FunctionalInterface
-public interface Action {
+import org.junit.jupiter.api.Test;
 
-  enum Consumes {
-    NONE,
-    TAG,
-    ARG,
-    ALL;
+class TagTests {
 
-    public boolean arg() {
-      return this == ARG || this == ALL;
-    }
+  @Test
+  void reflectNullFails() {
+    assertThrows(NullPointerException.class, () -> Tag.reflect("#", null));
   }
 
-  Listing execute(Listing listing, String tag, Object arg);
-
-  default Consumes consumes() {
-    return Consumes.ALL;
-  }
-
-  default boolean handles(String tag) {
-    return false;
+  @Test
+  void reflectWithAutoBoxing() {
+    assertEquals(1, Tag.reflect("#", 1));
+    assertEquals(Integer.class, Tag.reflect("#class", 1));
+    assertEquals("Integer", Tag.reflect("#class.simpleName", 1));
+    assertEquals(30, Tag.reflect("#class.simpleName.hashCode.byteValue.intValue", 1));
   }
 }

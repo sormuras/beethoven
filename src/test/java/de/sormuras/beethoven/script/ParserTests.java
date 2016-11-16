@@ -25,21 +25,21 @@ class ParserTests {
 
   @Test
   void action() {
-    assertEquals(Action.Tag.INDENT, parser.action(">"));
-    assertEquals(Action.Tag.UNINDENT, parser.action("<"));
-    assertEquals(Action.Tag.NEWLINE, parser.action("¶"));
-    assertEquals(Action.Tag.CLOSE_STATEMENT, parser.action(";"));
-    assertEquals(Action.Tag.LITERAL, parser.action("$"));
-    assertEquals(Action.Tag.STRING, parser.action("S"));
-    assertEquals(Action.Tag.BINARY, parser.action("B"));
-    assertEquals(Action.Tag.LISTABLE, parser.action("L"));
-    assertEquals(Action.Tag.NAME, parser.action("N"));
-    assertEquals(Action.Tag.TYPE, parser.action("T"));
-    assertEquals(Action.Tag.INDENT_INC, parser.action(">>"));
-    assertEquals(Action.Tag.INDENT_INC, parser.action(">>>"));
-    assertEquals(Action.Tag.INDENT_DEC, parser.action("<<"));
-    assertEquals(Action.Tag.INDENT_DEC, parser.action("<<<"));
-    assertEquals(Action.Tag.CHAINED_GETTER_CALL, parser.action("#test"));
+    assertEquals(Tag.INDENT, parser.action(">"));
+    assertEquals(Tag.UNINDENT, parser.action("<"));
+    assertEquals(Tag.NEWLINE, parser.action("¶"));
+    assertEquals(Tag.CLOSE_STATEMENT, parser.action(";"));
+    assertEquals(Tag.LITERAL, parser.action("$"));
+    assertEquals(Tag.STRING, parser.action("S"));
+    assertEquals(Tag.BINARY, parser.action("B"));
+    assertEquals(Tag.LISTABLE, parser.action("L"));
+    assertEquals(Tag.NAME, parser.action("N"));
+    assertEquals(Tag.TYPE, parser.action("T"));
+    assertEquals(Tag.INDENT_INC, parser.action(">>"));
+    assertEquals(Tag.INDENT_INC, parser.action(">>>"));
+    assertEquals(Tag.INDENT_DEC, parser.action("<<"));
+    assertEquals(Tag.INDENT_DEC, parser.action("<<<"));
+    assertEquals(Tag.REFLECT, parser.action("#test"));
   }
 
   @Test
