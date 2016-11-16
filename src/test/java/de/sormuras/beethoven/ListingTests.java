@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 class ListingTests {
 
-  static class Face {
+  public static class Face {
     public Optional<?> empty() {
       return Optional.empty();
     }
@@ -112,17 +112,21 @@ class ListingTests {
   @Test
   void eval() {
     String expected = "System.out.print(\"123\"); // 0 String";
-    String source = "{{N}}.{{S}}.print({{E}}); // {{hashCode}} {{class.simpleName.toString}}";
+    String source = "{{N}}.{{$}}.print({{S}}); // {{#hashCode}} {{#class.simpleName.toString}}";
     String actual = new Listing().eval(source, System.class, "out", "123", "", "*").toString();
     assertEquals(expected, actual);
     assertEquals(" ", new Listing().eval("{{L}}", Listable.SPACE).toString());
     assertEquals(" ", new Listing().eval("{{L // single space char}}", Listable.SPACE).toString());
-    assertEquals("x.Y", new Listing().eval("{{enclosing}}", Name.name("x", "Y", "Z")).toString());
-    assertEquals("x.Y", new Listing().eval("{{enclosing//}}", Name.name("x", "Y", "Z")).toString());
-    assertEquals("(:", new Listing().eval("{{smile}}", new Face()).toString());
-    assertEquals("{{}}", new Listing().eval("{{{empty}}{}}", new Face()).toString());
-    assertThrows(Exception.class, () -> new Listing().eval("{{xxx}}"));
-    assertThrows(Exception.class, () -> new Listing().eval("{{toString.toString.xxx}}"));
+    assertEquals("x.Y", new Listing().eval("{{#enclosing}}", Name.name("x", "Y", "Z")).toString());
+    assertEquals(
+        "x.Y", new Listing().eval("{{#enclosing//}}", Name.name("x", "Y", "Z")).toString());
+    assertEquals("(:", new Listing().eval("{{#smile}}", new Face()).toString());
+    assertEquals(
+        "Optional.empty", new Listing().eval("{{#empty // blank}}", new Face()).toString());
+    assertThrows(Exception.class, () -> new Listing().eval("{{}} // empty tag fails"));
+    assertThrows(Exception.class, () -> new Listing().eval("{{does not exist}}"));
+    assertThrows(Exception.class, () -> new Listing().eval("{{#xxx}}"));
+    assertThrows(Exception.class, () -> new Listing().eval("{{#toString.toString.xxx}}"));
   }
 
   @Test
@@ -142,10 +146,10 @@ class ListingTests {
     Name oos = Name.name(ObjectOutputStream.class);
     listing.eval("try ({{N}} bytes = new {{N}}(){{;}}", bos, bos);
     listing.eval("{{>>}}{{N}} stream = new {{N}}()) {", oos, oos).newline();
-    listing.eval("{{<}}stream.writeObject({{S}}){{;}}", "object");
-    listing.eval("return {{S}}({{S}}, bytes.toByteArray()){{;}}", "stashByteArray", "target");
+    listing.eval("{{<}}stream.writeObject({{$}}){{;}}", "object");
+    listing.eval("return {{$}}({{$}}, bytes.toByteArray()){{;}}", "stashByteArray", "target");
     listing.eval("{{<}}} catch ({{N}} e) {", Exception.class).newline();
-    listing.eval("{{>}}throw new RuntimeException({{E}}, e){{;}}", "Writing object failed!");
+    listing.eval("{{>}}throw new RuntimeException({{S}}, e){{;}}", "Writing object failed!");
     listing.eval("{{<}}}").newline();
     String expected = String.join(listing.getLineSeparator(), lines);
     assertEquals(expected, listing.toString());
@@ -190,7 +194,7 @@ class ListingTests {
   @Test
   void script() throws Exception {
     Listing listing = new Listing();
-    listing.eval("var hi = function(name) { return {{E}} + name; };", "Ho ").newline();
+    listing.eval("var hi = function(name) { return {{S}} + name; };", "Ho ").newline();
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
     engine.eval(listing.toString());
     Invocable invocable = (Invocable) engine;

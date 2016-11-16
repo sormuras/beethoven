@@ -82,7 +82,7 @@ class MethodDeclarationTests {
     runnable.addParameter(getClass(), "this");
     runnable.addThrows(RuntimeException.class);
     runnable.addThrows(TypeVariable.variable("X"));
-    runnable.addStatement("System.out.println({{E}})", "Running!");
+    runnable.addStatement("System.out.println({{S}})", "Running!");
     Tests.assertEquals(getClass(), "runnable", runnable);
     assertEquals(true, runnable.isModified());
     assertEquals(false, runnable.isVarArgs());

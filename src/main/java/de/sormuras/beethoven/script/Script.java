@@ -25,11 +25,11 @@ public class Script {
   private final String source;
   private final List<Command> commands;
 
-  Script(String source) {
+  public Script(String source) {
     this(source, new Parser().parse(source));
   }
 
-  Script(String source, List<Command> commands) {
+  public Script(String source, List<Command> commands) {
     this.source = source;
     this.commands = commands;
   }
