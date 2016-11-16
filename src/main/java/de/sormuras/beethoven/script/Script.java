@@ -50,6 +50,9 @@ public class Script {
           key = String.valueOf(argumentConsumingCommandCounter++);
         }
         argument = map.get(key);
+        if (argument == null) {
+          throw new IllegalArgumentException("No argument for `" + key + "` available in: " + map);
+        }
       }
       command.execute(listing, argument);
     }

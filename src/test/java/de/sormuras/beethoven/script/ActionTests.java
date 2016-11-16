@@ -14,17 +14,17 @@
 
 package de.sormuras.beethoven.script;
 
-import static de.sormuras.beethoven.script.Action.Consumer.BINARY;
-import static de.sormuras.beethoven.script.Action.Consumer.LISTABLE;
-import static de.sormuras.beethoven.script.Action.Consumer.LITERAL;
-import static de.sormuras.beethoven.script.Action.Consumer.NAME;
-import static de.sormuras.beethoven.script.Action.Consumer.STRING;
-import static de.sormuras.beethoven.script.Action.Consumer.TYPE;
-import static de.sormuras.beethoven.script.Action.Simple.END_OF_STATEMENT;
-import static de.sormuras.beethoven.script.Action.Simple.INDENT;
-import static de.sormuras.beethoven.script.Action.Simple.NEWLINE;
-import static de.sormuras.beethoven.script.Action.Simple.UNINDENT;
-import static de.sormuras.beethoven.script.Action.Variable.CHAINED_GETTER_CALL;
+import static de.sormuras.beethoven.script.Action.Tag.BINARY;
+import static de.sormuras.beethoven.script.Action.Tag.CHAINED_GETTER_CALL;
+import static de.sormuras.beethoven.script.Action.Tag.CLOSE_STATEMENT;
+import static de.sormuras.beethoven.script.Action.Tag.INDENT;
+import static de.sormuras.beethoven.script.Action.Tag.LISTABLE;
+import static de.sormuras.beethoven.script.Action.Tag.LITERAL;
+import static de.sormuras.beethoven.script.Action.Tag.NAME;
+import static de.sormuras.beethoven.script.Action.Tag.NEWLINE;
+import static de.sormuras.beethoven.script.Action.Tag.STRING;
+import static de.sormuras.beethoven.script.Action.Tag.TYPE;
+import static de.sormuras.beethoven.script.Action.Tag.UNINDENT;
 import static de.sormuras.beethoven.type.ClassType.parameterized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,7 +63,7 @@ class ActionTests {
   void newlines() {
     assertEquals("o", listing.add('o').toString());
     assertEquals("o\n", execute(NEWLINE).toString());
-    assertEquals("o\n;\n", execute(END_OF_STATEMENT).toString());
+    assertEquals("o\n;\n", execute(CLOSE_STATEMENT).toString());
   }
 
   @Test

@@ -21,115 +21,67 @@ import de.sormuras.beethoven.type.Type;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 @FunctionalInterface
 public interface Action {
 
-  /** Simple actions have no parameters. */
-  enum Simple implements Action {
-    INDENT(">", listing -> listing.indent(1)),
-    UNINDENT("<", listing -> listing.indent(-1)),
-    NEWLINE("¶", Listing::newline),
-    END_OF_STATEMENT(";", listing -> listing.add(';').newline()),
-    ;
-
-    final String identifier;
-    final Listable listable;
-
-    Simple(String identifier, Listable listable) {
-      this.identifier = identifier;
-      this.listable = listable;
-    }
-
-    @Override
-    public Listing execute(Listing listing, String snippet, Object argument) {
-      return listable.apply(listing);
-    }
-
-    @Override
-    public boolean handles(String snippet) {
-      return identifier.equals(snippet);
-    }
+  enum Consumes {
+    NONE,
+    ARGUMENT,
+    SNIPPET,
+    ALL
   }
 
-  /** Argument consuming actions. */
-  enum Consumer implements Action {
-    LITERAL("$", (listing, object) -> listing.add(String.valueOf(object))),
-    STRING("S", (listing, object) -> listing.add(Listable.escape(String.valueOf(object)))),
-    LISTABLE("L", (listing, object) -> listing.add(Listable.class.cast(object))),
-    NAME("N", (listing, object) -> listing.add(Name.cast(object))),
-    TYPE("T", (listing, object) -> listing.add(Type.cast(object))),
-    BINARY("B", (listing, object) -> listing.add(Type.cast(object).binary())),
-    ;
+  enum Tag implements Action {
+    INDENT(">", Consumes.NONE, (listing, snippet, argument) -> listing.indent(1)),
+    UNINDENT("<", Consumes.NONE, (listing, snippet, argument) -> listing.indent(-1)),
+    NEWLINE("¶", Consumes.NONE, (listing, snippet, argument) -> listing.newline()),
+    CLOSE_STATEMENT(";", Consumes.NONE, (listing, snippet, argument) -> listing.add(';').newline()),
 
-    final String identifier;
-    final BiFunction<Listing, Object, Listing> function;
+    LITERAL(
+        "\\$",
+        Consumes.ARGUMENT,
+        (listing, snippet, object) -> listing.add(String.valueOf(object))),
+    STRING(
+        "S",
+        Consumes.ARGUMENT,
+        (listing, snippet, object) -> listing.add(Listable.escape(String.valueOf(object)))),
+    LISTABLE(
+        "L",
+        Consumes.ARGUMENT,
+        (listing, snippet, object) -> listing.add(Listable.class.cast(object))),
+    NAME("N", Consumes.ARGUMENT, (listing, snippet, object) -> listing.add(Name.cast(object))),
+    TYPE("T", Consumes.ARGUMENT, (listing, snippet, object) -> listing.add(Type.cast(object))),
+    BINARY(
+        "B",
+        Consumes.ARGUMENT,
+        (listing, snippet, object) -> listing.add(Type.cast(object).binary())),
 
-    Consumer(String identifier, BiFunction<Listing, Object, Listing> function) {
-      this.identifier = identifier;
-      this.function = function;
-    }
+    INDENT_INC(
+        ">+", Consumes.SNIPPET, (listing, snippet, object) -> listing.indent(snippet.length())),
+    INDENT_DEC(
+        "<+", Consumes.SNIPPET, (listing, snippet, object) -> listing.indent(-snippet.length())),
 
-    @Override
-    public boolean consumesArgument() {
-      return true;
-    }
-
-    @Override
-    public Listing execute(Listing listing, String snippet, Object argument) {
-      return function.apply(listing, argument);
-    }
-
-    @Override
-    public boolean handles(String snippet) {
-      return identifier.equals(snippet);
-    }
-  }
-
-  /** No arg, but variable "keyword" interpretation. */
-  enum Dynamic implements Action {
-    INDENT_INC(">+", (listing, snippet) -> listing.indent(snippet.length())),
-    INDENT_DEC("<+", (listing, snippet) -> listing.indent(-snippet.length())),
-    ;
-
-    final Pattern pattern;
-    final BiFunction<Listing, String, Listing> function;
-
-    Dynamic(String regex, BiFunction<Listing, String, Listing> function) {
-      this.pattern = Pattern.compile(regex);
-      this.function = function;
-    }
-
-    @Override
-    public Listing execute(Listing listing, String snippet, Object argument) {
-      return function.apply(listing, snippet);
-    }
-
-    @Override
-    public boolean handles(String snippet) {
-      return pattern.matcher(snippet).matches();
-    }
-  }
-
-  enum Variable implements Action {
     CHAINED_GETTER_CALL(
         "#.+",
+        Consumes.ALL,
         (listing, snippet, argument) -> listing.addAny(reflect(snippet.substring(1), argument))),
     ;
 
     final Pattern pattern;
+    final Consumes consumes;
     final Action action;
 
-    Variable(String regex, Action action) {
+    Tag(String regex, Consumes consumes, Action action) {
       this.pattern = Pattern.compile(regex);
+      this.consumes = consumes;
       this.action = action;
     }
 
     @Override
     public boolean consumesArgument() {
-      return true;
+      return consumes == Consumes.ARGUMENT || consumes == Consumes.ALL;
     }
 
     @Override

@@ -15,22 +15,10 @@
 package de.sormuras.beethoven.script;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Parser {
-
-  private static final List<Action> actions = buildActions();
-
-  private static List<Action> buildActions() {
-    List<Action> actions = new ArrayList<>(50);
-    actions.addAll(Arrays.asList(Action.Simple.values()));
-    actions.addAll(Arrays.asList(Action.Consumer.values()));
-    actions.addAll(Arrays.asList(Action.Dynamic.values()));
-    actions.addAll(Arrays.asList(Action.Variable.values()));
-    return Collections.unmodifiableList(actions);
-  }
 
   private final String actionBeginMarker;
   private final String actionEndMarker;
@@ -45,7 +33,7 @@ public class Parser {
   }
 
   protected Action action(String snippet) {
-    for (Action action : actions) {
+    for (Action action : Action.Tag.values()) {
       if (action.handles(snippet)) {
         return action;
       }
