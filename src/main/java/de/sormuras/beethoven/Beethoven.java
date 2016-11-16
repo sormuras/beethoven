@@ -20,11 +20,15 @@ public interface Beethoven {
 
   String VERSION = "1.0-SNAPSHOT";
 
-  static void main(String[] args) {
+  static void main(String... args) {
     System.out.println("# Base package name and version constant");
     System.out.println(Beethoven.class.getPackage().getName() + " " + VERSION);
     System.out.println("# Module description");
     ModuleDescriptor descriptor = Beethoven.class.getModule().getDescriptor();
+    if (descriptor == null) {
+      System.out.println("Unnamed module.");
+      return;
+    }
     System.out.format("Name and version: %s%n", descriptor.toNameAndVersion());
     System.out.format("Requires modules: %s%n", descriptor.requires());
     System.out.format("Exports packages: %s%n", descriptor.exports());

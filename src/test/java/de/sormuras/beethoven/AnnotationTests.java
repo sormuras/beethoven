@@ -15,6 +15,7 @@
 package de.sormuras.beethoven;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +42,37 @@ import org.junit.jupiter.api.Test;
 )
 @Generated("not generated, not visible at runtime")
 class AnnotationTests {
+
+  @Test
+  void cast() {
+    Annotation override = Annotation.annotation(Override.class);
+    assertEquals(override, Annotation.cast(override));
+    assertEquals(override, Annotation.cast(Override.class));
+    assertEquals(override, Annotation.cast(Name.name(Override.class)));
+    assertEquals(override, Annotation.cast(Override.class.getCanonicalName()));
+    assertEquals(override, Annotation.cast(new String[] {"java", "lang", "Override"}));
+    assertEquals(override, Annotation.cast(new StringBuffer("java.lang.Override")));
+    Name all = Name.name(All.class);
+    assertEquals(all, Annotation.cast(getClass().getAnnotation(All.class)).getTypeName());
+  }
+
+  @Test
+  void string() {
+    assertEquals(
+        "Annotation{Name{java.lang/Override}, members={}}",
+        Annotation.annotation(Override.class).toString());
+  }
+
+  @Test
+  void equalsAndHashcode() {
+    Annotation override = Annotation.annotation(Override.class);
+    assertEquals(override, override);
+    // noinspection ObjectEqualsNull
+    assertFalse(override.equals(null));
+    // noinspection EqualsBetweenInconvertibleTypes
+    assertFalse(override.equals(byte.class));
+    assertEquals(881672236, override.hashCode());
+  }
 
   @Test
   void annotations() {

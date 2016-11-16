@@ -207,6 +207,11 @@ class NameTests {
   }
 
   @Test
+  void nameOfAnonymousClassFails() {
+    assertThrows(IllegalArgumentException.class, () -> Name.name(new Cloneable() {}.getClass()));
+  }
+
+  @Test
   void primitive() {
     assertEquals("boolean", Name.name(boolean.class).canonical());
     assertEquals("byte", Name.name(byte.class).canonical());

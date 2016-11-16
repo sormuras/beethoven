@@ -251,6 +251,22 @@ public class Annotation implements Listable {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    return hashCode() == obj.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return list().hashCode();
+  }
+
+  @Override
   public String toString() {
     return "Annotation{" + getTypeName() + ", members=" + members + "}";
   }

@@ -85,7 +85,7 @@ public class Name implements Listable {
    */
   public static Name name(Class<?> type) {
     if (type.isAnonymousClass()) {
-      throw new IllegalArgumentException("Anonymous. No name. " + type);
+      throw new IllegalArgumentException("Anonymous. No name. Compiler generated: " + type);
     }
     if (type.isLocalClass()) {
       return new Name(0, List.of(type.getSimpleName()));
