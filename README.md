@@ -13,7 +13,7 @@ Java source created with Java
  - [x] JavaBeans style API
 
 ## hello world
-Here's a simple [HelloWorld](https://github.com/sormuras/beethoven/blob/master/src/test/readme/HelloWorld.java)
+Here's a simple [HelloWorld](https://github.com/sormuras/beethoven/blob/master/src/test/java/readme/HelloWorld.java)
 program. It demonstrates basic usage of the main features.
 ```java
 Name out = Name.name(System.class, "out");
