@@ -34,6 +34,14 @@ public class Script {
     this.commands = commands;
   }
 
+  public List<Command> getCommands() {
+    return commands;
+  }
+
+  public String getSource() {
+    return source;
+  }
+
   public Listing eval(Listing listing, Object... args) {
     Map<String, Object> map = new LinkedHashMap<>();
     IntStream.range(0, args.length).forEach(i -> map.put(Integer.toString(i), args[i]));
@@ -61,6 +69,6 @@ public class Script {
 
   @Override
   public String toString() {
-    return "Script [source=" + source + ", commands=" + commands + "]";
+    return "Script [source=" + getSource() + ", commands=" + getCommands() + "]";
   }
 }

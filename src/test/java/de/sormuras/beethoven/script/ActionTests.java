@@ -27,6 +27,7 @@ import static de.sormuras.beethoven.script.Tag.TYPE;
 import static de.sormuras.beethoven.script.Tag.UNINDENT;
 import static de.sormuras.beethoven.type.ClassType.parameterized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
@@ -47,6 +48,13 @@ class ActionTests {
 
   private String execute(Action action, String snippet, Object argument) {
     return action.execute(new Listing("\n"), snippet, argument).toString();
+  }
+
+  @Test
+  void defaults() {
+    Action noop = (l, t, a) -> l;
+    assertEquals(Action.Consumes.ALL, noop.consumes());
+    assertFalse(noop.handles(""));
   }
 
   @Test

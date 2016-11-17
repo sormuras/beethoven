@@ -31,6 +31,12 @@ class ScriptTests {
   }
 
   @Test
+  void string() {
+    assertEquals("Script [source=α, commands=[`α`]]", new Script("α").toString());
+    assertEquals("[`α`, `$` -> LITERAL[:β]]", new Script("α{{$:β}}").getCommands().toString());
+  }
+
+  @Test
   void indent() {
     assertEquals("@", eval("@"));
     assertEquals("  @", eval("{{>}}@"));

@@ -53,10 +53,12 @@ public class Parser {
         commands.add(new Command(literal));
       }
 
-      int endIndex = source.indexOf(actionEndMarker, beginIndex) + actionEndMarker.length();
-      if (endIndex < beginIndex) {
-        throw new IllegalArgumentException("action marker syntax error: " + source);
+      int endIndex = source.indexOf(actionEndMarker, beginIndex);
+      if (endIndex == -1) {
+        throw new IllegalArgumentException("tag end marker not found: " + source);
       }
+      // include entire end marker when extracting the tag text
+      endIndex += actionEndMarker.length();
       String tag = source.substring(beginIndex, endIndex);
       // strip markers from start and end and trim content
       int patternStartIndex = actionBeginMarker.length();

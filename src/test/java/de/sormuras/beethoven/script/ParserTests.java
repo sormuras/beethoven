@@ -15,6 +15,7 @@
 package de.sormuras.beethoven.script;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.UnaryOperator;
 import org.junit.jupiter.api.Test;
@@ -49,5 +50,10 @@ class ParserTests {
     assertEquals("`>>` -> INDENT_INC", operator.apply("{{>>}}"));
     assertEquals("`<` -> UNINDENT", operator.apply("{{<}}"));
     assertEquals("`<<` -> INDENT_DEC", operator.apply("{{<<}}"));
+  }
+
+  @Test
+  void syntaxErrors() {
+    assertThrows(Exception.class, () -> parser.parse("{{ missing end marker }"));
   }
 }

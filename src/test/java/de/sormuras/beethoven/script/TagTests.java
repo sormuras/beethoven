@@ -24,6 +24,7 @@ class TagTests {
   @Test
   void reflectNullFails() {
     assertThrows(NullPointerException.class, () -> Tag.reflect("#", null));
+    assertThrows(Exception.class, () -> Tag.reflect("#thisDoesNotExist", new Object()));
   }
 
   @Test
