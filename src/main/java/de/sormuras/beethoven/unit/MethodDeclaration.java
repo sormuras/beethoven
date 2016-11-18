@@ -45,7 +45,7 @@ public class MethodDeclaration extends ClassMember {
   }
 
   public void addParameter(Type type, String name) {
-    addParameter(MethodParameter.of(type, name));
+    addParameter(new MethodParameter().setType(type).setName(name));
   }
 
   public void addParameter(MethodParameter declaration) {
@@ -160,6 +160,10 @@ public class MethodDeclaration extends ClassMember {
 
   public void setBody(Block body) {
     this.body = body;
+  }
+
+  public void setReturnType(java.lang.reflect.Type type) {
+    setReturnType(Type.type(type));
   }
 
   public void setReturnType(Type type) {

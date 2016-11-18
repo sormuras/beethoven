@@ -24,10 +24,11 @@ unit.getImportDeclarations().addSingleStaticImport(out);
 ClassDeclaration symphony = unit.declareClass("Symphony");
 symphony.addModifier(Modifier.PUBLIC);
 
-MethodParameter parameter = MethodParameter.of(String[].class, "strings");
 MethodDeclaration main = symphony.declareMethod(void.class, "main");
 main.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
-main.addParameter(parameter);
+main.addParameter(String[].class, "strings");
+MethodParameter parameter = main.getParameters().get(0);
+parameter.setVariable(true);
 main.addStatement("{{N}}.println({{S}} + {{#getName}}[0])", out, "Symphony ", parameter);
 
 System.out.println(unit.list());
@@ -46,7 +47,7 @@ import static java.lang.System.out;
 
 public class Symphony {
 
-  public static void main(String[] strings) {
+  public static void main(String... strings) {
     out.println("Symphony " + strings[0]);
   }
 }

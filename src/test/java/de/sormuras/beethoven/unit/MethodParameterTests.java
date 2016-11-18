@@ -19,26 +19,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Name;
+import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.TypeVariable;
 import java.lang.annotation.ElementType;
 import org.junit.jupiter.api.Test;
 
 class MethodParameterTests {
 
+  private MethodParameter of(Class<?> type, String name) {
+    return new MethodParameter().setType(Type.type(type)).setName(name);
+  }
+
   @Test
   void simple() {
-    assertEquals("int i", MethodParameter.of(int.class, "i").list());
-    assertEquals("int... ia1", MethodParameter.of(int[].class, "ia1").setVariable(true).list());
-    assertEquals("int[]... ia2", MethodParameter.of(int[][].class, "ia2").setVariable(true).list());
+    assertEquals("int i", of(int.class, "i").list());
+    assertEquals("int... ia1", of(int[].class, "ia1").setVariable(true).list());
+    assertEquals("int[]... ia2", of(int[][].class, "ia2").setVariable(true).list());
     MethodParameter parameter =
         new MethodParameter().setType(TypeVariable.variable("T")).setName("t").setFinal(true);
     parameter.addAnnotation(Annotation.annotation(Name.name("A")));
     assertEquals("final @A T t", parameter.list());
     assertEquals(ElementType.PARAMETER, new MethodParameter().getAnnotationsTarget());
     IllegalStateException expected =
-        assertThrows(
-            IllegalStateException.class,
-            () -> MethodParameter.of(int.class, "i").setVariable(true));
+        assertThrows(IllegalStateException.class, () -> of(int.class, "i").setVariable(true));
     assertEquals(true, expected.toString().contains("array type expected"));
   }
 }

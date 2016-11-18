@@ -23,7 +23,6 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.lang.model.element.Modifier;
 
 public abstract class TypeDeclaration extends ClassMember implements DeclarationContainer {
 
@@ -65,24 +64,13 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
   public MethodDeclaration declareMethod(MethodDeclaration declaration) {
     declaration.setCompilationUnit(getCompilationUnit());
     declaration.setEnclosingDeclaration(this);
-    getMethods().add(declaration);
-    return declaration;
-  }
-
-  /** Declare new method by overriding. */
-  public MethodDeclaration declareOverride(MethodDeclaration source) {
-    MethodDeclaration declaration = new MethodDeclaration();
-    declaration.addAnnotation(Override.class);
-    declaration.getModifiers().addAll(source.getModifiers());
-    declaration.getModifiers().remove(Modifier.ABSTRACT);
-    declaration.setName(source.getName());
-    declaration.setReturnType(source.getReturnType());
-    if (!source.getParameters().isEmpty()) {
-      source.getParameters().forEach(p -> declaration.addParameter(MethodParameter.of(p)));
-      assert declaration.isVarArgs() == source.isVarArgs();
+    int index = getMethods().size();
+    // keep constructors in declaration order
+    if (declaration.isConstructor()) {
+      index = (int) getMethods().stream().filter(MethodDeclaration::isConstructor).count();
     }
-    declaration.getThrows().addAll(source.getThrows());
-    return declareMethod(declaration);
+    getMethods().add(index, declaration);
+    return declaration;
   }
 
   @Override

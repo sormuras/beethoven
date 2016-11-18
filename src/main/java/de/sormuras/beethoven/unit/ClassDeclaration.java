@@ -31,7 +31,7 @@ import java.util.List;
  */
 public abstract class ClassDeclaration extends TypeDeclaration {
 
-  private List<Listable> fields = new ArrayList<>();
+  private List<FieldDeclaration> fields = new ArrayList<>();
   private List<Initializer> initializers = Collections.emptyList();
   private List<ClassType> interfaces = Collections.emptyList();
   private boolean local = false;
@@ -58,7 +58,7 @@ public abstract class ClassDeclaration extends TypeDeclaration {
     if (!isDeclarationsEmpty()) {
       getDeclarations().forEach(listing::add);
     }
-    listing.addAll(getFields());
+    listing.addAll(getFields(), Listable.IDENTITY);
     listing.addAll(getMethods());
     if (!isInitializersEmpty()) {
       getInitializers().forEach(listing::add);
@@ -95,7 +95,7 @@ public abstract class ClassDeclaration extends TypeDeclaration {
     return initializer;
   }
 
-  public List<Listable> getFields() {
+  public List<FieldDeclaration> getFields() {
     return fields;
   }
 

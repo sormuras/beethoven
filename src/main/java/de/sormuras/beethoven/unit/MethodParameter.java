@@ -32,24 +32,6 @@ import java.util.Optional;
  */
 public class MethodParameter extends Annotatable {
 
-  public static MethodParameter of(Class<?> type, String name) {
-    return of(Type.type(type), name);
-  }
-
-  public static MethodParameter of(Type type, String name) {
-    return new MethodParameter().setType(type).setName(name);
-  }
-
-  public static MethodParameter of(MethodParameter source) {
-    MethodParameter clone = new MethodParameter();
-    clone.addAnnotations(source.getAnnotations());
-    clone.setFinal(source.isFinal());
-    clone.setType(source.getType());
-    clone.setName(source.getName());
-    clone.setVariable(source.isVariable());
-    return clone;
-  }
-
   private boolean finalModifier;
   private MethodDeclaration methodDeclaration;
   private String name;
