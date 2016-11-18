@@ -44,6 +44,7 @@ import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unused")
 class TypeTests<T> {
 
   class W<X> {
