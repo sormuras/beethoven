@@ -1,6 +1,6 @@
 package pool;
 
-class Car {
+public class Car {
 
   private final String name;
 
@@ -8,7 +8,7 @@ class Car {
 
   private Thread.State state = Thread.State.NEW;
 
-  Car(String name, Number gear, Thread.State state) {
+  public Car(String name, Number gear, Thread.State state) {
     this.name = name;
     this.gear = gear;
     this.state = state;
@@ -33,5 +33,16 @@ class Car {
   public Car setState(Thread.State state) {
     this.state = java.util.Objects.requireNonNull(state, "Property `state` requires non `null` values!");
     return this;
+  }
+
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("Car");
+    builder.append('[');
+    builder.append("name").append('=').append(name);
+    builder.append(", ").append("gear").append('=').append(gear);
+    builder.append(", ").append("state").append('=').append(state);
+    builder.append(']');
+    return builder.toString();
   }
 }

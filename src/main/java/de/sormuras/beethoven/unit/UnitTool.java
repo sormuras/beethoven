@@ -20,6 +20,7 @@ import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.VoidType;
 import java.util.Objects;
+import java.util.Spliterator;
 import javax.lang.model.element.Modifier;
 
 public interface UnitTool {
@@ -94,8 +95,9 @@ public interface UnitTool {
     }
   }
 
-  static void addConstructor(ClassDeclaration declaration) {
+  static MethodDeclaration addConstructor(ClassDeclaration declaration) {
     MethodDeclaration constructor = declaration.declareConstructor();
+    constructor.setModifiers(Modifier.PUBLIC);
     declaration
         .getFields()
         .forEach(
@@ -103,5 +105,25 @@ public interface UnitTool {
               constructor.addParameter(field.getType(), field.getName());
               constructor.addStatement("this.{{$:0}} = {{$:0}}", field.getName());
             });
+    return constructor;
+  }
+
+  static MethodDeclaration addToString(ClassDeclaration declaration) {
+    MethodDeclaration method = declaration.declareMethod(String.class, "toString");
+    method.setModifiers(Modifier.PUBLIC);
+    method.addStatement("StringBuilder builder = new StringBuilder()");
+    method.addStatement("builder.append({{S}})", declaration.getName());
+    if (declaration.getFields().isEmpty()) {
+      return method;
+    }
+    method.addStatement("builder.append('[')");
+    String first = "builder.append({{S:0}}).append('=').append({{$:0}})";
+    Spliterator<FieldDeclaration> fields = declaration.getFields().spliterator();
+    fields.tryAdvance(field -> method.addStatement(first, field.getName()));
+    String line = "builder.append(\", \").append({{S:0}}).append('=').append({{$:0}})";
+    fields.forEachRemaining(field -> method.addStatement(line, field.getName()));
+    method.addStatement("builder.append(']')");
+    method.addStatement("return builder.toString()");
+    return method;
   }
 }
