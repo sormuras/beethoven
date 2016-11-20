@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2016 Christian Stein
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package de.sormuras.beethoven.composer;
+
+import de.sormuras.beethoven.Listable;
+import de.sormuras.beethoven.Name;
+import de.sormuras.beethoven.type.Type;
+import de.sormuras.beethoven.type.VoidType;
+import de.sormuras.beethoven.unit.ClassDeclaration;
+import de.sormuras.beethoven.unit.FieldDeclaration;
+import de.sormuras.beethoven.unit.MethodDeclaration;
+import java.util.Objects;
+import java.util.function.Consumer;
+import javax.lang.model.element.Modifier;
+
+public class BeanPropertyComposer implements Consumer<ClassDeclaration> {
+
+  private Type type;
+  private String name;
+  private boolean setterAvailable;
+  private boolean setterReturnsThis;
+  private boolean fieldFinal;
+  private Listable fieldInitializer;
+
+  @Override
+  public void accept(ClassDeclaration declaration) {
+    // field
+    FieldDeclaration field = declaration.declareField(type, name);
+    field.setModifiers(Modifier.PRIVATE);
+    if (fieldFinal) {
+      field.addModifiers(Modifier.FINAL);
+    }
+    if (fieldInitializer != null) {
+      field.setInitializer(fieldInitializer);
+    }
+    // uppercase first character
+    String property = name.substring(0, 1).toUpperCase() + name.substring(1);
+    // getter
+    MethodDeclaration getter = declaration.declareMethod(type, "get" + property);
+    getter.setModifiers(Modifier.PUBLIC);
+    getter.addStatement("return {{$}}", name);
+    // optional setter
+    if (setterAvailable) {
+      Type returnType = setterReturnsThis ? declaration.toType() : VoidType.instance();
+      MethodDeclaration setter = declaration.declareMethod(returnType, "set" + property);
+      setter.setModifiers(Modifier.PUBLIC);
+      setter.addParameter(type, name);
+      // setter.addStatement("this.{{$}} = {{$}}", name, name);
+      Name requireNonNull = Name.reflect(Objects.class, "requireNonNull");
+      String message = "Property `" + name + "` requires non `null` values!";
+      setter.addStatement(
+          "this.{{$:0}} = {{N:1}}({{$:0}}, {{S:2}})", name, requireNonNull, message);
+      if (setterReturnsThis) {
+        setter.addStatement("return this");
+      }
+    }
+  }
+
+  public Type getType() {
+    return type;
+  }
+
+  public void setType(Type type) {
+    this.type = type;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public boolean isSetterAvailable() {
+    return setterAvailable;
+  }
+
+  public void setSetterAvailable(boolean setterAvailable) {
+    this.setterAvailable = setterAvailable;
+  }
+
+  public boolean isSetterReturnsThis() {
+    return setterReturnsThis;
+  }
+
+  public void setSetterReturnsThis(boolean setterReturnsThis) {
+    this.setterReturnsThis = setterReturnsThis;
+  }
+
+  public boolean isFieldFinal() {
+    return fieldFinal;
+  }
+
+  public void setFieldFinal(boolean fieldFinal) {
+    this.fieldFinal = fieldFinal;
+  }
+
+  public Listable getFieldInitializer() {
+    return fieldInitializer;
+  }
+
+  public void setFieldInitializer(Listable fieldInitializer) {
+    this.fieldInitializer = fieldInitializer;
+  }
+}
