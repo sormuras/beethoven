@@ -53,6 +53,10 @@ public class MethodDeclaration extends ClassMember {
     getParameters().add(declaration);
   }
 
+  public void addStatement(Listable listable) {
+    bodyStatements.add(listing -> listable.apply(listing).add(';'));
+  }
+
   public void addStatement(String line) {
     bodyStatements.add(l -> l.add(line).add(';'));
   }
