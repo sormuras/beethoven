@@ -15,11 +15,6 @@
 package de.sormuras.beethoven.unit;
 
 import de.sormuras.beethoven.Annotation;
-import de.sormuras.beethoven.Listable;
-import de.sormuras.beethoven.Name;
-import de.sormuras.beethoven.type.Type;
-import de.sormuras.beethoven.type.VoidType;
-import java.util.Objects;
 import java.util.Spliterator;
 import javax.lang.model.element.Modifier;
 
@@ -56,45 +51,6 @@ public interface UnitTool {
     return declaration;
   }
 
-  static void addProperty(
-      ClassDeclaration declaration,
-      Type type,
-      String name,
-      boolean mutable,
-      boolean fluentSetterOrFinalField,
-      Listable fieldInitializer) {
-    // field
-    FieldDeclaration field = declaration.declareField(type, name);
-    field.setModifiers(Modifier.PRIVATE);
-    if (!mutable && fluentSetterOrFinalField) {
-      field.addModifiers(Modifier.FINAL);
-    }
-    if (fieldInitializer != null) {
-      field.setInitializer(fieldInitializer);
-    }
-    // uppercase first character
-    String property = name.substring(0, 1).toUpperCase() + name.substring(1);
-    // getter
-    MethodDeclaration getter = declaration.declareMethod(type, "get" + property);
-    getter.setModifiers(Modifier.PUBLIC);
-    getter.addStatement("return {{$}}", name);
-    // optional setter
-    if (mutable) {
-      Type returnType = fluentSetterOrFinalField ? declaration.toType() : VoidType.instance();
-      MethodDeclaration setter = declaration.declareMethod(returnType, "set" + property);
-      setter.setModifiers(Modifier.PUBLIC);
-      setter.addParameter(type, name);
-      // setter.addStatement("this.{{$}} = {{$}}", name, name);
-      Name requireNonNull = Name.reflect(Objects.class, "requireNonNull");
-      String message = "Property `" + name + "` requires non `null` values!";
-      setter.addStatement(
-          "this.{{$:0}} = {{N:1}}({{$:0}}, {{S:2}})", name, requireNonNull, message);
-      if (fluentSetterOrFinalField) {
-        setter.addStatement("return this");
-      }
-    }
-  }
-
   static MethodDeclaration addConstructor(ClassDeclaration declaration) {
     MethodDeclaration constructor = declaration.declareConstructor();
     constructor.setModifiers(Modifier.PUBLIC);
@@ -110,6 +66,7 @@ public interface UnitTool {
 
   static MethodDeclaration addToString(ClassDeclaration declaration) {
     MethodDeclaration method = declaration.declareMethod(String.class, "toString");
+    method.addAnnotation(Override.class);
     method.setModifiers(Modifier.PUBLIC);
     method.addStatement("StringBuilder builder = new StringBuilder()");
     method.addStatement("builder.append({{S}})", declaration.getName());

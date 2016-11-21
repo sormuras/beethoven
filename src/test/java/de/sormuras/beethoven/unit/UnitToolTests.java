@@ -14,16 +14,10 @@
 
 package de.sormuras.beethoven.unit;
 
-import static de.sormuras.beethoven.unit.UnitTool.addConstructor;
-import static de.sormuras.beethoven.unit.UnitTool.addProperty;
-import static de.sormuras.beethoven.unit.UnitTool.addToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Name;
-import de.sormuras.beethoven.Tests;
-import de.sormuras.beethoven.type.Type;
-import java.lang.Thread.State;
 import javax.lang.model.element.Modifier;
 import org.junit.jupiter.api.Test;
 
@@ -44,26 +38,5 @@ class UnitToolTests {
     over = UnitTool.override(base, true);
     over.setBody(new Block());
     assertEquals("@Reply(42)\n@Override\nObject method(String text) {\n}\n", over.list("\n"));
-  }
-
-  @Test
-  void properties() throws Exception {
-    CompilationUnit unit = new CompilationUnit();
-    unit.setPackageName("pool");
-    ClassDeclaration car = unit.declareClass("Car");
-    car.setModifiers(Modifier.PUBLIC);
-    addProperty(car, Type.type(String.class), "name", false, true, null);
-    addProperty(car, Type.type(Number.class), "gear", true, false, null);
-    addProperty(car, Type.type(State.class), "state", true, true, l -> l.add(Name.cast(State.NEW)));
-    addConstructor(car);
-    addToString(car);
-
-    Tests.assertEquals(getClass(), "properties", unit);
-    Class<?> carClass = unit.compile();
-    Object beetle =
-        carClass
-            .getConstructor(String.class, Number.class, State.class)
-            .newInstance("Beetle", 53, State.RUNNABLE);
-    assertEquals("Car[name=Beetle, gear=53, state=RUNNABLE]", beetle.toString());
   }
 }
