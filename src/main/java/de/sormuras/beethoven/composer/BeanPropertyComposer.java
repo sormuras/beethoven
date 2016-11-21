@@ -24,10 +24,10 @@ import de.sormuras.beethoven.unit.ClassDeclaration;
 import de.sormuras.beethoven.unit.FieldDeclaration;
 import de.sormuras.beethoven.unit.MethodDeclaration;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import javax.lang.model.element.Modifier;
 
-public class BeanPropertyComposer implements Consumer<ClassDeclaration> {
+public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
 
   private Type type = null;
   private String name = null;
@@ -37,7 +37,7 @@ public class BeanPropertyComposer implements Consumer<ClassDeclaration> {
   private Listable fieldInitializer = null;
 
   @Override
-  public void accept(ClassDeclaration declaration) {
+  public ClassDeclaration apply(ClassDeclaration declaration) {
     Type type = requireNonNull(getType(), "Bean property type must not be null!");
     String name = requireNonNull(getName(), "Bean property name must not be null!");
     // field
@@ -70,6 +70,7 @@ public class BeanPropertyComposer implements Consumer<ClassDeclaration> {
         setter.addStatement("return this");
       }
     }
+    return declaration;
   }
 
   public Type getType() {

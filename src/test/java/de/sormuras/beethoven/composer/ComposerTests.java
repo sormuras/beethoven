@@ -14,8 +14,6 @@
 
 package de.sormuras.beethoven.composer;
 
-import static de.sormuras.beethoven.unit.UnitTool.addConstructor;
-import static de.sormuras.beethoven.unit.UnitTool.addToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.sormuras.beethoven.Name;
@@ -26,7 +24,7 @@ import java.lang.Thread.State;
 import javax.lang.model.element.Modifier;
 import org.junit.jupiter.api.Test;
 
-class BeanPropertyComposerTests {
+class ComposerTests {
 
   @Test
   void properties() throws Exception {
@@ -39,16 +37,16 @@ class BeanPropertyComposerTests {
         .setName("name")
         .setSetterAvailable(false)
         .setFieldFinal(true)
-        .accept(car);
-    new BeanPropertyComposer().setType(Number.class).setName("gear").accept(car);
+        .apply(car);
+    new BeanPropertyComposer().setType(Number.class).setName("gear").apply(car);
     new BeanPropertyComposer()
         .setType(State.class)
         .setName("state")
         .setSetterReturnsThis(true)
         .setFieldInitializer(listing -> listing.add(Name.cast(State.NEW)))
-        .accept(car);
-    addConstructor(car);
-    addToString(car);
+        .apply(car);
+    new ConstructorComposer().apply(car);
+    new ToStringComposer().apply(car);
 
     Tests.assertEquals(getClass(), "properties", unit);
     Class<?> carClass = unit.compile();
