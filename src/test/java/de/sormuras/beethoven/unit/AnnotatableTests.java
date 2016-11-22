@@ -37,10 +37,12 @@ class AnnotatableTests {
     annotatable.addAnnotation(Deprecated.class);
     assertTrue(annotatable.isAnnotated());
     assertFalse(annotatable.isTagged());
+    assertFalse(annotatable.getTag("1").isPresent());
     annotatable.getTags();
     assertFalse(annotatable.isTagged());
     annotatable.getTags().put("1", "2");
     assertTrue(annotatable.isTagged());
+    assertTrue(annotatable.getTag("1").isPresent());
   }
 
   @TestFactory
@@ -57,6 +59,7 @@ class AnnotatableTests {
             new InterfaceDeclaration(),
             new MethodDeclaration(),
             new MethodParameter(),
+            new ModuleDeclaration(),
             new NormalClassDeclaration(),
             new PackageDeclaration(),
             new TypeParameter()

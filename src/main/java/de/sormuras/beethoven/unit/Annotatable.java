@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /** Default {@link Annotation}-collecting support. */
 public abstract class Annotatable extends Annotated {
@@ -64,6 +65,13 @@ public abstract class Annotatable extends Annotated {
 
   public boolean isTagged() {
     return tags != null && !tags.isEmpty();
+  }
+
+  public Optional<Object> getTag(Object key) {
+    if (tags == Collections.EMPTY_MAP) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(tags.get(key));
   }
 
   public Map<Object, Object> getTags() {
