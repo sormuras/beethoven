@@ -53,8 +53,8 @@ class HashCodeComposerTests {
   void xyz() throws Exception {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
-    // TODO unit.getImportDeclarations().addSingleTypeImport(Objects.class);
-    unit.getImportDeclarations().addSingleStaticImport(Name.reflect(Objects.class, "hash"));
+    unit.getImportDeclarations().addSingleTypeImport(Objects.class);
+    // unit.getImportDeclarations().addSingleStaticImport(Name.reflect(Objects.class, "hash"));
     ClassDeclaration xyz = unit.declareClass("Xyz");
     xyz.setModifiers(Modifier.PUBLIC);
     xyz.declareField(String.class, "x");

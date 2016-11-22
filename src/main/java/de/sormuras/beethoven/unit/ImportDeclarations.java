@@ -179,9 +179,15 @@ public class ImportDeclarations implements Listable {
     if (singleTypeImports.contains(name) || singleStaticImports.contains(name)) {
       return Style.LAST;
     }
-    // on demand static import match?
+    // check enclosing type
     if (name.isEnclosed()) {
-      if (onDemandStaticImports.contains(name.enclosing())) {
+      Name enclosing = name.enclosing();
+      // single type imported?
+      if (singleTypeImports.contains(enclosing)) {
+        return Style.SIMPLE;
+      }
+      // on demand static import match?
+      if (onDemandStaticImports.contains(enclosing)) {
         return Style.LAST;
       }
     }

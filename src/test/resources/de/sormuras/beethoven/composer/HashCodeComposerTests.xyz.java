@@ -1,6 +1,6 @@
 package test;
 
-import static java.util.Objects.hash;
+import java.util.Objects;
 
 public class Xyz {
 
@@ -12,6 +12,6 @@ public class Xyz {
 
   @Override
   public int hashCode() {
-    return hash(x, y, z);
+    return Objects.hash(x, y, z);
   }
 }
