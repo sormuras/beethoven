@@ -14,7 +14,6 @@
 
 package de.sormuras.beethoven.composer;
 
-import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.unit.ClassDeclaration;
 import de.sormuras.beethoven.unit.CompilationUnit;
@@ -54,7 +53,6 @@ class HashCodeComposerTests {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
     unit.getImportDeclarations().addSingleTypeImport(Objects.class);
-    // unit.getImportDeclarations().addSingleStaticImport(Name.reflect(Objects.class, "hash"));
     ClassDeclaration xyz = unit.declareClass("Xyz");
     xyz.setModifiers(Modifier.PUBLIC);
     xyz.declareField(String.class, "x");
