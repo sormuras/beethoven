@@ -54,7 +54,7 @@ class EnumDeclarationTests {
     declaration.declareField(int.class, "i");
     declaration.declareConstructor().addStatement("this(0)");
     MethodDeclaration ctor = declaration.declareConstructor();
-    ctor.addParameter(int.class, "i");
+    ctor.declareParameter(int.class, "i");
     ctor.addStatement("this.i = i");
     Tests.assertEquals(getClass(), "everything", declaration);
   }

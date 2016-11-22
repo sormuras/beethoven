@@ -29,7 +29,7 @@ public class ConstructorComposer implements Function<ClassDeclaration, MethodDec
         .getFields()
         .forEach(
             field -> {
-              constructor.addParameter(field.getType(), field.getName());
+              constructor.declareParameter(field.getType(), field.getName());
               constructor.addStatement("this.{{$:0}} = {{$:0}}", field.getName());
             });
     return constructor;

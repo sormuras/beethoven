@@ -40,12 +40,16 @@ public class MethodDeclaration extends ClassMember {
   private List<ReferenceType> throwables = new ArrayList<>();
   private List<TypeParameter> typeParameters = new ArrayList<>();
 
-  public void addParameter(Class<?> type, String name) {
-    addParameter(Type.type(type), name);
+  public MethodParameter declareParameter(Class<?> type, String name) {
+    return declareParameter(Type.type(type), name);
   }
 
-  public void addParameter(Type type, String name) {
-    addParameter(new MethodParameter().setType(type).setName(name));
+  public MethodParameter declareParameter(Type type, String name) {
+    MethodParameter parameter = new MethodParameter();
+    parameter.setType(type);
+    parameter.setName(name);
+    addParameter(parameter);
+    return parameter;
   }
 
   public void addParameter(MethodParameter declaration) {

@@ -28,11 +28,12 @@ public class ToStringComposer implements Function<ClassDeclaration, MethodDeclar
     MethodDeclaration method = declaration.declareMethod(String.class, "toString");
     method.addAnnotation(Override.class);
     method.setModifiers(Modifier.PUBLIC);
-    method.addStatement("StringBuilder builder = new StringBuilder()");
-    method.addStatement("builder.append({{S}})", declaration.getName());
     if (declaration.getFields().isEmpty()) {
+      method.addStatement("return super.toString()");
       return method;
     }
+    method.addStatement("StringBuilder builder = new StringBuilder()");
+    method.addStatement("builder.append({{S}})", declaration.getName());
     method.addStatement("builder.append('[')");
     String first = "builder.append({{S:0}}).append('=').append({{$:0}})";
     Spliterator<FieldDeclaration> fields = declaration.getFields().spliterator();

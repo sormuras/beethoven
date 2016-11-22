@@ -1,11 +1,14 @@
 package readme;
 
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.Modifier.STATIC;
+
+import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.unit.ClassDeclaration;
 import de.sormuras.beethoven.unit.CompilationUnit;
 import de.sormuras.beethoven.unit.MethodDeclaration;
 import de.sormuras.beethoven.unit.MethodParameter;
-import javax.lang.model.element.Modifier;
 
 public class HelloWorld {
 
@@ -15,20 +18,24 @@ public class HelloWorld {
     CompilationUnit unit = CompilationUnit.of("beethoven");
     unit.getImportDeclarations().addSingleStaticImport(out);
 
-    ClassDeclaration symphony = unit.declareClass("Symphony");
-    symphony.addModifier(Modifier.PUBLIC);
+    ClassDeclaration symphony = unit.declareClass("Symphony", PUBLIC);
+    MethodDeclaration main = symphony.declareMethod(void.class, "main", PUBLIC, STATIC);
+    MethodParameter strings = main.declareParameter(String[].class, "strings");
+    main.addStatement(
+        listing ->
+            listing
+                .add(out)
+                .add(".println(")
+                .add(Listable.escape("Symphony "))
+                .add(" + ")
+                .add(Name.name(String.class))
+                .add(".join(")
+                .add(Listable.escape(" - "))
+                .add(", ")
+                .add(strings.getName())
+                .add("))"));
 
-    MethodDeclaration main = symphony.declareMethod(void.class, "main");
-    main.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
-    main.addParameter(String[].class, "strings");
-    MethodParameter parameter = main.getParameters().get(0);
-    parameter.setVariable(true);
-    main.addStatement("{{N}}.println({{S}} + {{#getName}}[0])", out, "Symphony ", parameter);
-
-    System.out.println(unit.list());
-
-    Class<?> hello = unit.compile();
-    Object[] arguments = {new String[] {"no.9 - The Choral"}};
-    hello.getMethod("main", String[].class).invoke(null, arguments);
+    unit.list(System.out);
+    unit.launch("no.9", "The Choral");
   }
 }

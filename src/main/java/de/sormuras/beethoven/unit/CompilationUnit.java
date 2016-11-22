@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 
 /**
@@ -69,7 +70,7 @@ public class CompilationUnit implements DeclarationContainer {
   @SuppressWarnings("unchecked")
   public <T> T compile(Class<T> clazz, Object... args) {
     try {
-      return (T) compile().getDeclaredConstructors()[0].newInstance(args);
+      return clazz.cast(compile().getDeclaredConstructors()[0].newInstance(args));
     } catch (Exception exception) {
       throw new AssertionError("compiling or instantiating failed", exception);
     }
@@ -85,9 +86,19 @@ public class CompilationUnit implements DeclarationContainer {
     }
   }
 
+  /** Compile and invoke "public static void main(String[] args)". */
+  public void launch(String... args) {
+    try {
+      Object[] arguments = {args};
+      compile().getMethod("main", String[].class).invoke(null, arguments);
+    } catch (Exception cause) {
+      throw new RuntimeException("launching " + this + " failed!", cause);
+    }
+  }
+
   @Override
-  public <T extends TypeDeclaration> T declare(T declaration, String name) {
-    DeclarationContainer.super.declare(declaration, name);
+  public <T extends TypeDeclaration> T declare(T declaration, String name, Modifier... modifiers) {
+    DeclarationContainer.super.declare(declaration, name, modifiers);
     declaration.setEnclosingDeclaration(null);
     declaration.setCompilationUnit(this);
     return declaration;

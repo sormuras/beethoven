@@ -60,7 +60,7 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
       Type returnType = isSetterReturnsThis() ? declaration.toType() : VoidType.instance();
       MethodDeclaration setter = declaration.declareMethod(returnType, "set" + property);
       setter.setModifiers(Modifier.PUBLIC);
-      setter.addParameter(type, name);
+      setter.declareParameter(type, name);
       // setter.addStatement("this.{{$}} = {{$}}", name, name);
       Name requireNonNull = Name.reflect(Objects.class, "requireNonNull");
       String message = "Property `" + name + "` requires non `null` values!";

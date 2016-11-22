@@ -30,7 +30,7 @@ class UnitToolTests {
     base.addAnnotation(Annotation.annotation(Name.name("Reply"), 42));
     base.setReturnType(Object.class);
     base.setName("method");
-    base.addParameter(String.class, "text");
+    base.declareParameter(String.class, "text");
     MethodDeclaration over = UnitTool.override(base, false);
     over.addModifier(Modifier.DEFAULT);
     over.setBody(new Block());

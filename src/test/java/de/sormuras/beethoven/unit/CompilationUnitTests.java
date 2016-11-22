@@ -69,8 +69,8 @@ class CompilationUnitTests {
     enterprise.declareField(Number.class, "number").addModifier("private", "final");
     MethodDeclaration constructor = enterprise.declareConstructor();
     constructor.addModifier(Modifier.PUBLIC);
-    constructor.addParameter(String.class, "text");
-    constructor.addParameter(Number.class, "number");
+    constructor.declareParameter(String.class, "text");
+    constructor.declareParameter(Number.class, "number");
     constructor.addStatement("this.text = text");
     constructor.addStatement("this.number = number");
     MethodDeclaration getter = enterprise.declareMethod(String.class, "get");
@@ -236,7 +236,7 @@ class CompilationUnitTests {
     MethodDeclaration calc = simple.declareMethod(TypeVariable.variable("N"), "calc");
     calc.addModifier(Modifier.STATIC);
     calc.addTypeParameter(TypeParameter.of("N", Type.type(Number.class)));
-    calc.addParameter(int.class, "i");
+    calc.declareParameter(int.class, "i");
     calc.addThrows(Exception.class);
     calc.addStatement("return null");
 

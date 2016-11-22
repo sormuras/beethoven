@@ -23,6 +23,7 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.lang.model.element.Modifier;
 
 public abstract class TypeDeclaration extends ClassMember implements DeclarationContainer {
 
@@ -40,23 +41,26 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
   }
 
   @Override
-  public <T extends TypeDeclaration> T declare(T declaration, String name) {
-    DeclarationContainer.super.declare(declaration, name);
+  public <T extends TypeDeclaration> T declare(T declaration, String name, Modifier... modifiers) {
+    DeclarationContainer.super.declare(declaration, name, modifiers);
     declaration.setEnclosingDeclaration(this);
     declaration.setCompilationUnit(getCompilationUnit());
     return declaration;
   }
 
   /** Declare new method. */
-  public MethodDeclaration declareMethod(Class<?> type, String name) {
-    return declareMethod(Type.type(type), name);
+  public MethodDeclaration declareMethod(Class<?> type, String name, Modifier... modifiers) {
+    return declareMethod(Type.type(type), name, modifiers);
   }
 
   /** Declare new method. */
-  public MethodDeclaration declareMethod(Type type, String name) {
+  public MethodDeclaration declareMethod(Type type, String name, Modifier... modifiers) {
     MethodDeclaration declaration = new MethodDeclaration();
     declaration.setReturnType(type);
     declaration.setName(name);
+    if (modifiers.length > 0) {
+      declaration.setModifiers(modifiers);
+    }
     return declareMethod(declaration);
   }
 

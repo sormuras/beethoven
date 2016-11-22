@@ -21,21 +21,26 @@ Name out = Name.name(System.class, "out");
 CompilationUnit unit = CompilationUnit.of("beethoven");
 unit.getImportDeclarations().addSingleStaticImport(out);
 
-ClassDeclaration symphony = unit.declareClass("Symphony");
-symphony.addModifier(Modifier.PUBLIC);
+ClassDeclaration symphony = unit.declareClass("Symphony", PUBLIC);
+MethodDeclaration main = symphony.declareMethod(void.class, "main", PUBLIC, STATIC);
+MethodParameter strings = main.declareParameter(String[].class, "strings");
 
-MethodDeclaration main = symphony.declareMethod(void.class, "main");
-main.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
-main.addParameter(String[].class, "strings");
-MethodParameter parameter = main.getParameters().get(0);
-parameter.setVariable(true);
-main.addStatement("{{N}}.println({{S}} + {{#getName}}[0])", out, "Symphony ", parameter);
+main.addStatement(
+    listing ->
+        listing
+            .add(out)
+            .add(".println(")
+            .add(Listable.escape("Symphony "))
+            .add(" + ")
+            .add(Name.name(String.class))
+            .add(".join(")
+            .add(Listable.escape(" - "))
+            .add(", ")
+            .add(strings.getName())
+            .add("))"));
 
-System.out.println(unit.list());
-
-Class<?> hello = unit.compile();
-Object[] arguments = {new String[] {"no.9 - The Choral"}};
-hello.getMethod("main", String[].class).invoke(null, arguments);
+unit.list(System.out);
+unit.launch("no.9", "The Choral");
 ```
 
 

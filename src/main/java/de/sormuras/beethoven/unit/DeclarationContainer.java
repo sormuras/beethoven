@@ -17,6 +17,7 @@ package de.sormuras.beethoven.unit;
 import de.sormuras.beethoven.Listable;
 import java.util.List;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Modifier;
 
 public interface DeclarationContainer extends Listable {
 
@@ -31,9 +32,12 @@ public interface DeclarationContainer extends Listable {
   }
 
   /** Declare type as nested child. */
-  default <T extends TypeDeclaration> T declare(T declaration, String name) {
+  default <T extends TypeDeclaration> T declare(T declaration, String name, Modifier... modifiers) {
     assertValidNestedDeclarationName(name);
     declaration.setName(name);
+    if (modifiers.length > 0) {
+      declaration.setModifiers(modifiers);
+    }
     getDeclarations().add(declaration);
     return declaration;
   }
@@ -44,8 +48,8 @@ public interface DeclarationContainer extends Listable {
   }
 
   /** Declare normal class as nested child. */
-  default NormalClassDeclaration declareClass(String name) {
-    return declare(new NormalClassDeclaration(), name);
+  default NormalClassDeclaration declareClass(String name, Modifier... modifiers) {
+    return declare(new NormalClassDeclaration(), name, modifiers);
   }
 
   /** Declare enum as nested child. */

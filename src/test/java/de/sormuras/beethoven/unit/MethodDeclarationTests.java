@@ -79,7 +79,7 @@ class MethodDeclarationTests {
     runnable.addAnnotation(Override.class);
     runnable.addModifier("public");
     runnable.setName("run");
-    runnable.addParameter(getClass(), "this");
+    runnable.declareParameter(getClass(), "this");
     runnable.addThrows(RuntimeException.class);
     runnable.addThrows(TypeVariable.variable("X"));
     runnable.addStatement("System.out.println({{S}})", "Running!");
@@ -96,7 +96,7 @@ class MethodDeclarationTests {
   void varArgs() {
     MethodDeclaration var = new MethodDeclaration();
     var.setName("var");
-    var.addParameter(Type.type(int[].class), "numbers");
+    var.declareParameter(Type.type(int[].class), "numbers");
     assertEquals(false, var.isVarArgs());
     assertEquals("void var(int[] numbers);\n", var.list("\n"));
     var.setVarArgs(true);
@@ -118,7 +118,7 @@ class MethodDeclarationTests {
   void callWithSingleArgument() {
     MethodDeclaration method = new MethodDeclaration();
     method.setName("singleArg");
-    method.addParameter(int.class, "value");
+    method.declareParameter(int.class, "value");
     assertEquals("singleArg(value)", method.applyCall(new Listing()).toString());
   }
 
@@ -126,9 +126,9 @@ class MethodDeclarationTests {
   void callWithManyArguments() {
     MethodDeclaration method = new MethodDeclaration();
     method.setName("manyArgs");
-    method.addParameter(int.class, "a1");
-    method.addParameter(byte.class, "a2");
-    method.addParameter(short.class, "a3");
+    method.declareParameter(int.class, "a1");
+    method.declareParameter(byte.class, "a2");
+    method.declareParameter(short.class, "a3");
     assertEquals("manyArgs(a1, a2, a3)", method.applyCall(new Listing()).toString());
   }
 }

@@ -14,6 +14,7 @@
 
 package de.sormuras.beethoven;
 
+import java.io.PrintStream;
 import java.util.function.UnaryOperator;
 
 /**
@@ -141,6 +142,10 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
 
   default String list() {
     return list(new Listing());
+  }
+
+  default void list(PrintStream stream) {
+    stream.println(list());
   }
 
   default String list(String lineSeparator) {
