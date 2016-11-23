@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.function.UnaryOperator;
 import javax.lang.model.element.Modifier;
 
-public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
+public class PropertyComposer implements UnaryOperator<ClassDeclaration> {
 
   private Type type = null;
   private String name = null;
@@ -38,8 +38,8 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
 
   @Override
   public ClassDeclaration apply(ClassDeclaration declaration) {
-    Type type = requireNonNull(getType(), "Bean property type must not be null!");
-    String name = requireNonNull(getName(), "Bean property name must not be null!");
+    Type type = requireNonNull(getType(), "Property type must not be null!");
+    String name = requireNonNull(getName(), "Property name must not be null!");
     // field
     FieldDeclaration field = declaration.declareField(type, name);
     field.setModifiers(Modifier.PRIVATE);
@@ -77,12 +77,12 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
     return type;
   }
 
-  public BeanPropertyComposer setType(java.lang.reflect.Type type) {
+  public PropertyComposer setType(java.lang.reflect.Type type) {
     this.type = Type.type(type);
     return this;
   }
 
-  public BeanPropertyComposer setType(Type type) {
+  public PropertyComposer setType(Type type) {
     this.type = type;
     return this;
   }
@@ -91,7 +91,7 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
     return name;
   }
 
-  public BeanPropertyComposer setName(String name) {
+  public PropertyComposer setName(String name) {
     this.name = name;
     return this;
   }
@@ -100,7 +100,7 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
     return setterAvailable;
   }
 
-  public BeanPropertyComposer setSetterAvailable(boolean setterAvailable) {
+  public PropertyComposer setSetterAvailable(boolean setterAvailable) {
     this.setterAvailable = setterAvailable;
     return this;
   }
@@ -109,7 +109,7 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
     return setterReturnsThis;
   }
 
-  public BeanPropertyComposer setSetterReturnsThis(boolean setterReturnsThis) {
+  public PropertyComposer setSetterReturnsThis(boolean setterReturnsThis) {
     this.setterReturnsThis = setterReturnsThis;
     return this;
   }
@@ -118,7 +118,7 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
     return fieldFinal;
   }
 
-  public BeanPropertyComposer setFieldFinal(boolean fieldFinal) {
+  public PropertyComposer setFieldFinal(boolean fieldFinal) {
     this.fieldFinal = fieldFinal;
     return this;
   }
@@ -127,7 +127,7 @@ public class BeanPropertyComposer implements UnaryOperator<ClassDeclaration> {
     return fieldInitializer;
   }
 
-  public BeanPropertyComposer setFieldInitializer(Listable fieldInitializer) {
+  public PropertyComposer setFieldInitializer(Listable fieldInitializer) {
     this.fieldInitializer = fieldInitializer;
     return this;
   }

@@ -32,14 +32,14 @@ class ComposerTests {
     unit.setPackageName("pool");
     ClassDeclaration car = unit.declareClass("Car");
     car.setModifiers(Modifier.PUBLIC);
-    new BeanPropertyComposer()
+    new PropertyComposer()
         .setType(String.class)
         .setName("name")
         .setSetterAvailable(false)
         .setFieldFinal(true)
         .apply(car);
-    new BeanPropertyComposer().setType(Number.class).setName("gear").apply(car);
-    new BeanPropertyComposer()
+    new PropertyComposer().setType(Number.class).setName("gear").apply(car);
+    new PropertyComposer()
         .setType(State.class)
         .setName("state")
         .setSetterReturnsThis(true)
