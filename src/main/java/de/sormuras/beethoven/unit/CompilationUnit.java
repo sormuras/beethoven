@@ -35,8 +35,6 @@ import javax.tools.JavaFileObject;
  *   [ModuleDeclaration]
  * </pre>
  *
- * TODO ModuleDeclaration http://openjdk.java.net/projects/jigsaw/doc/lang-vm.html#jigsaw-1.3.2
- *
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html#jls-7.3">JLS 7.3</a>
  */
 public class CompilationUnit implements DeclarationContainer {

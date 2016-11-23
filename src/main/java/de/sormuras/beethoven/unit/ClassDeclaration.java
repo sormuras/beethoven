@@ -45,9 +45,7 @@ public abstract class ClassDeclaration extends TypeDeclaration {
   public Listing applyClassBody(Listing listing) {
     listing.add(' ').add('{').newline();
     listing.indent(1);
-    // TODO listing.push(getName());
     applyClassBodyElements(listing);
-    // TODO listing.pop();
     listing.indent(-1);
     listing.add('}').newline();
     return listing;

@@ -41,13 +41,11 @@ public class AnnotationDeclaration extends TypeDeclaration {
     listing.add("@interface").add(' ').add(getName());
     listing.add(' ').add('{').newline();
     listing.indent(1);
-    // TODO listing.push(getName());
     if (!isDeclarationsEmpty()) {
       getDeclarations().forEach(listing::add);
     }
     getConstants().forEach(listing::add);
     getElements().forEach(listing::add);
-    // TODO listing.pop();
     listing.indent(-1).add('}').newline();
     return listing;
   }

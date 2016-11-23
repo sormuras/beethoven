@@ -208,7 +208,7 @@ public abstract class Type extends Annotated {
           type = (javax.lang.model.type.DeclaredType) enclosing;
           continue;
         }
-        // TODO Why is the following block needed?
+        // TODO why is the following block needed?
         // expected: "java.util.Map.Entry<A, B>"
         // actual:   "java.util.Entry<A, B>"
         for (Element element = type.asElement().getEnclosingElement();
