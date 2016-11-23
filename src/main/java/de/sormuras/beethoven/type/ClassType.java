@@ -176,6 +176,7 @@ public class ClassType extends ReferenceType {
 
   @Override
   public Listing apply(Listing listing) {
+    listing.getCollectedNames().add(name);
     Style style = listing.getStyling().apply(getName());
     if (style == Style.LAST) {
       return listing.add(getLastSimple());

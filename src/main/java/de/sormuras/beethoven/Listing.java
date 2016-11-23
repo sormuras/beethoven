@@ -20,11 +20,14 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Spliterator;
+import java.util.TreeSet;
 
 public class Listing {
 
   private final Deque<String> collectedLines = new ArrayDeque<>(512);
+  private final Set<Name> collectedNames = new TreeSet<>();
   private int currentIndentationDepth = 0;
   private final StringBuilder currentLine = new StringBuilder(256);
   private final String[] indentationLookupTable = new String[23];
@@ -131,6 +134,10 @@ public class Listing {
 
   public Listing fmt(String format, Object... args) {
     return add(args.length == 0 ? format : String.format(format, args));
+  }
+
+  public Set<Name> getCollectedNames() {
+    return collectedNames;
   }
 
   public Deque<String> getCollectedLines() {

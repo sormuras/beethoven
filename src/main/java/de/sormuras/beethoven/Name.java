@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
@@ -163,6 +164,7 @@ public class Name implements Listable {
   public static Name name(int packageLevel, List<String> names) {
     assert packageLevel >= 0 : "Package level must not be < 0, but is " + packageLevel;
     assert packageLevel <= names.size() : "Package level " + packageLevel + " too high: " + names;
+    assert names.stream().allMatch(Objects::nonNull) : "Null-name in " + names;
     assert names.stream().allMatch(SourceVersion::isName) : "Non-name in " + names;
     return new Name(packageLevel, names);
   }
@@ -231,6 +233,7 @@ public class Name implements Listable {
 
   /** Add name respecting name mode styling result. */
   public Listing apply(Listing listing) {
+    listing.getCollectedNames().add(this);
     Style style = listing.getStyling().apply(this);
     if (style == Style.LAST) {
       return listing.add(lastName());

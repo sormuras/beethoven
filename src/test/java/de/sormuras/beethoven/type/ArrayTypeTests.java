@@ -15,8 +15,12 @@
 package de.sormuras.beethoven.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.Annotation;
+import de.sormuras.beethoven.Listing;
+import de.sormuras.beethoven.Name;
+
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -38,5 +42,12 @@ class ArrayTypeTests {
     };
     ArrayType actual = ArrayType.array(Type.type(byte.class), List.of(dimensions));
     assertEquals("byte@A []@B @C []@D []", actual.list());
+  }
+
+  @Test
+  void arrayComponentTypeNameIsCollected() {
+    Listing listing = new Listing();
+    listing.add(Type.type(Byte[][][].class));
+    assertTrue(listing.getCollectedNames().contains(Name.name(Byte.class)));
   }
 }

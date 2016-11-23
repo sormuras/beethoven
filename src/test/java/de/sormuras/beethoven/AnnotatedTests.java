@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import de.sormuras.beethoven.type.ArrayType;
 import de.sormuras.beethoven.type.ClassType;
-import de.sormuras.beethoven.type.PrimitiveType;
+import de.sormuras.beethoven.type.PrimitiveType.Primitive;
 import de.sormuras.beethoven.type.TypeVariable;
 import de.sormuras.beethoven.type.VoidType;
 import de.sormuras.beethoven.type.WildcardType;
@@ -55,9 +55,8 @@ class AnnotatedTests {
 
   @TestFactory
   Stream<DynamicTest> primitives() {
-    List<PrimitiveType.Primitive> primitives = List.of(PrimitiveType.Primitive.values());
-    return DynamicTest.stream(
-        primitives.iterator(), PrimitiveType.Primitive::name, p -> test(p::build));
+    List<Primitive> primitives = List.of(Primitive.values());
+    return DynamicTest.stream(primitives.iterator(), Primitive::name, p -> test(p::build));
   }
 
   @TestFactory
@@ -73,6 +72,6 @@ class AnnotatedTests {
         dynamicTest("PackageDeclaration", () -> test(PackageDeclaration::new)),
         dynamicTest("ConstantDeclaration", () -> test(ConstantDeclaration::new)),
         dynamicTest("AnnotationElement", () -> test(AnnotationElement::new)),
-        dynamicTest("PackageDeclaration", () -> test(AnnotationDeclaration::new)));
+        dynamicTest("AnnotationDeclaration", () -> test(AnnotationDeclaration::new)));
   }
 }

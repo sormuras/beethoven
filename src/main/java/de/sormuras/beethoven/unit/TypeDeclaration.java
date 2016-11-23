@@ -106,8 +106,9 @@ public abstract class TypeDeclaration extends ClassMember implements Declaration
   /** Return simple {@link Name} representation of this type declaration. */
   public Name toName() {
     List<String> identifiers = new ArrayList<>();
-    if (getCompilationUnit() != null) {
-      addAll(identifiers, Name.DOT.split(getCompilationUnit().getPackageName()));
+    CompilationUnit unit = getCompilationUnit();
+    if (unit != null && !unit.getPackageDeclaration().isUnnamed()) {
+      addAll(identifiers, Name.DOT.split(unit.getPackageName()));
     }
     int packageLevel = identifiers.size();
     for (NamedMember member = this; member != null; member = member.getEnclosingDeclaration()) {

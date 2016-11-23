@@ -148,6 +148,11 @@ public class CompilationUnit implements DeclarationContainer {
   }
 
   @Override
+  public String list(String lineSeparator) {
+    return list(new Listing("  ", lineSeparator, this::style));
+  }
+
+  @Override
   public boolean isEmpty() {
     return getDeclarations().isEmpty()
         && getPackageDeclaration().isEmpty()

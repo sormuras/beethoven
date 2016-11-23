@@ -37,6 +37,7 @@ public class EnumDeclaration extends ClassDeclaration {
     applyAnnotations(listing);
     applyModifiers(listing);
     // enum Identifier
+    listing.getCollectedNames().add(toName());
     listing.add("enum").add(' ').add(getName());
     // [Superinterfaces]
     if (!isInterfacesEmpty()) {

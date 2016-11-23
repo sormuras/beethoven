@@ -51,6 +51,7 @@ public class InterfaceDeclaration extends TypeDeclaration {
     applyAnnotations(listing);
     applyModifiers(listing);
     // interface Identifier
+    listing.getCollectedNames().add(toName());
     listing.add("interface").add(' ').add(getName());
     // [TypeParameters]
     if (!getTypeParameters().isEmpty()) {

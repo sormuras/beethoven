@@ -19,7 +19,7 @@ public abstract class NamedMember extends Annotatable {
 
   private CompilationUnit compilationUnit = null;
   private TypeDeclaration enclosing = null;
-  private String name = null;
+  private String name = "DefaultName";
 
   public CompilationUnit getCompilationUnit() {
     return compilationUnit;

@@ -38,6 +38,7 @@ public class AnnotationDeclaration extends TypeDeclaration {
     listing.newline();
     applyAnnotations(listing);
     applyModifiers(listing);
+    listing.getCollectedNames().add(toName());
     listing.add("@interface").add(' ').add(getName());
     listing.add(' ').add('{').newline();
     listing.indent(1);
