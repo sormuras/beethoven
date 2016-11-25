@@ -28,12 +28,17 @@ import de.sormuras.beethoven.Generated;
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Tests;
+import de.sormuras.beethoven.composer.ImportsComposer;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.TypeVariable;
 import de.sormuras.beethoven.type.WildcardType;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -266,5 +271,54 @@ class CompilationUnitTests {
     call.setBody(body);
     unit.compile();
     Tests.assertEquals(getClass(), "imports", unit.list());
+  }
+
+  @Test
+  void launch() throws IOException {
+    Name out = Name.name(System.class, "out");
+
+    Path tempFilePath = Files.createTempFile("beethoven-launch-", ".java");
+
+    CompilationUnit unit = CompilationUnit.of("unit");
+    unit.getImportDeclarations().addSingleStaticImport(out);
+
+    ClassDeclaration symphony = unit.declareClass("Launch", Modifier.PUBLIC);
+    MethodDeclaration main =
+        symphony.declareMethod(void.class, "main", Modifier.PUBLIC, Modifier.STATIC);
+    main.addThrows(IOException.class);
+    MethodParameter args = main.declareParameter(String[].class, "args");
+    main.addStatement(
+        listing ->
+            listing
+                .add(Name.name(Files.class))
+                .add(".write(")
+                .add(Name.name(Paths.class))
+                .add(".get(")
+                .add(args.getName())
+                .add("[0])")
+                .add(", ")
+                .add(Name.name(String.class))
+                .add(".join(")
+                .add(Listable.escape("\n"))
+                .add(", ")
+                .add(args.getName())
+                .add(").getBytes()")
+                .add(")"));
+
+    new ImportsComposer().apply(unit);
+    String listed = unit.list(System.lineSeparator());
+    Tests.assertEquals(getClass(), "launch", listed);
+
+    unit.launch(tempFilePath.toString(), "Second,", "Third line.");
+    List<String> lines = Files.readAllLines(tempFilePath);
+    assertEquals(tempFilePath.toString(), lines.get(0));
+    assertEquals("Second,", lines.get(1));
+    assertEquals("Third line.", lines.get(2));
+  }
+
+  @Test
+  void launchWithoutMainMethodFails() throws IOException {
+    Exception exception = assertThrows(Exception.class, () -> Units.abc().launch());
+    assertEquals(NoSuchMethodException.class, exception.getCause().getClass());
   }
 }
