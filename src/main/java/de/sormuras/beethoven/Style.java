@@ -71,15 +71,15 @@ public enum Style {
    * automatically imports all of the public types declared in the predefined package {@code
    * java.lang}.
    *
-   * @return {@link #SIMPLE} if the package names match or of the name points to a type declared in
+   * @return {@link #SIMPLE} if package names match or the name points to a type declared in
    *     {@code java.lang} package. Else, {@link #CANONICAL} is returned.
    * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-7.html">JLS 7</a>
    */
   public static Style auto(String contextPackageName, Name name) {
     if (name.packageName().equals(contextPackageName)) {
-      return Style.SIMPLE;
+      return SIMPLE;
     }
-    return name.isJavaLangPackage() ? Style.SIMPLE : Style.CANONICAL;
+    return name.isJavaLangPackage() ? SIMPLE : CANONICAL;
   }
 
   /** Return this style for all names. */

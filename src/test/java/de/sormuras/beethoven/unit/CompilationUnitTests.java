@@ -26,9 +26,7 @@ import de.sormuras.beethoven.Compilation;
 import de.sormuras.beethoven.Counter;
 import de.sormuras.beethoven.Generated;
 import de.sormuras.beethoven.Listable;
-import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
-import de.sormuras.beethoven.Style;
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
@@ -245,9 +243,6 @@ class CompilationUnitTests {
     assertSame(simple, i.getEnclosingDeclaration());
     Tests.assertEquals(getClass(), "crazy", unit);
     // Tests.assertSerializable(unit);
-    Listing listing = new Listing("  ", "\n", Style.CANONICAL.styling());
-    unit.list(listing);
-    // listing.getCollectedNames().forEach(System.out::println);
   }
 
   @Test
