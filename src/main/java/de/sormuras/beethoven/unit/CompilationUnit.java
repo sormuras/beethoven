@@ -20,7 +20,10 @@ import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Style;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.lang.model.element.Modifier;
@@ -48,6 +51,7 @@ public class CompilationUnit implements DeclarationContainer {
   private List<TypeDeclaration> declarations = new ArrayList<>();
   private ImportDeclarations importDeclarations = new ImportDeclarations();
   private PackageDeclaration packageDeclaration = new PackageDeclaration();
+  private Map<Name, Style> nameStyleMap = Collections.emptyMap();
 
   @Override
   public Listing apply(Listing listing) {
@@ -159,12 +163,19 @@ public class CompilationUnit implements DeclarationContainer {
         && getImportDeclarations().isEmpty();
   }
 
+  public void setNameStyleMap(Map<Name, Style> map) {
+    this.nameStyleMap = Objects.requireNonNull(map, "name-to-style map must be null");
+  }
+
   public void setPackageName(String packageName) {
     List<String> names = List.of(Name.DOT.split(packageName));
     getPackageDeclaration().setName(Name.name(names.size(), names));
   }
 
   public Style style(Name name) {
+    if (nameStyleMap != Collections.EMPTY_MAP) {
+      return nameStyleMap.getOrDefault(name, Style.CANONICAL);
+    }
     Style style = getImportDeclarations().style(name);
     if (style == Style.CANONICAL) {
       style = Style.auto(getPackageName(), name);

@@ -42,7 +42,6 @@ public class NormalClassDeclaration extends ClassDeclaration {
     }
     applyAnnotations(listing);
     applyModifiers(listing);
-    listing.getCollectedNames().add(toName());
     listing.add("class").add(' ').add(getName());
     // [TypeParameters]
     if (!isTypeParametersEmpty()) {
