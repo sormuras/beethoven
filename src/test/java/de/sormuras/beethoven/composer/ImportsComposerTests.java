@@ -23,7 +23,6 @@ import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.unit.ClassDeclaration;
 import de.sormuras.beethoven.unit.CompilationUnit;
 import de.sormuras.beethoven.unit.NormalClassDeclaration;
-import java.time.Instant;
 import javax.lang.model.element.Modifier;
 import org.junit.jupiter.api.Test;
 
@@ -71,9 +70,11 @@ class ImportsComposerTests {
   void instantAndNumberFields() throws Exception {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
+    unit.getImportDeclarations().addSingleTypeImport(java.time.Instant.class);
+    unit.getImportDeclarations().addSingleTypeImport(java.util.Date.class);
     NormalClassDeclaration empty = unit.declareClass("Fields");
     empty.setModifiers(Modifier.PUBLIC);
-    empty.declareField(Instant.class, "timeInstant");
+    empty.declareField(java.time.Instant.class, "timeInstant");
     empty.declareField(ClassType.type(Name.name("test", "Instant")), "testInstant");
     empty.declareField(Number.class, "langNumber");
     empty.declareField(ClassType.type(Name.name("test", "Number")), "testNumber");

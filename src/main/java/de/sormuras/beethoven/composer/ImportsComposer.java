@@ -18,6 +18,7 @@ import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Style;
 import de.sormuras.beethoven.unit.CompilationUnit;
+import de.sormuras.beethoven.unit.ImportDeclarations;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,8 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
     Listing listing = new Listing("  ", "\n", Style.CANONICAL.styling());
     unit.list(listing);
 
+    ImportDeclarations imports = unit.getImportDeclarations();
+    Set<Name> alreadyImportedNames = new TreeSet<>(imports.getSingleTypeImports());
     Set<String> simpleNames = new TreeSet<>();
     Map<Name, Style> map = new LinkedHashMap<>();
 
@@ -42,14 +45,20 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
       }
       simpleNames.add(simpleName);
       map.put(name, Style.SIMPLE);
+      if (alreadyImportedNames.contains(name)) {
+        continue;
+      }
       if (name.isJavaLangPackage()) {
         continue;
       }
       if (name.packageName().equals(unit.getPackageName())) {
         continue;
       }
-      unit.getImportDeclarations().addSingleTypeImport(name);
+      imports.addSingleTypeImport(name);
     }
+
+    // remove unused imports -- i.e. remove all not mapped ones.
+    imports.getSingleTypeImports().retainAll(map.keySet());
 
     unit.setNameStyleMap(map);
     return unit;

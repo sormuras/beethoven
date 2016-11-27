@@ -166,12 +166,28 @@ public class ImportDeclarations implements Listable {
     return listing;
   }
 
+  public Set<Name> getSingleTypeImports() {
+    return singleTypeImports;
+  }
+
+  public Set<Name> getOnDemandTypeImports() {
+    return onDemandTypeImports;
+  }
+
+  public Set<Name> getSingleStaticImports() {
+    return singleStaticImports;
+  }
+
+  public Set<Name> getOnDemandStaticImports() {
+    return onDemandStaticImports;
+  }
+
   @Override
   public boolean isEmpty() {
-    return singleTypeImports.isEmpty()
-        && onDemandTypeImports.isEmpty()
-        && singleStaticImports.isEmpty()
-        && onDemandStaticImports.isEmpty();
+    return getSingleTypeImports().isEmpty()
+        && getOnDemandTypeImports().isEmpty()
+        && getSingleStaticImports().isEmpty()
+        && getOnDemandStaticImports().isEmpty();
   }
 
   public Style style(Name name) {
