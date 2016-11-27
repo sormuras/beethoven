@@ -27,6 +27,17 @@ import java.util.function.UnaryOperator;
 
 public class ImportsComposer implements UnaryOperator<CompilationUnit> {
 
+  private boolean removeUnused = true;
+
+  public boolean isRemoveUnused() {
+    return removeUnused;
+  }
+
+  public ImportsComposer setRemoveUnused(boolean removeUnused) {
+    this.removeUnused = removeUnused;
+    return this;
+  }
+
   @Override
   public CompilationUnit apply(CompilationUnit unit) {
     Listing listing = new Listing("  ", "\n", Style.CANONICAL.styling());
@@ -58,7 +69,9 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
     }
 
     // remove unused imports -- i.e. remove all not mapped ones.
-    imports.getSingleTypeImports().retainAll(map.keySet());
+    if (isRemoveUnused()) {
+      imports.getSingleTypeImports().retainAll(map.keySet());
+    }
 
     unit.setNameStyleMap(map);
     return unit;

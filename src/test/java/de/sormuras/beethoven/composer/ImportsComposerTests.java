@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 class ImportsComposerTests {
 
   @Test
-  void empty() throws Exception {
+  void empty() {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
     ClassDeclaration empty = unit.declareClass("Empty");
@@ -41,7 +41,7 @@ class ImportsComposerTests {
   }
 
   @Test
-  void extendsObject() throws Exception {
+  void extendsObject() {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
     NormalClassDeclaration empty = unit.declareClass("ExtendsObject");
@@ -54,7 +54,7 @@ class ImportsComposerTests {
   }
 
   @Test
-  void extendsTypeInSamePackage() throws Exception {
+  void extendsTypeInSamePackage() {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
     NormalClassDeclaration empty = unit.declareClass("ExtendsTypeInSamePackage");
@@ -67,7 +67,7 @@ class ImportsComposerTests {
   }
 
   @Test
-  void instantAndNumberFields() throws Exception {
+  void instantAndNumberFields() {
     CompilationUnit unit = new CompilationUnit();
     unit.setPackageName("test");
     unit.getImportDeclarations().addSingleTypeImport(java.time.Instant.class);
@@ -83,5 +83,28 @@ class ImportsComposerTests {
     String actual = unit.list();
     assertNotEquals(expected, actual);
     Tests.assertEquals(getClass(), "instantAndNumberFields", unit);
+  }
+
+  @Test
+  void unused() {
+    CompilationUnit unit = new CompilationUnit();
+    unit.setPackageName("test");
+    unit.getImportDeclarations().addSingleTypeImport(java.time.Instant.class);
+    unit.getImportDeclarations().addSingleTypeImport(java.util.Date.class);
+    unit.declareInterface("Unused");
+    // first, keep user-declared imports
+    new ImportsComposer().setRemoveUnused(false).apply(unit);
+    assertEquals(
+        "package test;\n"
+            + "\n"
+            + "import java.time.Instant;\n"
+            + "import java.util.Date;\n"
+            + "\n"
+            + "interface Unused {\n"
+            + "}\n",
+        unit.list("\n"));
+    // now, remove unused imports
+    new ImportsComposer().setRemoveUnused(true).apply(unit);
+    assertEquals("package test;\n\ninterface Unused {\n}\n", unit.list("\n"));
   }
 }
