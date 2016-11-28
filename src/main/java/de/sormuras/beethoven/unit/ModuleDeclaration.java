@@ -87,47 +87,27 @@ public class ModuleDeclaration extends Annotatable {
     }
     listing.add("module").add(' ').add(getName()).add(' ').add('{').newline();
     listing.indent(1);
-    boolean newlineNeeded = false;
-    // "requires" statements...
-    if (!requires.isEmpty()) {
-      requires.forEach(listing::add);
-      newlineNeeded = true;
-    }
-    // "exports" statements...
-    if (!exports.isEmpty()) {
-      if (newlineNeeded) {
-        listing.newline();
-      }
-      exports.forEach(listing::add);
-      newlineNeeded = true;
-    }
+    boolean newlineNeeded = apply(listing, requires, false);
+    newlineNeeded = apply(listing, exports, newlineNeeded);
     if (!isOpen()) {
-      // "opens" statements...
-      if (!opens.isEmpty()) {
-        if (newlineNeeded) {
-          listing.newline();
-        }
-        opens.forEach(listing::add);
-        newlineNeeded = true;
-      }
+      newlineNeeded = apply(listing, opens, newlineNeeded);
     }
-    // "uses" statements...
-    if (!uses.isEmpty()) {
-      if (newlineNeeded) {
-        listing.newline();
-      }
-      uses.forEach(listing::add);
-      newlineNeeded = true;
-    }
-    // "provides" statements...
-    if (!provides.isEmpty()) {
-      if (newlineNeeded) {
-        listing.newline();
-      }
-      provides.forEach(listing::add);
-    }
+    newlineNeeded = apply(listing, uses, newlineNeeded);
+    apply(listing, provides, newlineNeeded);
+
     listing.indent(-1).add('}').newline();
     return listing;
+  }
+
+  private boolean apply(Listing listing, List<Listable> listables, boolean needsNewline) {
+    if (listables.isEmpty()) {
+      return false;
+    }
+    if (needsNewline) {
+      listing.newline();
+    }
+    listables.forEach(listing::add);
+    return true;
   }
 
   @Override
