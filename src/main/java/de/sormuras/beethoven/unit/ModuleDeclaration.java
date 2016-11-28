@@ -25,6 +25,7 @@ import de.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Java module declaration.
@@ -87,27 +88,17 @@ public class ModuleDeclaration extends Annotatable {
     }
     listing.add("module").add(' ').add(getName()).add(' ').add('{').newline();
     listing.indent(1);
-    boolean newlineNeeded = apply(listing, requires, false);
-    newlineNeeded = apply(listing, exports, newlineNeeded);
+    AtomicBoolean needsNewline = new AtomicBoolean(false);
+    listing.addAll(requires, needsNewline);
+    listing.addAll(exports, needsNewline);
     if (!isOpen()) {
-      newlineNeeded = apply(listing, opens, newlineNeeded);
+      listing.addAll(opens, needsNewline);
     }
-    newlineNeeded = apply(listing, uses, newlineNeeded);
-    apply(listing, provides, newlineNeeded);
+    listing.addAll(uses, needsNewline);
+    listing.addAll(provides, needsNewline);
 
     listing.indent(-1).add('}').newline();
     return listing;
-  }
-
-  private boolean apply(Listing listing, List<Listable> listables, boolean needsNewline) {
-    if (listables.isEmpty()) {
-      return false;
-    }
-    if (needsNewline) {
-      listing.newline();
-    }
-    listables.forEach(listing::add);
-    return true;
   }
 
   @Override
@@ -193,6 +184,6 @@ public class ModuleDeclaration extends Annotatable {
   }
 
   public void compile() throws Exception {
-    ClassLoader loader = Compilation.compile(Compilation.source("/module-info.java", list()));
+    Compilation.compile(Compilation.source("/module-info.java", list()));
   }
 }

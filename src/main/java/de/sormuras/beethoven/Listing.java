@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Listing {
 
@@ -104,6 +105,18 @@ public class Listing {
     Spliterator<? extends Listable> spliterator = listables.spliterator();
     spliterator.tryAdvance(this::add);
     spliterator.forEachRemaining(listable -> separator.apply(this).add(listable));
+    return this;
+  }
+
+  public Listing addAll(List<? extends Listable> listables, AtomicBoolean needsNewline) {
+    if (listables.isEmpty()) {
+      return this;
+    }
+    if (needsNewline.get()) {
+      newline();
+    }
+    listables.forEach(this::add);
+    needsNewline.set(true);
     return this;
   }
 
