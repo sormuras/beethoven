@@ -77,7 +77,11 @@ public class ModuleDeclaration extends Annotatable {
 
   @Override
   public boolean isEmpty() {
-    return requires.isEmpty();
+    return requires.isEmpty()
+        && exports.isEmpty()
+        && opens.isEmpty()
+        && uses.isEmpty()
+        && provides.isEmpty();
   }
 
   @Override
