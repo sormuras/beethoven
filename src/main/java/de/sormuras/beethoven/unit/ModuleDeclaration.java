@@ -24,6 +24,7 @@ import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -142,11 +143,11 @@ public class ModuleDeclaration extends Annotatable {
   }
 
   public void exports(Name packageName, Name... toModuleNames) {
-    exportsOrOpens(exports, packageName, List.of(toModuleNames));
+    exportsOrOpens(exports, packageName, Arrays.asList(toModuleNames));
   }
 
   public void opens(Name packageName, Name... toModuleNames) {
-    exportsOrOpens(opens, packageName, List.of(toModuleNames));
+    exportsOrOpens(opens, packageName, Arrays.asList(toModuleNames));
   }
 
   private void exportsOrOpens(List<Listable> list, Name packageName, List<Name> toModuleNames) {
@@ -179,7 +180,7 @@ public class ModuleDeclaration extends Annotatable {
           listing.add(with);
           if (moreWiths.length > 0) {
             listing.add(", ");
-            listing.addAll(List.of(moreWiths), ", ");
+            listing.addAll(Arrays.asList(moreWiths), ", ");
           }
           listing.add(';');
           listing.newline();

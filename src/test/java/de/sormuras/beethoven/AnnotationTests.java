@@ -14,6 +14,9 @@
 
 package de.sormuras.beethoven;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -202,8 +205,8 @@ class AnnotationTests {
   @Test
   void values() {
     Listable x = listing -> listing.add('x');
-    assertSame(Listable.IDENTITY, Annotation.values(List.of()));
-    assertEquals("x", Annotation.values(List.of(x)).list());
-    assertEquals("{x, x}", Annotation.values(List.of(x, x)).list());
+    assertSame(Listable.IDENTITY, Annotation.values(emptyList()));
+    assertEquals("x", Annotation.values(singletonList(x)).list());
+    assertEquals("{x, x}", Annotation.values(asList(x, x)).list());
   }
 }

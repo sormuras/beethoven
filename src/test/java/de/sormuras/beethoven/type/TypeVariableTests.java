@@ -14,11 +14,11 @@
 
 package de.sormuras.beethoven.type;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.sormuras.beethoven.Annotation;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class TypeVariableTests {
@@ -33,7 +33,7 @@ class TypeVariableTests {
     assertEquals(
         "@Deprecated T",
         TypeVariable.variable("T")
-            .annotated(i -> List.of(Annotation.annotation(Deprecated.class)))
+            .annotated(i -> singletonList(Annotation.annotation(Deprecated.class)))
             .list());
   }
 

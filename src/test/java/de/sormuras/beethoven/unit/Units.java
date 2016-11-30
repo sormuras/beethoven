@@ -14,6 +14,10 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 import de.sormuras.beethoven.Counter;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
@@ -25,15 +29,15 @@ public interface Units {
   static List<Type> nTimesI(int n) {
     ClassType i = ClassType.type("", "I");
     if (n == 0) {
-      return List.of(i);
+      return singletonList(i);
     }
     if (n == 1) {
-      return List.of(i, i);
+      return asList(i, i);
     }
     if (n == 2) {
-      return List.of(i, i, i);
+      return asList(i, i, i);
     }
-    return List.of();
+    return emptyList();
   }
 
   static CompilationUnit abc() {

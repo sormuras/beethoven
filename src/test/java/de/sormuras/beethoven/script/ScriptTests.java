@@ -14,9 +14,11 @@
 
 package de.sormuras.beethoven.script;
 
+import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.sormuras.beethoven.Listing;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +67,10 @@ class ScriptTests {
   void evalUserName() {
     String[] expected = {"String hello = ", "  \"world\";", ""};
     String source = "{{T:type}} {{ N:variable }} = {{¶}}{{>}}{{ S : value }}{{;}}";
-    Map<String, Object> map = Map.of("type", String.class, "variable", "hello", "value", "world");
+    Map<String, Object> map = new LinkedHashMap<>();
+    map.put("type", String.class);
+    map.put("variable", "hello");
+    map.put("value", "world");
     String actual = eval(source, map);
     assertEquals(String.join(System.lineSeparator(), expected), actual);
   }
@@ -74,6 +79,6 @@ class ScriptTests {
   void reflection() {
     assertEquals("1 2 3", eval("1 {{#toString // auto-index map w/ position }} 3", 2));
     assertEquals("1 2 3", eval("1 {{#toString:0 // auto-index map w/ selector }} 3", 2));
-    assertEquals("1 2 3", eval("1 {{#toString:II // named selector }} 3", Map.of("II", 2)));
+    assertEquals("1 2 3", eval("1 {{#toString:II // named selector }} 3", singletonMap("II", 2)));
   }
 }

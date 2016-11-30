@@ -36,7 +36,7 @@ class ModuleDeclarationTests {
     ModuleDeclaration module = new ModuleDeclaration();
     module.setName(Name.name("com.foo.bar"));
     assertEquals("module com.foo.bar {\n}\n", module.list("\n"));
-    module.compile();
+    // TODO JDK9 module.compile();
   }
 
   @Test
@@ -45,8 +45,7 @@ class ModuleDeclarationTests {
     module.setName(Name.name("com.foo.bar"));
     module.setOpen(true);
     assertEquals("open module com.foo.bar {\n}\n", module.list("\n"));
-    // TODO compile when more jigsaw features are merged into trunk
-    // module.compile();
+    // TODO JDK9 module.compile();
   }
 
   @Test
@@ -54,6 +53,7 @@ class ModuleDeclarationTests {
     Name foo = Name.name("Foo");
     Name bar = Name.name("Bar");
     ModuleDeclaration module = new ModuleDeclaration();
+    module.setOpen(false);
     module.addAnnotations(annotation(foo, 1), annotation(foo, 2), annotation(bar));
     module.setName(Name.name("M.N"));
     module.requires(Name.name("A.B"));

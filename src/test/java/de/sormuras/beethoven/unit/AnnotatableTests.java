@@ -14,6 +14,7 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,7 +50,7 @@ class AnnotatableTests {
   Stream<DynamicTest> annotatables() {
     Function<Annotatable, String> name = a -> "annotatable(" + a.getClass().getSimpleName() + ")";
     List<Annotatable> annotatables =
-        List.of( //
+        asList( //
             new AnnotationDeclaration(),
             new AnnotationElement(),
             new ConstantDeclaration(),

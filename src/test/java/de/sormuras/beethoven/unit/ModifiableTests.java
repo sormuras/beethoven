@@ -14,6 +14,7 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.util.Collections.singletonList;
 import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PUBLIC;
@@ -49,7 +50,7 @@ class ModifiableTests implements Modifiable {
     assertTrue(getModifiers().equals(EnumSet.of(ABSTRACT, PUBLIC, STATIC)));
     assertTrue(isPublic());
     assertTrue(isStatic());
-    addModifiers(List.of(FINAL));
+    addModifiers(singletonList(FINAL));
     assertTrue(getModifiers().equals(EnumSet.of(ABSTRACT, FINAL, PUBLIC, STATIC)));
     assertTrue(isPublic());
     assertTrue(isStatic());

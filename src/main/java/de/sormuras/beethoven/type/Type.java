@@ -16,6 +16,7 @@ package de.sormuras.beethoven.type;
 
 import static de.sormuras.beethoven.type.Type.Reflection.reflect;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import de.sormuras.beethoven.Annotated;
@@ -27,6 +28,7 @@ import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.AnnotatedWildcardType;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -147,7 +149,7 @@ public abstract class Type extends Annotated {
     static List<Annotation> annotations(AnnotatedConstruct source) {
       List<? extends AnnotationMirror> mirrors = source.getAnnotationMirrors();
       if (mirrors.isEmpty()) {
-        return List.of();
+        return emptyList();
       }
       return mirrors.stream().map(Mirrors::annotation).collect(toList());
     }
@@ -197,7 +199,7 @@ public abstract class Type extends Annotated {
       while (true) {
         String name = type.asElement().getSimpleName().toString();
         List<Annotation> annotations = annotations(type);
-        List<TypeArgument> arguments = List.of();
+        List<TypeArgument> arguments = emptyList();
         List<? extends TypeMirror> mirrors = type.getTypeArguments();
         if (!mirrors.isEmpty()) {
           arguments = mirrors.stream().map(ta -> TypeArgument.argument(type(ta))).collect(toList());
@@ -216,7 +218,7 @@ public abstract class Type extends Annotated {
             element = element.getEnclosingElement()) {
           annotations = annotations(element.asType());
           name = element.getSimpleName().toString();
-          simples.add(0, new ClassType.Simple(annotations, name, List.of()));
+          simples.add(0, new ClassType.Simple(annotations, name, emptyList()));
         }
         break;
       }
@@ -288,11 +290,18 @@ public abstract class Type extends Annotated {
         ClassType classType = (ClassType) type(annotatedType.getType());
         String name = classType.getLastSimple().getName();
         simples.add(0, new ClassType.Simple(annotations, name, arguments));
-        annotatedType = (AnnotatedParameterizedType) annotatedType.getAnnotatedOwnerType();
-        if (annotatedType == null) {
+        // annotatedType = (AnnotatedParameterizedType) annotatedType.getAnnotatedOwnerType();
+        ParameterizedType ownerType =
+            (ParameterizedType) ((ParameterizedType) annotatedType.getType()).getOwnerType();
+        if (ownerType == null) {
           String packageName = classType.getPackageName();
           return new ClassType(packageName, simples);
         }
+        if (ownerType instanceof AnnotatedParameterizedType) {
+          annotatedType = (AnnotatedParameterizedType) ownerType;
+          continue;
+        }
+        throw new AssertionError("Not handled owner: " + ownerType + " of " + ownerType.getClass());
       }
     }
 
@@ -332,7 +341,7 @@ public abstract class Type extends Annotated {
       List<ArrayType.Dimension> dimensions = new ArrayList<>();
       java.lang.reflect.Type component = type;
       while (component instanceof java.lang.reflect.GenericArrayType) {
-        dimensions.add(new ArrayType.Dimension(List.of()));
+        dimensions.add(new ArrayType.Dimension(emptyList()));
         component = ((java.lang.reflect.GenericArrayType) component).getGenericComponentType();
       }
       return ArrayType.array(Type.type(component), dimensions);
@@ -348,7 +357,7 @@ public abstract class Type extends Annotated {
           arguments.add(TypeArgument.argument(Type.type(actual)));
         }
         String name = ((Class<?>) owner.getRawType()).getSimpleName();
-        simples.add(0, new ClassType.Simple(List.of(), name, arguments));
+        simples.add(0, new ClassType.Simple(emptyList(), name, arguments));
         owner = (java.lang.reflect.ParameterizedType) owner.getOwnerType();
       }
       String packageName = ((Class<?>) type.getRawType()).getPackage().getName();
@@ -477,12 +486,12 @@ public abstract class Type extends Annotated {
 
   @SuppressWarnings("unchecked")
   public static <T extends Type> T withAnnotations(T type, List<Annotation> annotations) {
-    return (T) type.annotated(i -> i == type.getAnnotationsIndex() ? annotations : List.of());
+    return (T) type.annotated(i -> i == type.getAnnotationsIndex() ? annotations : emptyList());
   }
 
   @SuppressWarnings("unchecked")
   public static <T extends Type> T withoutAnnotations(T type) {
-    return (T) type.annotated(i -> List.of());
+    return (T) type.annotated(i -> emptyList());
   }
 
   /** Initialize this {@code Type} instance. */

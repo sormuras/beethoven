@@ -20,6 +20,7 @@ import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Style;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,7 @@ public class CompilationUnit implements DeclarationContainer {
   }
 
   public void setPackageName(String packageName) {
-    List<String> names = List.of(Name.DOT.split(packageName));
+    List<String> names = Arrays.asList(Name.DOT.split(packageName));
     getPackageDeclaration().setName(Name.name(names.size(), names));
   }
 

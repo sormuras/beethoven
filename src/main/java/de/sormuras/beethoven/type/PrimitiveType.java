@@ -14,6 +14,8 @@
 
 package de.sormuras.beethoven.type;
 
+import static java.util.Collections.emptyList;
+
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Listing;
 import java.util.List;
@@ -55,7 +57,7 @@ public class PrimitiveType extends Type {
     }
 
     public PrimitiveType build() {
-      return build(List.of());
+      return build(emptyList());
     }
 
     public PrimitiveType build(List<Annotation> annotations) {
@@ -65,7 +67,7 @@ public class PrimitiveType extends Type {
 
   /** Create new {@code PrimitiveType} instance for passed primitive class <code>type</code>. */
   public static PrimitiveType primitive(Class<?> type) {
-    return primitive(List.of(), type);
+    return primitive(emptyList(), type);
   }
 
   /** Create new {@code PrimitiveType} instance for passed primitive class <code>type</code>. */

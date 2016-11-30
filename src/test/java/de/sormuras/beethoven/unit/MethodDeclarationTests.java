@@ -14,6 +14,7 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -62,7 +63,7 @@ class MethodDeclarationTests {
   @Test
   void emptyList() {
     ClassType listOfT =
-        ClassType.type(List.class).parameterized(i -> List.of(TypeVariable.variable("T")));
+        ClassType.type(List.class).parameterized(i -> singletonList(TypeVariable.variable("T")));
     MethodDeclaration emptyList = new MethodDeclaration();
     emptyList.addAnnotation(SuppressWarnings.class, "unchecked");
     emptyList.addModifier("public", "static", "final");

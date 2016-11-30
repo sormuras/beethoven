@@ -1,9 +1,9 @@
-sudo: required
-dist: trusty
-group: edge
+#sudo: required
+#dist: trusty
+#group: edge
 
 language: java
-jdk: oraclejdk9
+jdk: oraclejdk8
 
 notifications:
   email:

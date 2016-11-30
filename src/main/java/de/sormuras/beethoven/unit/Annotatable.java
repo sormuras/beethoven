@@ -17,6 +17,7 @@ package de.sormuras.beethoven.unit;
 import de.sormuras.beethoven.Annotated;
 import de.sormuras.beethoven.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public abstract class Annotatable extends Annotated {
   }
 
   public void addAnnotations(Annotation... annotations) {
-    addAnnotations(List.of(annotations));
+    addAnnotations(Arrays.asList(annotations));
   }
 
   public void addAnnotations(Collection<Annotation> annotations) {

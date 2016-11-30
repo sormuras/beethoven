@@ -14,6 +14,8 @@
 
 package de.sormuras.beethoven;
 
+import static java.util.Collections.singletonList;
+
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +91,7 @@ public class Name implements Listable {
       throw new IllegalArgumentException("Anonymous. No name. Compiler generated: " + type);
     }
     if (type.isLocalClass()) {
-      return new Name(0, List.of(type.getSimpleName()));
+      return new Name(0, singletonList(type.getSimpleName()));
     }
     String[] packageNames = DOT.split(type.getName()); // java[.]lang[.]Thread$State
     String[] identifiers = DOT.split(type.getCanonicalName()); // java[.]lang[.]Thread[.]State

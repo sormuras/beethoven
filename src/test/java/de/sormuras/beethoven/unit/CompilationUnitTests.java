@@ -14,7 +14,9 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -138,7 +140,8 @@ class CompilationUnitTests {
     enterprise.declareField(Object.class, "field1").addAnnotation(Counter.Mark.class);
     enterprise
         .declareField(
-            ClassType.type(Comparable.class).parameterized(i -> List.of(WildcardType.wildcard())),
+            ClassType.type(Comparable.class)
+                .parameterized(i -> singletonList(WildcardType.wildcard())),
             "field2")
         .addAnnotation(Counter.Mark.class);
     enterprise
@@ -147,8 +150,8 @@ class CompilationUnitTests {
                 .parameterized(
                     i ->
                         i == 0
-                            ? List.of()
-                            : List.of(
+                            ? emptyList()
+                            : asList(
                                 WildcardType.supertype(String.class),
                                 WildcardType.extend(Runnable.class))),
             "field3")
@@ -158,7 +161,8 @@ class CompilationUnitTests {
     enterprise.declareField(String[][].class, "field6").addAnnotation(Counter.Mark.class);
     Tests.assertEquals(getClass(), "processed", unit);
     Counter counter = new Counter();
-    Compilation.compile(null, emptyList(), List.of(counter), List.of(unit.toJavaFileObject()));
+    Compilation.compile(
+        null, emptyList(), singletonList(counter), singletonList(unit.toJavaFileObject()));
     assertEquals(6, counter.marked.size());
     Assertions.assertEquals(
         "java.util.Map.Entry<? super String, ? extends Runnable>",
@@ -174,7 +178,8 @@ class CompilationUnitTests {
     Tests.assertEquals(getClass(), "abc", unit);
 
     Counter counter = new Counter();
-    Compilation.compile(null, emptyList(), List.of(counter), List.of(unit.toJavaFileObject()));
+    Compilation.compile(
+        null, emptyList(), singletonList(counter), singletonList(unit.toJavaFileObject()));
     assertEquals(2, counter.marked.size());
     Assertions.assertEquals("A.B.C", counter.types.get("raw").list());
     Assertions.assertEquals("A<I>.B<I, I>.C<I, I, I>", counter.types.get("parametered").list());
@@ -196,9 +201,9 @@ class CompilationUnitTests {
   @Test
   void crazy() throws Exception {
     Annotation tag = Annotation.annotation(Name.name("Tag"));
-    ClassType taggedRunnable = ClassType.type(Runnable.class).annotated(i -> List.of(tag));
-    ClassType taggedString = ClassType.type(String.class).annotated(i -> List.of(tag));
-    ClassType taggedThread = ClassType.type(Thread.class).annotated(i -> List.of(tag));
+    ClassType taggedRunnable = ClassType.type(Runnable.class).annotated(i -> singletonList(tag));
+    ClassType taggedString = ClassType.type(String.class).annotated(i -> singletonList(tag));
+    ClassType taggedThread = ClassType.type(Thread.class).annotated(i -> singletonList(tag));
     ClassType listOfStrings = ClassType.parameterized(List.class, String.class);
 
     CompilationUnit unit = CompilationUnit.of("abc.xyz");

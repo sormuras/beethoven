@@ -18,6 +18,7 @@ import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
 import java.lang.annotation.ElementType;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class PackageDeclaration extends Annotatable {
     if (packageName == null || packageName.isEmpty()) {
       throw new AssertionError("Package name must not be blank!");
     }
-    List<String> names = List.of(Name.DOT.split(packageName));
+    List<String> names = Arrays.asList(Name.DOT.split(packageName));
     return of(Name.name(names.size(), names));
   }
 

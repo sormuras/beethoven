@@ -2,12 +2,12 @@
 Java source created with Java
 
 ## badges
-[![jdk9](https://img.shields.io/badge/jdk-9-blue.svg)](https://shields.io)
+[![jdk9](https://img.shields.io/badge/jdk-8-blue.svg)](https://shields.io)
 [![travis](https://travis-ci.org/sormuras/beethoven.svg?branch=master)](https://travis-ci.org/sormuras/beethoven)
 [![snapshots](https://img.shields.io/badge/sonatype-snapshots-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/de/sormuras/beethoven/)
 
 ## features
- - [x] JDK 9
+ - [x] JDK 8
  - [x] Aligned to [JLS](https://docs.oracle.com/javase/specs/jls/se8/html/jls-19.html) syntax grammar
  - [x] Runtime compilation supporting custom annotation processors
  - [x] JavaBeans style API

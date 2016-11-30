@@ -30,6 +30,7 @@ import de.sormuras.beethoven.unit.AnnotationDeclaration;
 import de.sormuras.beethoven.unit.AnnotationElement;
 import de.sormuras.beethoven.unit.ConstantDeclaration;
 import de.sormuras.beethoven.unit.PackageDeclaration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -55,13 +56,13 @@ class AnnotatedTests {
 
   @TestFactory
   Stream<DynamicTest> primitives() {
-    List<Primitive> primitives = List.of(Primitive.values());
+    List<Primitive> primitives = Arrays.asList(Primitive.values());
     return DynamicTest.stream(primitives.iterator(), Primitive::name, p -> test(p::build));
   }
 
   @TestFactory
   List<DynamicTest> types() {
-    return List.of(
+    return Arrays.asList(
         // type
         dynamicTest("VoidType", () -> test(VoidType::instance)),
         dynamicTest("WildcardType", () -> test(WildcardType::wildcard)),

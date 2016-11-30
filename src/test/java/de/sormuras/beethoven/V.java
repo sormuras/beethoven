@@ -14,6 +14,8 @@
 
 package de.sormuras.beethoven;
 
+import static java.util.Collections.singletonList;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,5 +28,5 @@ public @interface V {
 
   String USE = "@" + V.class.getCanonicalName();
 
-  List<Annotation> SINGLETON = List.of(Annotation.annotation(V.class));
+  List<Annotation> SINGLETON = singletonList(Annotation.annotation(V.class));
 }

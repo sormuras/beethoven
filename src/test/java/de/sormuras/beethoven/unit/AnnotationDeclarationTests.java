@@ -14,6 +14,7 @@
 
 package de.sormuras.beethoven.unit;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,7 +27,6 @@ import de.sormuras.beethoven.type.WildcardType;
 import java.lang.*;
 import java.lang.annotation.ElementType;
 import java.util.Formatter;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class AnnotationDeclarationTests {
@@ -64,7 +64,7 @@ class AnnotationDeclarationTests {
         .declareElement(Type.type(String.class), "date", "201608032129")
         .addAnnotation(Deprecated.class);
     declaration.declareElement(
-        ClassType.type(java.lang.Class.class).parameterized(i -> List.of(extendsFormatter)),
+        ClassType.type(java.lang.Class.class).parameterized(i -> singletonList(extendsFormatter)),
         "formatterClass");
     Tests.assertEquals(getClass(), "everything", declaration);
     assertFalse(declaration.isEmpty());

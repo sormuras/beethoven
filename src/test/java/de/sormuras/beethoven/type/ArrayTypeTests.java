@@ -14,13 +14,14 @@
 
 package de.sormuras.beethoven.type;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ArrayTypeTests {
@@ -35,11 +36,11 @@ class ArrayTypeTests {
   @Test
   void arrayTypeWithAnnotatedDimensions() {
     ArrayType.Dimension[] dimensions = {
-      new ArrayType.Dimension(List.of(Annotation.cast("A"))),
-      new ArrayType.Dimension(List.of(Annotation.cast("B"), Annotation.cast("C"))),
-      new ArrayType.Dimension(List.of(Annotation.cast("D")))
+      new ArrayType.Dimension(singletonList(Annotation.cast("A"))),
+      new ArrayType.Dimension(asList(Annotation.cast("B"), Annotation.cast("C"))),
+      new ArrayType.Dimension(singletonList(Annotation.cast("D")))
     };
-    ArrayType actual = ArrayType.array(Type.type(byte.class), List.of(dimensions));
+    ArrayType actual = ArrayType.array(Type.type(byte.class), asList(dimensions));
     assertEquals("byte@A []@B @C []@D []", actual.list());
   }
 
