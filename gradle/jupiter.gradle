@@ -1,35 +1,29 @@
-//repositories {
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-//}
-//
-//configurations {
-//    jupiter
-//}
-
-dependencies {
-//    jupiter "org.junit.platform:junit-platform-console:${junitPlatformVersion}"
-//    jupiter "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-    testRuntime "org.junit.platform:junit-platform-console:${junitPlatformVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+configurations {
+    jupiter
 }
 
-//task downloadJupiter(type: Copy) {
-//    from configurations.jupiter
-//    into "$buildDir/jupiter"
-//}
+dependencies {
+    jupiter "org.junit.platform:junit-platform-console:${junitPlatformVersion}"
+    jupiter "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+}
 
-task runJupiter(type: JavaExec) {
+task downloadJupiter(type: Copy) {
+    from configurations.jupiter
+    into "$buildDir/jupiter"
+}
+
+task runJupiter2(type: JavaExec) {
     jvmArgs '-ea'
     jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
 
-    // classpath = project.sourceSets.test.runtimeClasspath + fileTree(dir: "$buildDir/jupiter", include: '*.jar')
-    classpath = project.sourceSets.test.runtimeClasspath
+    classpath = project.sourceSets.test.runtimeClasspath + fileTree(dir: "$buildDir/jupiter", include: '*.jar')
 
     main 'org.junit.platform.console.ConsoleLauncher'
-    args = ['--scan-class-path']
-    args += '--hide-details'
+
+    args += '--scan-class-path'
+    // args += '--hide-details'
     args += "--reports-dir=$project.testReportDir"
 }
 
-//runJupiter.dependsOn downloadJupiter
-test.dependsOn runJupiter
+runJupiter2.dependsOn downloadJupiter
+test.dependsOn runJupiter2

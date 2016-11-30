@@ -11,22 +11,14 @@ task downloadFormat(type: Copy) {
     into "$buildDir/format"
 }
 
-task runFormat(type: Exec) {
-    def mainJavaFilesWithoutModuleInfo = sourceSets.main.allJava.files
-    mainJavaFilesWithoutModuleInfo.removeIf{ file -> file.name.endsWith('module-info.java') }
+task runFormat(type: JavaExec) {
+    classpath = fileTree(dir: "$buildDir/format", include: '*.jar')
 
-    executable System.getenv("JAVA_HOME_8") + '/bin/java'
-
-    // args = ['-showversion']
-    args += '-cp'
-    args += "$buildDir/format/*"
-
-    args += 'com.google.googlejavaformat.java.Main'
+    main 'com.google.googlejavaformat.java.Main'
 
     args += '--replace'
-    args += mainJavaFilesWithoutModuleInfo
-    // args += sourceSets.main.allJava.files
-    args += sourceSets.test.getAllJava().files
+    args += sourceSets.main.allJava.files
+    args += sourceSets.test.allJava.files
 }
 
 runFormat.dependsOn downloadFormat
