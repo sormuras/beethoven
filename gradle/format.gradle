@@ -17,7 +17,7 @@ task runFormat(type: Exec) {
 
     executable System.getenv("JAVA_HOME_8") + '/bin/java'
 
-    args = ['-showversion']
+    // args = ['-showversion']
     args += '-cp'
     args += "$buildDir/format/*"
 
