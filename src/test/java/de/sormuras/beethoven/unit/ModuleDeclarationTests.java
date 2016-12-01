@@ -36,7 +36,7 @@ class ModuleDeclarationTests {
     ModuleDeclaration module = new ModuleDeclaration();
     module.setName(Name.name("com.foo.bar"));
     assertEquals("module com.foo.bar {\n}\n", module.list("\n"));
-    // TODO JDK9 module.compile();
+    // TODO JDK9 module.compile(); https://github.com/sormuras/beethoven/issues/9
   }
 
   @Test
@@ -45,7 +45,7 @@ class ModuleDeclarationTests {
     module.setName(Name.name("com.foo.bar"));
     module.setOpen(true);
     assertEquals("open module com.foo.bar {\n}\n", module.list("\n"));
-    // TODO JDK9 module.compile();
+    // TODO JDK9 module.compile(); https://github.com/sormuras/beethoven/issues/9
   }
 
   @Test

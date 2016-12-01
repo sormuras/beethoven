@@ -18,8 +18,11 @@ import static de.sormuras.beethoven.Style.SIMPLE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import de.sormuras.beethoven.All;
 import de.sormuras.beethoven.Annotation;
@@ -28,6 +31,7 @@ import de.sormuras.beethoven.Counter;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.U;
+import de.sormuras.beethoven.V;
 import de.sormuras.beethoven.unit.Annotatable;
 import de.sormuras.beethoven.unit.Block;
 import de.sormuras.beethoven.unit.ClassDeclaration;
@@ -40,10 +44,13 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedType;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 @SuppressWarnings("unused")
 class TypeTests<T> {
@@ -91,6 +98,15 @@ class TypeTests<T> {
   void voidType() {
     assertEquals("void", Type.type(void.class).list());
     assertTrue(VoidType.INSTANCE.isVoid());
+  }
+
+  @Test
+  void cast() throws Exception {
+    assertSame(null, Type.cast(null));
+    assertSame(Type.type(void.class), Type.cast(Type.type(void.class)));
+    assertEquals(
+        Type.type(int.class), Type.cast(getClass().getDeclaredField("a").getAnnotatedType()));
+    assertThrows(IllegalArgumentException.class, () -> Type.cast('?'));
   }
 
   @Test
@@ -292,5 +308,26 @@ class TypeTests<T> {
     Type.Mirrors.TypeVisitor visitor = new Type.Mirrors.TypeVisitor();
     NoType voidType = Tests.proxy(NoType.class, (p, m, a) -> TypeKind.VOID);
     assertEquals(Type.type(void.class), visitor.visitNoType(voidType, null));
+  }
+
+  private void annotated(Type type) {
+    assertFalse(type.isVoid());
+    assertFalse(type.isAnnotated());
+    assertTrue(type.getAnnotationsIndex() >= 0);
+    Type annotated = type.annotated(i -> V.SINGLETON);
+    assertEquals(type.getClass(), annotated.getClass());
+    assertTrue(annotated.isAnnotated());
+    assertEquals(V.SINGLETON, annotated.getAnnotations());
+  }
+
+  @TestFactory
+  Stream<DynamicTest> annotated() {
+    assertThrows(Exception.class, () -> VoidType.instance().annotated(i -> V.SINGLETON));
+    return Stream.of(
+        dynamicTest("ArrayType", () -> annotated(ArrayType.array(Byte.class, 3))),
+        dynamicTest("ClassType", () -> annotated(ClassType.type(Byte.class))),
+        dynamicTest("PrimitiveType", () -> annotated(PrimitiveType.primitive(byte.class))),
+        dynamicTest("TypeVariable", () -> annotated(TypeVariable.variable("B"))),
+        dynamicTest("WildcardType", () -> annotated(WildcardType.wildcard())));
   }
 }

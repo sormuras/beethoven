@@ -78,8 +78,7 @@ public class PropertyComposer implements UnaryOperator<ClassDeclaration> {
   }
 
   public PropertyComposer setType(java.lang.reflect.Type type) {
-    this.type = Type.type(type);
-    return this;
+    return setType(Type.type(type));
   }
 
   public PropertyComposer setType(Type type) {

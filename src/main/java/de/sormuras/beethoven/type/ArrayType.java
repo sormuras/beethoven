@@ -113,6 +113,11 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
+  public List<Annotation> getAnnotations() {
+    return getDimensions().get(getAnnotationsIndex()).getAnnotations();
+  }
+
+  @Override
   public int getAnnotationsIndex() {
     return dimensions.size() - 1;
   }

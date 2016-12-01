@@ -28,9 +28,11 @@ class TypeArgumentTests {
     TypeArgument argumentWithReference = TypeArgument.argument(Object.class);
     assertNotNull(argumentWithReference.getReference());
     assertNull(argumentWithReference.getWildcard());
+    assertNotNull(argumentWithReference.toString());
     TypeArgument argumentWithWildcard = TypeArgument.argument(WildcardType.wildcard());
     assertNull(argumentWithWildcard.getReference());
     assertNotNull(argumentWithWildcard.getWildcard());
+    assertNotNull(argumentWithWildcard.toString());
   }
 
   @Test

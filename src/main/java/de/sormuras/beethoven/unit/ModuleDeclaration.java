@@ -18,7 +18,6 @@ import static java.lang.String.join;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
-import de.sormuras.beethoven.Compilation;
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
@@ -186,9 +185,5 @@ public class ModuleDeclaration extends Annotatable {
           listing.newline();
           return listing;
         });
-  }
-
-  public void compile() throws Exception {
-    Compilation.compile(Compilation.source("/module-info.java", list()));
   }
 }

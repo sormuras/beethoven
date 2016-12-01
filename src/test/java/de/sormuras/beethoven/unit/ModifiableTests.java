@@ -57,6 +57,10 @@ class ModifiableTests implements Modifiable {
     setModifiers(Collections.emptySet());
     assertFalse(isPublic());
     assertFalse(isStatic());
+    setModifiers(java.lang.reflect.Modifier.STATIC);
+    assertTrue(isStatic());
+    setModifiers(0);
+    assertFalse(isModified());
   }
 
   @Test

@@ -39,10 +39,6 @@ public abstract class Annotatable extends Annotated {
     addAnnotation(Annotation.annotation(type, values));
   }
 
-  public void addAnnotation(java.lang.annotation.Annotation annotation) {
-    addAnnotation(Annotation.annotation(annotation));
-  }
-
   public void addAnnotations(Annotation... annotations) {
     addAnnotations(Arrays.asList(annotations));
   }
@@ -57,11 +53,6 @@ public abstract class Annotatable extends Annotated {
       annotations = new ArrayList<>();
     }
     return annotations;
-  }
-
-  public void setAnnotations(Annotation... annotations) {
-    getAnnotations().clear();
-    addAnnotations(annotations);
   }
 
   public boolean isTagged() {
