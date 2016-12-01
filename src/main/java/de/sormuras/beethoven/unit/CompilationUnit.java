@@ -70,7 +70,6 @@ public class CompilationUnit implements DeclarationContainer {
   }
 
   /** Compile and create new instance. */
-  @SuppressWarnings("unchecked")
   public <T> T compile(Class<T> clazz, Object... args) {
     try {
       return clazz.cast(compile().getDeclaredConstructors()[0].newInstance(args));
