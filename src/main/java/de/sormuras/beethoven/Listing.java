@@ -108,6 +108,7 @@ public class Listing {
     return this;
   }
 
+  /** Add all listables using atomic boolean reference for newline management. */
   public Listing addAll(List<? extends Listable> listables, AtomicBoolean needsNewline) {
     if (listables.isEmpty()) {
       return this;

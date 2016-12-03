@@ -21,7 +21,7 @@ public interface Beethoven {
   static void main(String... args) {
     System.out.println("# Base package name and version constant");
     System.out.println(Beethoven.class.getPackage().getName() + " " + VERSION);
-    System.out.println("# Module description");
+    //System.out.println("# Module description");
     //ModuleDescriptor descriptor = Beethoven.class.getModule().getDescriptor();
     //if (descriptor == null) {
     //  System.out.println("Unnamed module.");
