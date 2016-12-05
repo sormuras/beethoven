@@ -52,8 +52,8 @@ import static java.lang.System.out;
 
 public class Symphony {
 
-  public static void main(String... strings) {
-    out.println("Symphony " + strings[0]);
+  public static void main(String[] strings) {
+    out.println("Symphony " + String.join(" - ", strings));
   }
 }
 
