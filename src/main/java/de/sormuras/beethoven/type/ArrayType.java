@@ -77,6 +77,9 @@ public class ArrayType extends ReferenceType {
 
   /** Create n array dimension(s) with annotations supplied by the given int-function. */
   public static List<Dimension> dimensions(int size, IntFunction<List<Annotation>> annotations) {
+    if (size <= 0) {
+      throw new IllegalArgumentException("size <= 0 are illegal: " + size);
+    }
     List<Dimension> dimensions = new ArrayList<>();
     IntStream.range(0, size).forEach(i -> dimensions.add(new Dimension(annotations.apply(i))));
     return dimensions;

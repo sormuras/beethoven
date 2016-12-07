@@ -289,19 +289,17 @@ class TypeTests<T> {
     assertEquals(annotation.list(), counter.annotations.get(0).list());
   }
 
-  //  @Test
-  //  void unknownTypeFails() {
-  //    AssertionError e =
-  //        expectThrows(
-  //            AssertionError.class,
-  //            () -> JavaMirrors.of(Tests.proxy(PrimitiveType.class, (p, m, a) -> TypeKind.ERROR)));
-  //    assertTrue(e.toString().contains("Unsupported primitive type"));
-  //    e =
-  //        expectThrows(
-  //            AssertionError.class,
-  //            () -> JavaMirrors.of(Tests.proxy(NoType.class, (p, m, a) -> TypeKind.ERROR)));
-  //    assertTrue(e.toString().contains("Unsupported no type"));
-  //  }
+  @Test
+  void unknownNoTypeFails() {
+    NoType noType = Tests.proxy(NoType.class, (p, m, a) -> TypeKind.NONE);
+    AssertionError e = assertThrows(AssertionError.class, () -> Type.Mirrors.mirror(noType));
+    assertTrue(e.toString().contains("Unsupported no type"));
+    //    AssertionError e =
+    //        expectThrows(
+    //            AssertionError.class,
+    //            () -> JavaMirrors.of(Tests.proxy(PrimitiveType.class, (p, m, a) -> TypeKind.ERROR)));
+    //    assertTrue(e.toString().contains("Unsupported primitive type"));
+  }
 
   @Test
   void visitor() {
