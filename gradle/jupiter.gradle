@@ -12,7 +12,7 @@ task downloadJupiter(type: Copy) {
     into "$buildDir/jupiter"
 }
 
-task runJupiter2(type: JavaExec) {
+task runJupiter(type: JavaExec) {
     jvmArgs '-ea'
     jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
 
@@ -21,9 +21,9 @@ task runJupiter2(type: JavaExec) {
     main 'org.junit.platform.console.ConsoleLauncher'
 
     args += '--scan-class-path'
-    // args += '--hide-details'
+    args += '--hide-details'
     args += "--reports-dir=$project.testReportDir"
 }
 
-runJupiter2.dependsOn downloadJupiter
-test.dependsOn runJupiter2
+runJupiter.dependsOn downloadJupiter
+test.dependsOn runJupiter

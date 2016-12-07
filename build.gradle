@@ -5,7 +5,7 @@ plugins {
 }
 
 apply from: 'gradle/format.gradle'
-// apply from: 'gradle/jupiter.gradle'
+apply from: 'gradle/jupiter.gradle'
 
 repositories {
     mavenCentral()
@@ -13,9 +13,7 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'org.junit.jupiter',  name: 'junit-jupiter-api',      version: "${junitJupiterVersion}"
-    testRuntime group: 'org.junit.jupiter',  name: 'junit-jupiter-engine',   version: "${junitJupiterVersion}"
-    testRuntime group: 'org.junit.platform', name: 'junit-platform-console', version: "${junitPlatformVersion}"
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: "${junitJupiterVersion}"
 }
 
 Date buildTimeAndDate = new Date()
@@ -36,21 +34,6 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
-
-task runJupiter(type: JavaExec) {
-    jvmArgs '-ea'
-    jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
-
-    classpath = project.sourceSets.test.runtimeClasspath
-
-    main 'org.junit.platform.console.ConsoleLauncher'
-
-    args += '--scan-classpath'
-    args += '--hide-details'
-    args += "--reports-dir=$project.testReportDir"
-}
-
-test.dependsOn runJupiter
 
 jar {
     manifest {
