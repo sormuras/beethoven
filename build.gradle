@@ -123,11 +123,6 @@ uploadArchives {
     }
 }
 
-task GRADLE3329() {
-    def text = " ▓ " + ("✔" * 10) + (" a b c d e f " * 2) + ("✔" * 10) + " ▒ "
-    1000.times {println text + text}
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '3.2.1'
 }
