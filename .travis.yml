@@ -8,4 +8,4 @@ notifications:
 
 after_success:
 # - gradle/deploy_snapshot
-- test
+ - ./test
