@@ -11,7 +11,10 @@ BRANCH="master"
 
 set -e
 
-../test
+for run in {1..1000}
+do
+  echo " ▓ ✔✔✔✔✔✔✔✔✔✔ a b c d e f  a b c d e f ✔✔✔✔✔✔✔✔✔✔ ▒ "
+done
 
 if [ "$TRAVIS_REPO_SLUG" != "$SLUG" ]; then
   echo "Skipping snapshot deployment: wrong repository. Expected '$SLUG' but was '$TRAVIS_REPO_SLUG'."

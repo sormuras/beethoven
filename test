@@ -1,8 +1,0 @@
-#!/bin/bash
-#
-# https://github.com/gradle/gradle/issues/1008
-
-for run in {1..1000}
-do
-  echo $' ▓ ✔✔✔✔✔✔✔✔✔✔ a b c d e f  a b c d e f ✔✔✔✔✔✔✔✔✔✔ ▒ '
-done
