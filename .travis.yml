@@ -7,5 +7,4 @@ notifications:
     on_failure: always
 
 after_success:
-# - gradle/deploy_snapshot
- - ./test
+ - gradle/deploy_snapshot
