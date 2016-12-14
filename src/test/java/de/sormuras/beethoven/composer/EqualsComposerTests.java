@@ -16,6 +16,8 @@ package de.sormuras.beethoven.composer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.sormuras.beethoven.Tests;
 import de.sormuras.beethoven.unit.ClassDeclaration;
@@ -37,7 +39,9 @@ class EqualsComposerTests {
 
     Object a = unit.compile(Object.class);
     Object b = unit.compile(Object.class);
+    assertSame(a, a);
     assertEquals(a, a);
+    assertNotSame(a, b);
     assertNotEquals(a, b);
   }
 }
