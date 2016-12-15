@@ -26,12 +26,8 @@ public class Script {
   private final List<Command> commands;
 
   public Script(String source) {
-    this(source, new Parser().parse(source));
-  }
-
-  public Script(String source, List<Command> commands) {
     this.source = source;
-    this.commands = commands;
+    this.commands = new Parser().parse(source);
   }
 
   public List<Command> getCommands() {
