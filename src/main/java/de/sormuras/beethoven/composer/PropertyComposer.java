@@ -64,7 +64,7 @@ public class PropertyComposer implements UnaryOperator<ClassDeclaration> {
       setter.declareParameter(type, name);
       if (isSetterRequiresNonNullValue()) {
         Name requireNonNull = Name.reflect(Objects.class, "requireNonNull");
-        String message = "Property `" + name + "` requires non `null` values!";
+        String message = "Property `" + name + "` requires non-null instance of " + type.list();
         setter.addStatement(
             "this.{{$:0}} = {{N:1}}({{$:0}}, {{S:2}})", name, requireNonNull, message);
       } else {

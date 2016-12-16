@@ -54,6 +54,15 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
         map.put(name, Style.CANONICAL);
         continue;
       }
+      if (name.isMemberReference()) {
+        simpleNames.add(simpleName);
+        // map.put(name, Style.LAST);
+        // imports.getSingleStaticImports().add(name);
+        map.put(name, Style.SIMPLE);
+        map.put(name.enclosing(), Style.SIMPLE);
+        imports.getSingleTypeImports().add(name.enclosing());
+        continue;
+      }
       simpleNames.add(simpleName);
       map.put(name, Style.SIMPLE);
       if (alreadyImportedNames.contains(name)) {

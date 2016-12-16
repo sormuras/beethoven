@@ -185,7 +185,10 @@ public class Name implements Listable {
 
   /** Create new Name based on the member instance. */
   public static Name name(Member member) {
-    return name(member.getDeclaringClass(), member.getName());
+    Name declaringName = name(member.getDeclaringClass());
+    List<String> simples = new ArrayList<>(Arrays.asList(DOT.split(declaringName.canonical())));
+    simples.add(member.getName());
+    return new Name(declaringName.packageLevel, simples, true);
   }
 
   /** Create name instance for the identifiers by delegating to {@link #name(List)}. */
@@ -219,8 +222,13 @@ public class Name implements Listable {
   private final String simpleNames;
   private final int size;
   private final String topLevelName;
+  private final boolean isMemberReference;
 
   Name(int packageLevel, List<String> identifiers) {
+    this(packageLevel, identifiers, false);
+  }
+
+  Name(int packageLevel, List<String> identifiers, boolean isMemberReference) {
     this.packageLevel = packageLevel;
     this.size = identifiers.size();
     assert size > 0 : "Identifiers must not be empty";
@@ -231,6 +239,7 @@ public class Name implements Listable {
     this.simpleNames = String.join(".", identifiers.subList(packageLevel, size));
     this.lastName = identifiers.get(size - 1);
     this.topLevelName = packageLevel < size ? identifiers.get(packageLevel) : null;
+    this.isMemberReference = isMemberReference;
   }
 
   /** Add name respecting name mode styling result. */
@@ -292,6 +301,10 @@ public class Name implements Listable {
 
   public boolean isJavaLangPackage() {
     return packageLevel == 2 && "java.lang".equals(packageName);
+  }
+
+  public boolean isMemberReference() {
+    return isMemberReference;
   }
 
   public String lastName() {

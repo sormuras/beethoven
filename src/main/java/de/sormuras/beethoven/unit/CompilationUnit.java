@@ -164,7 +164,7 @@ public class CompilationUnit implements DeclarationContainer {
   }
 
   public void setNameStyleMap(Map<Name, Style> map) {
-    this.nameStyleMap = Objects.requireNonNull(map, "name-to-style map must be null");
+    this.nameStyleMap = Objects.requireNonNull(map, "name-to-style map is null");
   }
 
   public void setPackageName(String packageName) {

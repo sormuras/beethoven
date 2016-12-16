@@ -52,7 +52,7 @@ class ComposerTests {
     new HashCodeComposer().apply(car);
     new ToStringComposer().apply(car);
 
-    // TODO new ImportsComposer().apply(unit);
+    new ImportsComposer().apply(unit);
 
     Tests.assertEquals(getClass(), "properties", unit);
     Class<?> carClass = unit.compile();

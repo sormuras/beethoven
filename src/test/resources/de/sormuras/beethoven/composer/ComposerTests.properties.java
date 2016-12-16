@@ -1,5 +1,7 @@
 package pool;
 
+import java.util.Objects;
+
 public class Car {
 
   private final String name;
@@ -31,7 +33,7 @@ public class Car {
   }
 
   public Car setState(Thread.State state) {
-    this.state = java.util.Objects.requireNonNull(state, "Property `state` requires non `null` values!");
+    this.state = Objects.requireNonNull(state, "Property `state` requires non-null instance of Thread.State");
     return this;
   }
 
@@ -48,7 +50,7 @@ public class Car {
 
   @Override
   public int hashCode() {
-    return java.util.Objects.hash(name, gear, state);
+    return Objects.hash(name, gear, state);
   }
 
   @Override
