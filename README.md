@@ -59,6 +59,122 @@ public class Symphony {
 
 Symphony no.9 - The Choral
 ```
+
+## composers
+
+Composers visit unit objects and apply new features to the visited objects.
+
+- `ConstructorComposer` generates a parameter for each declared field.
+- `EqualsComposer` generates an trivial `Object#equals(Object)` implementation
+delegating equality check to `this.hashCode()` after checking runtime type
+equality.
+- `HashCodeComposer` generates trivial implementation delegating to `Objects#hashCode(Object)`
+or `Objects#hash(Object...)`.
+- `ImportsComposer` generates import statements for types used within the
+compilation unit.
+- `PropertyComposer` generates a bean property: a field, a getter and optionally
+a setter.
+- `ToStringComposer` generates a simple implementation utilizing a `StringBuilder`
+instance as a target for each field's string representation.
+
+```java
+    CompilationUnit unit = new CompilationUnit();
+    unit.setPackageName("pool");
+    ClassDeclaration car = unit.declareClass("Car");
+    car.setModifiers(Modifier.PUBLIC);
+
+    new PropertyComposer()
+        .setType(String.class)
+        .setName("name")
+        .setSetterAvailable(false)
+        .setFieldFinal(true)
+        .apply(car);
+
+    new PropertyComposer().setType(Number.class).setName("gear").apply(car);
+
+    new PropertyComposer()
+        .setType(State.class)
+        .setName("state")
+        .setSetterRequiresNonNullValue(true)
+        .setSetterReturnsThis(true)
+        .setFieldInitializer(listing -> listing.add(Name.cast(State.NEW)))
+        .apply(car);
+
+    new ConstructorComposer().apply(car);
+    new EqualsComposer().apply(car);
+    new HashCodeComposer().apply(car);
+    new ToStringComposer().apply(car);
+```
+
+The generated code is:
+```java
+package pool;
+
+public class Car {
+
+  private final String name;
+
+  private Number gear;
+
+  private Thread.State state = Thread.State.NEW;
+
+  public Car(String name, Number gear, Thread.State state) {
+    this.name = name;
+    this.gear = gear;
+    this.state = state;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Number getGear() {
+    return gear;
+  }
+
+  public void setGear(Number gear) {
+    this.gear = gear;
+  }
+
+  public Thread.State getState() {
+    return state;
+  }
+
+  public Car setState(Thread.State state) {
+    this.state = java.util.Objects.requireNonNull(state, "Property `state` requires non `null` values!");
+    return this;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    return hashCode() == other.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(name, gear, state);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("Car");
+    builder.append('[');
+    builder.append("name").append('=').append(name);
+    builder.append(", ").append("gear").append('=').append(gear);
+    builder.append(", ").append("state").append('=').append(state);
+    builder.append(']');
+    return builder.toString();
+  }
+}
+```
+
 ## license
 ```text
 Copyright 2016 Christian Stein

@@ -23,7 +23,7 @@ public class Car {
   }
 
   public void setGear(Number gear) {
-    this.gear = java.util.Objects.requireNonNull(gear, "Property `gear` requires non `null` values!");
+    this.gear = gear;
   }
 
   public Thread.State getState() {
@@ -33,6 +33,22 @@ public class Car {
   public Car setState(Thread.State state) {
     this.state = java.util.Objects.requireNonNull(state, "Property `state` requires non `null` values!");
     return this;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    return hashCode() == other.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(name, gear, state);
   }
 
   @Override

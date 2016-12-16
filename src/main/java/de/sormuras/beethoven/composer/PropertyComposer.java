@@ -33,6 +33,7 @@ public class PropertyComposer implements UnaryOperator<ClassDeclaration> {
   private String name = null;
   private boolean setterAvailable = true;
   private boolean setterReturnsThis = false;
+  private boolean setterRequiresNonNullValue = false;
   private boolean fieldFinal = false;
   private Listable fieldInitializer = null;
 
@@ -61,11 +62,14 @@ public class PropertyComposer implements UnaryOperator<ClassDeclaration> {
       MethodDeclaration setter = declaration.declareMethod(returnType, "set" + property);
       setter.setModifiers(Modifier.PUBLIC);
       setter.declareParameter(type, name);
-      // setter.addStatement("this.{{$}} = {{$}}", name, name);
-      Name requireNonNull = Name.reflect(Objects.class, "requireNonNull");
-      String message = "Property `" + name + "` requires non `null` values!";
-      setter.addStatement(
-          "this.{{$:0}} = {{N:1}}({{$:0}}, {{S:2}})", name, requireNonNull, message);
+      if (isSetterRequiresNonNullValue()) {
+        Name requireNonNull = Name.reflect(Objects.class, "requireNonNull");
+        String message = "Property `" + name + "` requires non `null` values!";
+        setter.addStatement(
+            "this.{{$:0}} = {{N:1}}({{$:0}}, {{S:2}})", name, requireNonNull, message);
+      } else {
+        setter.addStatement("this.{{$}} = {{$}}", name, name);
+      }
       if (isSetterReturnsThis()) {
         setter.addStatement("return this");
       }
@@ -101,6 +105,15 @@ public class PropertyComposer implements UnaryOperator<ClassDeclaration> {
 
   public PropertyComposer setSetterAvailable(boolean setterAvailable) {
     this.setterAvailable = setterAvailable;
+    return this;
+  }
+
+  public boolean isSetterRequiresNonNullValue() {
+    return setterRequiresNonNullValue;
+  }
+
+  public PropertyComposer setSetterRequiresNonNullValue(boolean setterRequiresNonNullValue) {
+    this.setterRequiresNonNullValue = setterRequiresNonNullValue;
     return this;
   }
 
