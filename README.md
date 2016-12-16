@@ -15,6 +15,7 @@ Java source created with Java
 ## hello world
 Here's a simple [HelloWorld](https://github.com/sormuras/beethoven/blob/master/src/test/java/readme/HelloWorld.java)
 program. It demonstrates basic usage of the main features.
+
 ```java
 Name out = Name.name(System.class, "out");
 
@@ -45,6 +46,7 @@ unit.launch("no.9", "The Choral");
 
 
 The console reads like:
+
 ```text
 package beethoven;
 
@@ -106,7 +108,8 @@ instance as a target for each field's string representation.
     new ToStringComposer().apply(car);
 ```
 
-The generated code is:
+The composer-enriched code reads:
+
 ```java
 package pool;
 
