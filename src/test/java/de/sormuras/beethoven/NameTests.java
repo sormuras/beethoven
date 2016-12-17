@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -235,5 +236,13 @@ class NameTests {
     assertEquals("Name{/int[][]}", Name.name(int[][].class).toString());
     assertEquals("Name{java.lang/Thread.State[]}", Name.name(Thread.State[].class).toString());
     assertEquals("Name{java.lang/Thread.State.NEW}", Name.name(Thread.State.NEW).toString());
+  }
+
+  @Test
+  void memberRef() {
+    assertTrue(Name.name(Arrays.asList("a", "b", "C", "d")).isMemberReference());
+    assertTrue(Name.name(Arrays.asList("a", "b", "C", "D")).isMemberReference());
+    assertTrue(Name.name(Arrays.asList("a", "b", "C", "DEF")).isMemberReference());
+    assertFalse(Name.name(Arrays.asList("a", "b", "C", "Def")).isMemberReference());
   }
 }

@@ -186,7 +186,8 @@ public class Name implements Listable {
     int size = names.size();
     IntPredicate uppercase = index -> Character.isUpperCase(names.get(index).codePointAt(0));
     int packageLevel = IntStream.range(0, size).filter(uppercase).findFirst().orElse(size);
-    return name(packageLevel, names, !uppercase.test(size - 1));
+    boolean allUpper = names.get(size - 1).toUpperCase().equals(names.get(size - 1));
+    return name(packageLevel, names, allUpper || !uppercase.test(size - 1));
   }
 
   /** Create new Name based on the member instance. */

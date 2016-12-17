@@ -17,6 +17,8 @@ package de.sormuras.beethoven.type;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.Annotation;
@@ -49,5 +51,15 @@ class ArrayTypeTests {
     Listing listing = new Listing();
     listing.add(Type.type(Byte[][][].class));
     assertTrue(listing.getCollectedNames().contains(Name.name(Byte.class)));
+  }
+
+  @Test
+  void dimensions() {
+    assertThrows(IllegalArgumentException.class, () -> ArrayType.dimensions(0, null));
+  }
+
+  @Test
+  void empty() {
+    assertFalse(ArrayType.array(int.class, 1).isEmpty());
   }
 }
