@@ -44,7 +44,6 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
     unit.list(listing);
 
     ImportDeclarations imports = unit.getImportDeclarations();
-    Set<Name> alreadyImportedNames = new TreeSet<>(imports.getSingleTypeImports());
     Set<String> simpleNames = new TreeSet<>();
     Map<Name, Style> map = new LinkedHashMap<>();
 
@@ -54,27 +53,17 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
         map.put(name, Style.CANONICAL);
         continue;
       }
-      if (name.isMemberReference()) {
-        simpleNames.add(simpleName);
-        // map.put(name, Style.LAST);
-        // imports.getSingleStaticImports().add(name);
-        map.put(name, Style.SIMPLE);
-        map.put(name.enclosing(), Style.SIMPLE);
-        imports.getSingleTypeImports().add(name.enclosing());
-        continue;
-      }
       simpleNames.add(simpleName);
       map.put(name, Style.SIMPLE);
-      if (alreadyImportedNames.contains(name)) {
-        continue;
+      if (name.isMemberReference()) {
+        // System.out.println("member:" + name);
+        // map.put(name, Style.LAST);
+        // imports.getSingleStaticImports().add(name);
+        map.put(name.enclosing(), Style.SIMPLE);
+        addSingleTypeImport(unit, name.enclosing());
+      } else {
+        addSingleTypeImport(unit, name);
       }
-      if (name.isJavaLangPackage()) {
-        continue;
-      }
-      if (name.packageName().equals(unit.getPackageName())) {
-        continue;
-      }
-      imports.addSingleTypeImport(name);
     }
 
     // remove unused imports -- i.e. remove all not mapped ones.
@@ -84,5 +73,18 @@ public class ImportsComposer implements UnaryOperator<CompilationUnit> {
 
     unit.setNameStyleMap(map);
     return unit;
+  }
+
+  private void addSingleTypeImport(CompilationUnit unit, Name name) {
+    if (unit.getImportDeclarations().getSingleTypeImports().contains(name)) {
+      return;
+    }
+    if (name.isJavaLangPackage()) {
+      return;
+    }
+    if (name.packageName().equals(unit.getPackageName())) {
+      return;
+    }
+    unit.getImportDeclarations().addSingleTypeImport(name);
   }
 }

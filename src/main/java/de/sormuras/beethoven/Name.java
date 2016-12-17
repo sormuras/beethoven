@@ -105,7 +105,9 @@ public class Name implements Listable {
    */
   public static Name name(Class<?> declaringType, String declaredMemberName) {
     Name declaringName = name(declaringType);
-    return name(declaringName.packageLevel, declaringName.canonical + '.' + declaredMemberName);
+    int packageLevel = declaringName.packageLevel;
+    String canonical = declaringName.canonical + '.' + declaredMemberName;
+    return name(packageLevel, canonical, true);
   }
 
   /**
@@ -147,8 +149,8 @@ public class Name implements Listable {
    *
    * @return {@link Name}
    */
-  public static Name name(int packageLevel, String canonical) {
-    return name(packageLevel, Arrays.asList(DOT.split(canonical)));
+  public static Name name(int packageLevel, String canonical, boolean isMemberReference) {
+    return name(packageLevel, Arrays.asList(DOT.split(canonical)), isMemberReference);
   }
 
   /**
@@ -164,15 +166,19 @@ public class Name implements Listable {
    * @throws AssertionError if any identifier is not a syntactically valid qualified name.
    */
   public static Name name(int packageLevel, List<String> names) {
+    return name(packageLevel, names, false);
+  }
+
+  public static Name name(int packageLevel, List<String> names, boolean isMemberReference) {
     assert packageLevel >= 0 : "Package level must not be < 0, but is " + packageLevel;
     assert packageLevel <= names.size() : "Package level " + packageLevel + " too high: " + names;
     assert names.stream().allMatch(Objects::nonNull) : "Null-name in " + names;
     assert names.stream().allMatch(SourceVersion::isName) : "Non-name in " + names;
-    return new Name(packageLevel, names);
+    return new Name(packageLevel, names, isMemberReference);
   }
 
   /**
-   * Create name instance for the identifiers by delegating to {@link #name(int, List)}.
+   * Create name instance for the identifiers by delegating to {@link #name(int, List, boolean)}.
    *
    * <p>The package level is determined by the first capital name of the list.
    */
@@ -180,7 +186,7 @@ public class Name implements Listable {
     int size = names.size();
     IntPredicate uppercase = index -> Character.isUpperCase(names.get(index).codePointAt(0));
     int packageLevel = IntStream.range(0, size).filter(uppercase).findFirst().orElse(size);
-    return name(packageLevel, names);
+    return name(packageLevel, names, !uppercase.test(size - 1));
   }
 
   /** Create new Name based on the member instance. */
@@ -272,7 +278,7 @@ public class Name implements Listable {
     }
     int shrunkByOne = size - 1;
     int newPackageLevel = Math.min(packageLevel, shrunkByOne);
-    return name(newPackageLevel, canonical.substring(0, canonical.lastIndexOf('.')));
+    return name(newPackageLevel, canonical.substring(0, canonical.lastIndexOf('.')), false);
   }
 
   @Override
