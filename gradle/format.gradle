@@ -3,7 +3,7 @@ configurations {
 }
 
 dependencies {
-    format "com.google.googlejavaformat:google-java-format:1.2-SNAPSHOT"
+    format "com.google.googlejavaformat:google-java-format:${googleFormatVersion}"
 }
 
 task downloadFormat(type: Copy) {
