@@ -16,14 +16,14 @@ public class Script {
     MethodDeclaration main = hello.declareMethod(void.class, "main", PUBLIC, STATIC);
 
     main.addStatement(
-        "{{N // out}}.println({{S}} + {{N // join}}({{S}}, {{#getName // args }}))",
+        "{{N // out}}.println({{S}} + {{N // join}}({{S}}, {{#getName // of parameter}}))",
         Name.reflect(System.class, "out"),
         "Symphony ",
         Name.reflect(String.class, "join"),
-        " - ",
+        " // ",
         main.declareParameter(String[].class, "arguments").setVariable(true));
 
     unit.list(System.out);
-    unit.launch("no.9", "The Choral");
+    unit.launch("no.9", "The Choral", "d-Moll op. 125");
   }
 }

@@ -62,6 +62,26 @@ public class Symphony {
 Symphony no.9 - The Choral
 ```
 
+## script
+
+The `println`-statement from above, can be scripted as:
+```java
+    main.addStatement(
+        // script source
+        "{{N // out}}.println({{S}} + {{N // join}}({{S}}, {{#getName // of parameter}}))",
+
+        // arguments
+        Name.reflect(System.class, "out"),
+        "Symphony ",
+        Name.reflect(String.class, "join"),
+        " // ",
+        main.declareParameter(String[].class, "arguments").setVariable(true));
+```
+
+See [Tag](https://github.com/sormuras/beethoven/blob/master/src/main/java/de/sormuras/beethoven/script/Tag.java)
+enum for available accelerator tags and [script tests](https://github.com/sormuras/beethoven/tree/master/src/test/java/de/sormuras/beethoven/script)
+supported syntax features.
+
 ## composers
 
 Composers visit unit objects and apply new features to the visited objects.

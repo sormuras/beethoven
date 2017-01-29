@@ -51,25 +51,26 @@ public enum Tag implements Action {
   REFLECT("#.+", Consumes.ALL, (listing, tag, arg) -> listing.addAny(reflect(tag, arg)));
 
   // convert unknown tag to chained method call sequence
-  static Object reflect(String tag, Object arg) {
+  static Object reflect(String tag, Object argument) {
+    Objects.requireNonNull(tag, "tag must not be null");
+    Objects.requireNonNull(argument, "argument must not be null");
     if (tag.startsWith("#")) {
       tag = tag.substring(1);
     }
-    Objects.requireNonNull(arg, "arg must not be null");
     try (Scanner scanner = new Scanner(tag)) {
       scanner.useDelimiter(Name.DOT);
       while (scanner.hasNext()) {
         String name = scanner.next();
         Method method;
         try {
-          method = arg.getClass().getMethod(name);
+          method = argument.getClass().getMethod(name);
         } catch (NoSuchMethodException e) {
           name = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
-          method = arg.getClass().getMethod(name);
+          method = argument.getClass().getMethod(name);
         }
-        arg = method.invoke(arg);
+        argument = method.invoke(argument);
       }
-      return arg;
+      return argument;
     } catch (ReflectiveOperationException exception) {
       throw new IllegalArgumentException("Can't reflect tag: " + tag, exception);
     }
