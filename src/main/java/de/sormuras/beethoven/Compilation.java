@@ -109,7 +109,6 @@ public interface Compilation {
     @Override
     public JavaFileObject getJavaFileForOutput(
         Location location, String name, Kind kind, FileObject sibling) {
-      isSameFile(sibling, sibling);
       ByteArrayFileObject object = new ByteArrayFileObject(name, kind);
       map.put(name, object);
       return object;
