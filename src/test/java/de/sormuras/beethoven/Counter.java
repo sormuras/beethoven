@@ -15,6 +15,7 @@
 package de.sormuras.beethoven;
 
 import de.sormuras.beethoven.type.Type;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,8 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 public class Counter extends AbstractProcessor {
 
@@ -42,6 +45,7 @@ public class Counter extends AbstractProcessor {
   public final List<Annotation> annotations = new ArrayList<>();
   public Elements elementUtils;
   public Types typeUtils;
+  public boolean createAbc = true;
 
   @Override
   public SourceVersion getSupportedSourceVersion() {
@@ -86,6 +90,19 @@ public class Counter extends AbstractProcessor {
       Type type = Type.type(mirror);
       types.put(name, type);
     }
+
+    if (createAbc) {
+      createAbc = false;
+      try {
+        JavaFileObject src = processingEnv.getFiler().createSourceFile("test.Abc");
+        PrintWriter writer = new PrintWriter(src.openWriter());
+        writer.println("package test; class Abc {}");
+        writer.close();
+      } catch (Exception e) {
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "" + e);
+      }
+    }
+
     return true;
   }
 }

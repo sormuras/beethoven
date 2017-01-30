@@ -20,6 +20,7 @@ import static java.util.Collections.emptyList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureClassLoader;
@@ -91,6 +92,33 @@ public interface Compilation {
     }
   }
 
+  class SourceFileObject extends SimpleJavaFileObject {
+
+    private ByteArrayOutputStream stream;
+
+    public SourceFileObject(String canonical, Kind kind) {
+      super(URI.create("beethoven:///" + canonical.replace('.', '/') + kind.extension), kind);
+    }
+
+    @Override
+    public String getCharContent(boolean ignoreEncodingErrors) {
+      try {
+        return stream.toString("UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        if (ignoreEncodingErrors) {
+          return stream.toString();
+        }
+        throw new UnsupportedOperationException(e);
+      }
+    }
+
+    @Override
+    public OutputStream openOutputStream() throws IOException {
+      this.stream = new ByteArrayOutputStream(2000);
+      return stream;
+    }
+  }
+
   class Manager extends ForwardingJavaFileManager<StandardJavaFileManager> {
 
     private final Map<String, ByteArrayFileObject> map = new HashMap<>();
@@ -109,9 +137,16 @@ public interface Compilation {
     @Override
     public JavaFileObject getJavaFileForOutput(
         Location location, String name, Kind kind, FileObject sibling) {
-      ByteArrayFileObject object = new ByteArrayFileObject(name, kind);
-      map.put(name, object);
-      return object;
+      switch (kind) {
+        case CLASS:
+          ByteArrayFileObject object = new ByteArrayFileObject(name, kind);
+          map.put(name, object);
+          return object;
+        case SOURCE:
+          return new SourceFileObject(name, kind);
+        default:
+          throw new UnsupportedOperationException("kind not supported: " + kind);
+      }
     }
 
     @Override
