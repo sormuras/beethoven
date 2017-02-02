@@ -121,6 +121,7 @@ class MethodDeclarationTests {
     method.setName("singleArg");
     method.declareParameter(int.class, "value");
     assertEquals("singleArg(value)", method.applyCall(new Listing()).toString());
+    assertEquals("singleArg(x)", method.applyCall(new Listing(), "x").toString());
   }
 
   @Test
@@ -131,5 +132,6 @@ class MethodDeclarationTests {
     method.declareParameter(byte.class, "a2");
     method.declareParameter(short.class, "a3");
     assertEquals("manyArgs(a1, a2, a3)", method.applyCall(new Listing()).toString());
+    assertEquals("manyArgs(x, y, z)", method.applyCall(new Listing(), "x", "y", "z").toString());
   }
 }

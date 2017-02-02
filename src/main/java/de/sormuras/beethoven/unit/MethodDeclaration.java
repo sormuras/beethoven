@@ -189,6 +189,10 @@ public class MethodDeclaration extends ClassMember {
     return applyCall(listing, MethodParameter::getName);
   }
 
+  public Listing applyCall(Listing listing, String... names) {
+    return applyCall(listing, parameter -> names[getParameters().indexOf(parameter)]);
+  }
+
   public Listing applyCall(Listing listing, Function<MethodParameter, String> function) {
     listing.add(getName());
     listing.add('(');
