@@ -183,9 +183,12 @@ public class CompilationUnit implements DeclarationContainer {
     return style;
   }
 
-  public JavaFileObject toJavaFileObject() {
+  public URI toURI() {
     TypeDeclaration declaration = getEponymousDeclaration().orElseThrow(IllegalStateException::new);
-    URI uri = getPackageDeclaration().toUri(declaration.getName() + ".java");
-    return Compilation.source(uri, list());
+    return getPackageDeclaration().toUri(declaration.getName() + ".java");
+  }
+
+  public JavaFileObject toJavaFileObject() {
+    return Compilation.source(toURI(), list());
   }
 }

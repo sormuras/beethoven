@@ -326,4 +326,18 @@ class CompilationUnitTests {
     Exception exception = assertThrows(Exception.class, () -> Units.abc().launch());
     assertEquals(NoSuchMethodException.class, exception.getCause().getClass());
   }
+
+  @Test
+  void toURI() {
+    // empty unit has no URI
+    assertThrows(IllegalStateException.class, () -> new CompilationUnit().toURI());
+    // single type in unit
+    CompilationUnit singleTypeUnit = new CompilationUnit();
+    singleTypeUnit.setPackageName("some.where");
+    singleTypeUnit.declareClass("Over");
+    assertTrue(singleTypeUnit.getEponymousDeclaration().isPresent());
+    assertEquals("some/where/Over.java", singleTypeUnit.toURI().toString());
+    // multiple top level classes
+    assertEquals("Gamma.java", Units.simple().toURI().toString());
+  }
 }
