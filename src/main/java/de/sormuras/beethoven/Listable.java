@@ -145,7 +145,7 @@ public interface Listable extends UnaryOperator<Listing>, Comparable<Listable> {
   }
 
   default void list(PrintStream stream) {
-    stream.println(list());
+    stream.print(list());
   }
 
   default String list(String lineSeparator) {
