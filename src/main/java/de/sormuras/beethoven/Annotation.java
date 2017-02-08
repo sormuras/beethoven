@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import javax.lang.model.type.MirroredTypeException;
 
 /**
  * An annotation object denotes a specific invocation of an annotation type.
@@ -65,7 +66,19 @@ public class Annotation implements Listable {
       Method[] methods = annotation.annotationType().getDeclaredMethods();
       sort(methods, Comparator.comparing(Method::getName));
       for (Method method : methods) {
-        Object value = method.invoke(annotation);
+        Object value;
+        try {
+          value = method.invoke(annotation);
+        } catch (MirroredTypeException mte) {
+          try {
+            value = Class.forName(mte.getTypeMirror().toString());
+          } catch (ClassNotFoundException classNotFoundException) {
+            throw new AssertionError("Class not found?!", classNotFoundException);
+          }
+        }
+        if (value == null) {
+          throw new IllegalStateException("Null value reported by " + method);
+        }
         if (!includeDefaultValues) {
           if (Objects.deepEquals(value, method.getDefaultValue())) {
             continue;
