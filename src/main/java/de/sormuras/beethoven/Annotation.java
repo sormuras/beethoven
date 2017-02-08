@@ -19,6 +19,7 @@ import static java.util.Arrays.stream;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,8 +70,9 @@ public class Annotation implements Listable {
         Object value;
         try {
           value = method.invoke(annotation);
-        } catch (MirroredTypeException mte) {
+        } catch (InvocationTargetException exception) {
           try {
+            MirroredTypeException mte = (MirroredTypeException) exception.getCause();
             value = Class.forName(mte.getTypeMirror().toString());
           } catch (ClassNotFoundException classNotFoundException) {
             throw new AssertionError("Class not found?!", classNotFoundException);
