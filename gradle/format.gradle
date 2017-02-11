@@ -9,9 +9,10 @@ dependencies {
 task downloadFormat(type: Copy) {
     from configurations.format
     into "$buildDir/format"
+    eachFile { println "  google-java-format ${googleFormatVersion} -> " + it.file.name }
 }
 
-task runFormat(type: JavaExec) {
+task runFormat(type: JavaExec, dependsOn: downloadFormat) {
     classpath = fileTree(dir: "$buildDir/format", include: '*.jar')
 
     main 'com.google.googlejavaformat.java.Main'
@@ -20,5 +21,3 @@ task runFormat(type: JavaExec) {
     args += sourceSets.main.allJava.files
     args += sourceSets.test.allJava.files
 }
-
-runFormat.dependsOn downloadFormat

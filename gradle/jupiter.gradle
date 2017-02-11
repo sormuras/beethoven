@@ -10,9 +10,10 @@ dependencies {
 task downloadJupiter(type: Copy) {
     from configurations.jupiter
     into "$buildDir/jupiter"
+    eachFile { println " Jupiter ${junitJupiterVersion} -> " + it.file.name }
 }
 
-task runJupiter(type: JavaExec) {
+task runJupiter(type: JavaExec, dependsOn: downloadJupiter) {
     jvmArgs '-ea'
     jvmArgs '-Djava.util.logging.config.file=src/test/logging.properties'
 
@@ -25,5 +26,4 @@ task runJupiter(type: JavaExec) {
     args += "--reports-dir=$project.testReportDir"
 }
 
-runJupiter.dependsOn downloadJupiter
 test.dependsOn runJupiter
