@@ -6,6 +6,7 @@ plugins {
 
 apply from: 'gradle/format.gradle'
 apply from: 'gradle/jupiter.gradle'
+apply from: 'gradle/junit-platform-standalone.gradle'
 
 repositories {
     mavenCentral()
