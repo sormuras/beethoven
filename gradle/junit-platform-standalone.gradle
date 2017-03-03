@@ -3,7 +3,7 @@ configurations {
 }
 
 dependencies {
-    standalone 'org.junit.platform:junit-platform-console:1.0.0-SNAPSHOT:standalone'
+    standalone 'org.junit.platform:junit-platform-console-standalone:1.0.0-SNAPSHOT'
 }
 
 task downloadJUnitPlatformStandalone(type: Copy) {
