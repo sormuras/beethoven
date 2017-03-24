@@ -46,6 +46,10 @@ public class Block implements Listable {
     return this;
   }
 
+  public Block eval(String source, Object... args) {
+    return add(listing -> listing.eval(source, args));
+  }
+
   @Override
   public Listing apply(Listing listing) {
     listing.add('{').newline().indent(1);
