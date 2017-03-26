@@ -18,12 +18,17 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 import java.lang.annotation.ElementType;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /** Base {@link Annotation}-collection implementation. */
 public abstract class Annotated implements Listable {
 
   protected List<Annotation> annotations;
+  private Map<Object, Object> tags = Collections.emptyMap();
 
   /** Initialize this instance. */
   protected Annotated() {
@@ -82,6 +87,20 @@ public abstract class Annotated implements Listable {
     return list() + " // 0x" + Integer.toHexString(System.identityHashCode(this));
   }
 
+  public Optional<Object> getTag(Object key) {
+    if (tags == Collections.EMPTY_MAP) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(tags.get(key));
+  }
+
+  public Map<Object, Object> getTags() {
+    if (tags == Collections.EMPTY_MAP) {
+      tags = new HashMap<>();
+    }
+    return tags;
+  }
+
   @Override
   public int hashCode() {
     return list().hashCode();
@@ -90,6 +109,10 @@ public abstract class Annotated implements Listable {
   /** Return {@code true} if there is at least one annotation available. */
   public boolean isAnnotated() {
     return !annotations.isEmpty();
+  }
+
+  public boolean isTagged() {
+    return tags != null && !tags.isEmpty();
   }
 
   @Override

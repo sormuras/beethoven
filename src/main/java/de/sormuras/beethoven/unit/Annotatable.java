@@ -20,15 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /** Default {@link Annotation}-collecting support. */
 public abstract class Annotatable extends Annotated {
-
-  private Map<Object, Object> tags = Collections.emptyMap();
 
   public void addAnnotation(Annotation annotation) {
     getAnnotations().add(annotation);
@@ -53,23 +48,5 @@ public abstract class Annotatable extends Annotated {
       annotations = new ArrayList<>();
     }
     return annotations;
-  }
-
-  public boolean isTagged() {
-    return tags != null && !tags.isEmpty();
-  }
-
-  public Optional<Object> getTag(Object key) {
-    if (tags == Collections.EMPTY_MAP) {
-      return Optional.empty();
-    }
-    return Optional.ofNullable(tags.get(key));
-  }
-
-  public Map<Object, Object> getTags() {
-    if (tags == Collections.EMPTY_MAP) {
-      tags = new HashMap<>();
-    }
-    return tags;
   }
 }
