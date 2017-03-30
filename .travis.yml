@@ -15,7 +15,9 @@ before_install:
 - cd pro
 - wget -d -v --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.160/pro-9-b160-linux.tar.gz
 - tar -xzf pro-9-b160-linux.tar.gz
+- ls -la
 - cd ..
+- tree
 
 install:
 - java -version
