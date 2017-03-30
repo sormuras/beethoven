@@ -12,6 +12,6 @@ set("compiler.rawArguments", list(
      "-encoding", "UTF8"
 ))
 
-run("resolver", "modulefixer", "compiler")
+run("resolver", "modulefixer", "compiler", "packager")
 
 /exit
