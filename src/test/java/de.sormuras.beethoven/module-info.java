@@ -14,10 +14,10 @@
 
 module de.sormuras.beethoven {
   requires jdk.compiler;
+  requires jdk.scripting.nashorn;
+  requires java.desktop;
 
-  exports de.sormuras.beethoven;
-  exports de.sormuras.beethoven.composer;
-  exports de.sormuras.beethoven.script;
-  exports de.sormuras.beethoven.type;
-  exports de.sormuras.beethoven.unit;
+  requires org.junit.jupiter.api;
+  requires org.junit.platform.commons;
+  requires org.opentest4j;
 }

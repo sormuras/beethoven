@@ -1,3 +1,7 @@
+# https://github.com/forax/pro
+deps/
+target/
+
 # Gradle
 .gradle
 build/
