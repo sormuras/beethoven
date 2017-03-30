@@ -12,7 +12,7 @@ addons:
 notifications:
   email:
     on_success: always
-    on_failure: never
+    on_failure: always
 
 before_install:
 - wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.160/pro-9-b160-linux.tar.gz
@@ -24,4 +24,4 @@ install:
 
 script:
 - ./pro/bin/pro
-- java -jar jupiter.jar --classpath target\test\exploded\de.sormuras.beethoven --scan-classpath
+- java -jar jupiter.jar --classpath target/test/exploded/de.sormuras.beethoven --scan-classpath
