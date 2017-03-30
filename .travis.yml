@@ -11,13 +11,14 @@ notifications:
     on_failure: never
 
 before_install:
+- mkdir pro
+- cd pro
 - wget -d -v --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.160/pro-9-b160-linux.tar.gz
-- ls -la
-- tar xcvf pro-9-b160-linux.tar.gz
-- ls -la
+- tar -xzf pro-9-b160-linux.tar.gz
+- cd ..
 
 install:
 - java -version
 
 script:
-- ./pro
+- ./pro/bin/pro
