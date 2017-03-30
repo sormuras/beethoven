@@ -1,25 +1,23 @@
+sudo: false
+dist: trusty
+group: edge
+
 language: java
-jdk: oraclejdk8
+jdk: oraclejdk9
 
 notifications:
   email:
     on_success: always
-    on_failure: always
+    on_failure: never
 
-after_success:
-  - gradle/deploy_snapshot
+before_install:
+- wget -d -v --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.160/pro-9-b160-linux.tar.gz
+- ls -la
+- tar xcvf pro-9-b160-linux.tar.gz
+- ls -la
 
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-install: java -version
+install:
+- java -version
 
 script:
-  - ./gradlew -version
-  - ./gradlew --refresh-dependencies clean check
+- ./pro
