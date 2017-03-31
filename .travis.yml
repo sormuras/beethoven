@@ -17,11 +17,11 @@ notifications:
 before_install:
 - wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.160/pro-9-b160-linux.tar.gz
 - tar -xzf pro-9-b160-linux.tar.gz
-- wget --no-check-certificate -O jupiter.jar https://oss.sonatype.org/content/repositories/snapshots/org/junit/platform/junit-platform-console-standalone/1.0.0-SNAPSHOT/junit-platform-console-standalone-1.0.0-20170327.190109-76.jar
+- wget --no-check-certificate -O jupiter.jar https://oss.sonatype.org/content/repositories/snapshots/org/junit/platform/junit-platform-console-standalone/1.0.0-SNAPSHOT/junit-platform-console-standalone-1.0.0-20170331.213831-86.jar
 
 install:
 - java -version
 
 script:
 - ./pro/bin/pro
-- java -ea -classpath jupiter.jar:target/test/exploded/de.sormuras.beethoven --scan-classpath
+- java -ea -classpath jupiter.jar:target/test/exploded/de.sormuras.beethoven org.junit.platform.console.ConsoleLauncher --scan-classpath
