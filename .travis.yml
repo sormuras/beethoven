@@ -24,4 +24,4 @@ install:
 
 script:
 - ./pro/bin/pro
-- java -jar jupiter.jar --classpath target/test/exploded/de.sormuras.beethoven --scan-classpath
+- java -ea -classpath jupiter.jar:target/test/exploded/de.sormuras.beethoven --scan-classpath
