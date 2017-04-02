@@ -20,9 +20,4 @@ module de.sormuras.beethoven {
   exports de.sormuras.beethoven.script;
   exports de.sormuras.beethoven.type;
   exports de.sormuras.beethoven.unit;
-
-  // move to test, blocked by https://github.com/forax/pro/issues/5
-  requires org.junit.jupiter.api;
-  requires org.junit.platform.commons;
-  requires org.opentest4j;
 }
