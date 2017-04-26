@@ -15,9 +15,9 @@ notifications:
     on_failure: always
 
 before_install:
-- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.160/pro-9-b160-linux.tar.gz
-- tar -xzf pro-9-b160-linux.tar.gz
-- wget --no-check-certificate -O jupiter.jar https://oss.sonatype.org/content/repositories/snapshots/org/junit/platform/junit-platform-console-standalone/1.0.0-SNAPSHOT/junit-platform-console-standalone-1.0.0-20170331.213831-86.jar
+- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.165.1/pro-9-b165.1-linux.tar.gz
+- tar -xzf pro-9-b165.1-linux.tar.gz
+- wget --no-check-certificate -O jupiter.jar https://oss.sonatype.org/content/repositories/snapshots/org/junit/platform/junit-platform-console-standalone/1.0.0-SNAPSHOT/junit-platform-console-standalone-1.0.0-20170422.164334-149.jar
 
 install:
 - java -version

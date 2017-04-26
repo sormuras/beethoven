@@ -17,5 +17,7 @@ module de.sormuras.beethoven {
   requires jdk.scripting.nashorn;
   requires java.desktop;
 
-  requires org.junit.jupiter.api; // provided by pro plugin "junitconsole"
+  requires junit.jupiter.api;
+  requires junit.platform.commons;
+  requires opentest4j;
 }
