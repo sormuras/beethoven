@@ -1,26 +1,11 @@
 sudo: false
 dist: trusty
-
 language: java
-jdk: oraclejdk9
-
-addons:
-  apt:
-    packages:
-      - oracle-java9-installer
-
-notifications:
-  email:
-    on_success: always
-    on_failure: always
-
-before_install:
-- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.165.1/pro-9-b165.1-linux.tar.gz
-- tar -xzf pro-9-b165.1-linux.tar.gz
-- wget --no-check-certificate -O jupiter.jar https://oss.sonatype.org/content/repositories/snapshots/org/junit/platform/junit-platform-console-standalone/1.0.0-SNAPSHOT/junit-platform-console-standalone-1.0.0-20170422.164334-149.jar
 
 install:
-- java -version
+- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.167/pro-9-b167-linux.tar.gz
+- tar -xzf pro-9-b167-linux.tar.gz
+- wget --no-check-certificate -O jupiter.jar http://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.0.0-M4/junit-platform-console-standalone-1.0.0-M4.jar
 
 script:
 - ./pro/bin/pro

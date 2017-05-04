@@ -13,4 +13,7 @@ set("compiler.rawArguments", list("-encoding", "UTF8"))
 
 run("resolver", "modulefixer", "compiler") // , "tester")
 
+// set("pro.loglevel", "debug")
+// run("formatter")
+
 /exit
