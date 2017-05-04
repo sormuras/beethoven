@@ -11,9 +11,10 @@ set("resolver.dependencies", list(
 
 set("compiler.rawArguments", list("-encoding", "UTF8"))
 
-run("resolver", "modulefixer", "compiler") // , "tester")
+run("resolver", "modulefixer", "compiler", "tester")
 
-// set("pro.loglevel", "debug")
-// run("formatter")
+//print("format")
+//set("pro.loglevel", "debug")
+//run("formatter")
 
 /exit
