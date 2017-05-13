@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jlink.jqwik">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/com.github.jlink.jqwik.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/org.junit.platform.engine.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

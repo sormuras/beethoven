@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="junit.jupiter" level="project" />
+    <orderEntry type="library" scope="TEST" name="jlink.jqwik" level="project" />
   </component>
 </module>

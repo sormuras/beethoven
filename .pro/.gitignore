@@ -1,2 +1,4 @@
-src/
-target/
+*
+!.gitignore
+!build.pro
+!prepare.pro

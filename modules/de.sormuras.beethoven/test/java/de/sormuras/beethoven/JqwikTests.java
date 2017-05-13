@@ -12,8 +12,20 @@
  * the License.
  */
 
-open module de.sormuras.beethoven {
-  requires jdk.scripting.nashorn;
-  requires org.junit.jupiter.api;
-  requires com.github.jlink.jqwik;
+package de.sormuras.beethoven;
+
+import net.jqwik.api.Example;
+import net.jqwik.api.Group;
+
+class JqwikTests {
+    @Example
+    void example() {
+    }
+
+    @Group
+    class Nested {
+        @Example
+        void another() {
+        }
+    }
 }
