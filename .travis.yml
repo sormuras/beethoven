@@ -1,0 +1,12 @@
+sudo: false
+dist: trusty
+language: java
+jdk: oraclejdk9
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+
+script:
+- java -version
