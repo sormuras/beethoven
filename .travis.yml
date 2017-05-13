@@ -2,18 +2,30 @@ sudo: false
 dist: trusty
 language: java
 
+jdk: oraclejdk9
+addons: {apt: {packages: [oracle-java9-installer]}}
+
 notifications:
   email:
     on_success: always
     on_failure: always
 
 install:
-- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.167/pro-9-b167-linux.tar.gz
-- tar -xzf pro-9-b167-linux.tar.gz
-- export JAVA_HOME=./pro
-- ./pro/bin/pro version
+# Download pro release and use it...
+#- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.167/pro-9-b167-linux.tar.gz
+#- tar -xzf pro-9-b167-linux.tar.gz
+#- alias pro="~/pro/bin/pro"
+#
+# Download pro source and build it... (needs latest jdk-9)
+- wget --no-check-certificate https://github.com/forax/pro/archive/master.zip
+- unzip master.zip
+- cd pro-master
+- chmod u+x build.sh
+- ./build.sh
+- cd ..
+- alias pro="~/pro-master/target/pro/bin/pro"
+- pro version
 
 script:
 - cd .pro
-- ../pro/bin/pro
-
+- pro
