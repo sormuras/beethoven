@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/beethoven.iml" filepath="$PROJECT_DIR$/.idea/modules/beethoven.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.iml" filepath="$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.composer.iml" filepath="$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.composer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.type.iml" filepath="$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.type.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.unit.iml" filepath="$PROJECT_DIR$/.idea/modules/de.sormuras.beethoven.unit.iml" />
+    </modules>
+  </component>
+</project>
