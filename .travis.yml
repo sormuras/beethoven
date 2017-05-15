@@ -19,7 +19,7 @@ install:
 - tar x -f jdk-9-ea+168_linux-x64_bin.tar
 - export JAVA_HOME=$PWD/jdk-9
 - PATH=$JAVA_HOME/bin:$PATH
-- javac -version
+- java -version
 
 # Download pro source and build it... (needs latest jdk-9)
 - wget --no-check-certificate https://github.com/forax/pro/archive/master.zip
@@ -28,7 +28,7 @@ install:
 - chmod u+x build.sh
 - ./build.sh
 - cd ..
-- alias pro="~/pro-master/target/pro/bin/pro"
+- alias pro=$PWD/pro-master/target/pro/bin/pro
 - pro version
 
 script:
