@@ -28,9 +28,9 @@ install:
 - chmod u+x build.sh
 - ./build.sh
 - cd ..
-- alias pro="$PWD/pro-master/target/pro/bin/pro"
-- pro version
+- export PRO="$PWD/pro-master/target/pro/bin/pro"
+- $PRO version
 
 script:
 - cd .pro
-- pro
+- $PRO
