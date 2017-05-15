@@ -8,12 +8,29 @@ notifications:
     on_failure: always
 
 install:
-- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.167/pro-9-b167-linux.tar.gz
-- tar -xzf pro-9-b167-linux.tar.gz
-- export JAVA_HOME=./pro
-- ./pro/bin/pro version
+# Download pro release and use it...
+#- wget --no-check-certificate https://github.com/forax/pro/releases/download/v0.9.167/pro-9-b167-linux.tar.gz
+#- tar -xzf pro-9-b167-linux.tar.gz
+#- export PRO="$PWD/pro/bin/pro"
+
+# Download jdk-9 "manually"
+- wget http://download.java.net/java/jdk9/archive/168/binaries/jdk-9-ea+168_linux-x64_bin.tar.gz
+- gunzip jdk-9-ea+168_linux-x64_bin.tar.gz
+- tar x -f jdk-9-ea+168_linux-x64_bin.tar
+- export JAVA_HOME=$PWD/jdk-9
+- PATH=$JAVA_HOME/bin:$PATH
+- java -version
+
+# Download pro source and build it
+- wget --no-check-certificate https://github.com/forax/pro/archive/master.zip
+- unzip master.zip
+- cd pro-master
+- chmod u+x build.sh
+- ./build.sh
+- cd ..
+- export PRO="$PWD/pro-master/target/pro/bin/pro"
 
 script:
+- $PRO version
 - cd .pro
-- ../pro/bin/pro
-
+- $PRO
