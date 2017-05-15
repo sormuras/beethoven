@@ -17,9 +17,8 @@ install:
 - wget http://download.java.net/java/jdk9/archive/168/binaries/jdk-9-ea+168_linux-x64_bin.tar.gz
 - gunzip jdk-9-ea+168_linux-x64_bin.tar.gz
 - tar x -f jdk-9-ea+168_linux-x64_bin.tar
-- ls -la
-- export JAVA_HOME=~/dev/jdk-9/
-- export JDK_HOME=~/dev/jdk-9/
+- export JAVA_HOME=~/jdk-9
+- export JDK_HOME=~/jdk-9
 
 # Download pro source and build it... (needs latest jdk-9)
 - wget --no-check-certificate https://github.com/forax/pro/archive/master.zip
