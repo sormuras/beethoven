@@ -1,3 +1,17 @@
+/*
+ * Copyright 2017 Christian Stein
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 // no package
 
 import javax.tools.JavaCompiler;
@@ -40,18 +54,22 @@ public class Bach {
   private final EnumMap<Folder, Path> folders;
   private final StandardStreams standardStreams;
   private final Log log;
+  private final Util util;
 
   public Bach() {
     this(Level.INFO);
   }
 
   public Bach(Level initialLevel) {
-    this.log = new Log().level(requireNonNull(initialLevel, "initial log level must be null"));
+    this.util = new Util();
     this.javac = requireNonNull(ToolProvider.getSystemJavaCompiler(), "java compiler not available");
     this.folders = Folder.defaultFolders();
     this.standardStreams = new StandardStreams();
-    log.info("[init] %s initialized%n", getClass());
-    log.log(Level.CONFIG, "[init] folders=%s%n", folders);
+    this.log = new Log().level(initialLevel).tag("init");
+    log.info("%s initialized%n", getClass());
+    log.log(Level.CONFIG, "level=%s%n", initialLevel);
+    log.log(Level.CONFIG, "pwd=`%s`%n", Paths.get(".").toAbsolutePath().normalize());
+    log.log(Level.CONFIG, "folders=%s%n", folders);
   }
 
   public void set(Folder folder, Path path) {
@@ -63,47 +81,47 @@ public class Bach {
   }
 
   public void clean() throws IOException {
-    log.info("[clean]%n");
-    Util.cleanTree(folders.get(Folder.TARGET), false);
+    log.tag("clean");
+    util.cleanTree(folders.get(Folder.TARGET), false);
   }
 
   public void prepare(Path modules, String module) {
+    log.log(Level.CONFIG, "module %s%n", module);
     Path target = folders.get(Folder.TARGET).resolve("prepared").resolve("module-source-path");
     Path preparedMain = target.resolve("main/java");
     Path preparedTest = target.resolve("test/java");
-    Util.copyTree(modules.resolve(module + "/main/java"), preparedMain.resolve(module));
-    Util.copyTree(modules.resolve(module + "/main/resources"), target.resolve("main/resources/" + module));
-    Util.copyTree(modules.resolve(module + "/test/java"), preparedTest.resolve(module));
-    Util.copyTree(modules.resolve(module + "/test/resources"), target.resolve("test/resources/" + module));
+    util.copyTree(modules.resolve(module + "/main/java"), preparedMain.resolve(module));
+    util.copyTree(modules.resolve(module + "/main/resources"), target.resolve("main/resources/" + module));
+    util.copyTree(modules.resolve(module + "/test/java"), preparedTest.resolve(module));
+    util.copyTree(modules.resolve(module + "/test/resources"), target.resolve("test/resources/" + module));
     // TODO Util.moveModuleInfo(module);
     folders.put(Folder.SOURCE_MAIN_JAVA, preparedMain);
     folders.put(Folder.SOURCE_TEST_JAVA, preparedTest);
   }
 
   public void prepare(Path modules) throws IOException {
-    log.info("[prepare] %s%n", modules);
+    log.tag("prepare").info("preparing modules in `%s`%n", modules.toAbsolutePath());
     List<String> names = new ArrayList<>();
     Files.find(modules, 1, (path, attr) -> Files.isDirectory(path))
         .filter(path -> !modules.equals(path))
         .map(path -> modules.relativize(path).toString())
         .peek(names::add)
         .forEach(module -> prepare(modules, module));
-    log.info("[prepare] module names = %s%n", names);
+    log.info("prepared = %s%n", names);
   }
 
   public int compile() throws IOException {
-    log.info("[compile]%n");
-    log.log(Level.CONFIG, "[compile] folders=%s%n", folders);
-    Path target = folders.get(Folder.TARGET);
-    // Util.cleanTree(target, true);
-    compile(folders.get(Folder.SOURCE_MAIN_JAVA), target.resolve("main/exploded"));
-    // TODO merge! compile(folders.get(Folder.SOURCE_TEST_JAVA), target.resolve("test/exploded"));
+    log.tag("compile").log(Level.CONFIG, "folders=%s%n", folders);
+    Path compiled = folders.get(Folder.TARGET).resolve("compiled");
+    util.cleanTree(compiled, true);
+    compile(folders.get(Folder.SOURCE_MAIN_JAVA), compiled.resolve("main/exploded"));
+    // TODO merge! compile(folders.get(Folder.SOURCE_TEST_JAVA), compiled.resolve("test/exploded"));
     return 0;
   }
 
   public int compile(Path moduleSourcePath, Path destinationPath) throws IOException {
     List<String> arguments = new ArrayList<>();
-    if (log.current == Level.FINEST) {
+    if (log.threshold <= Level.FINEST.intValue()) {
       // output messages about what the compiler is doing
       arguments.add("-verbose");
     }
@@ -128,21 +146,32 @@ public class Bach {
         .forEach(arguments::add);
     // compile
     int code = javac.run(standardStreams.in, standardStreams.out, standardStreams.err, arguments.toArray(new String[0]));
-    log.info("[compile] %d java files processed%n", count[0]);
+    log.info("%d java files processed%n", count[0]);
     return code;
   }
 
   class Log {
-    Level current;
+    int threshold;
+    String tag;
 
     Log level(Level level) {
-      this.current = level;
+      this.threshold = level.intValue();
+      return this;
+    }
+
+    Log tag(String tag) {
+      this.tag = tag;
+      info("%n");
       return this;
     }
 
     void log(Level level, String format, Object... args) {
-      if (level.intValue() < current.intValue()) {
+      if (level.intValue() < threshold) {
         return;
+      }
+      standardStreams.out.printf("%7s ", tag);
+      if (threshold < Level.INFO.intValue()) {
+        standardStreams.out.printf("%6s| ", level.getName().toLowerCase());
       }
       standardStreams.out.printf(format, args);
     }
@@ -173,9 +202,9 @@ public class Bach {
     }
   }
 
-  interface Util {
+  class Util {
 
-    static void deleteIfExists(Path path) {
+    void deleteIfExists(Path path) {
       try {
         Files.deleteIfExists(path);
       } catch (IOException e) {
@@ -183,7 +212,7 @@ public class Bach {
       }
     }
 
-    static void cleanTree(Path root, boolean keepRoot) throws IOException {
+    void cleanTree(Path root, boolean keepRoot) throws IOException {
       if (Files.notExists(root)) {
         if (keepRoot) {
           Files.createDirectories(root);
@@ -193,13 +222,14 @@ public class Bach {
       Files.walk(root)
           .filter(p -> !(keepRoot && root.equals(p)))
           .sorted((p, q) -> -p.compareTo(q))
-          .forEach(Util::deleteIfExists);
+          .forEach(this::deleteIfExists);
     }
 
-    static void copyTree(Path source, Path target) {
+    void copyTree(Path source, Path target) {
       if (!Files.exists(source)) {
         return;
       }
+      log.log(Level.CONFIG, "copy `%s` to `%s`%n", source, target);
       try {
         Files.createDirectories(target);
         Files.walkFileTree(source, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
