@@ -23,12 +23,17 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Java Shell Builder.
+ *
  * @noinspection WeakerAccess, unused
  */
 public class Bach {
 
   public static void main(String... args) throws Exception {
-    new Bach();
+    Bach bach = new Bach(Level.CONFIG);
+    bach.set(Bach.Folder.DEPENDENCIES, Paths.get("dependencies"));
+    bach.clean();
+    bach.prepare(Paths.get("modules"));
+    bach.compile();
   }
 
   private final JavaCompiler javac;
@@ -46,7 +51,7 @@ public class Bach {
     this.folders = Folder.defaultFolders();
     this.standardStreams = new StandardStreams();
     log.info("[init] %s initialized%n", getClass());
-    log.log(Level.CONFIG,"[init] folders=%s%n", folders);
+    log.log(Level.CONFIG, "[init] folders=%s%n", folders);
   }
 
   public void set(Folder folder, Path path) {
@@ -62,9 +67,6 @@ public class Bach {
     Util.cleanTree(folders.get(Folder.TARGET), false);
   }
 
-  // modules/<name>/main/<type> -> src/main/<type>/<name>
-  // modules/<name>/test/<type> -> src/test/<type>/<name>
-  // module-info.test -> module-info.java
   public void prepare(Path modules, String module) {
     Path target = folders.get(Folder.TARGET).resolve("prepared").resolve("module-source-path");
     Path preparedMain = target.resolve("main/java");
@@ -80,16 +82,18 @@ public class Bach {
 
   public void prepare(Path modules) throws IOException {
     log.info("[prepare] %s%n", modules);
+    List<String> names = new ArrayList<>();
     Files.find(modules, 1, (path, attr) -> Files.isDirectory(path))
         .filter(path -> !modules.equals(path))
         .map(path -> modules.relativize(path).toString())
-        .peek(System.out::println)
+        .peek(names::add)
         .forEach(module -> prepare(modules, module));
+    log.info("[prepare] module names = %s%n", names);
   }
 
   public int compile() throws IOException {
     log.info("[compile]%n");
-    log.log(Level.CONFIG,"[compile] folders=%s%n", folders);
+    log.log(Level.CONFIG, "[compile] folders=%s%n", folders);
     Path target = folders.get(Folder.TARGET);
     // Util.cleanTree(target, true);
     compile(folders.get(Folder.SOURCE_MAIN_JAVA), target.resolve("main/exploded"));
@@ -116,26 +120,33 @@ public class Bach {
     arguments.add("--module-source-path");
     arguments.add(moduleSourcePath.toString());
     // collect .java source files
+    int[] count = {0};
     Files.walk(moduleSourcePath)
         .map(Path::toString)
         .filter(name -> name.endsWith(".java"))
+        .peek(name -> count[0]++)
         .forEach(arguments::add);
     // compile
-    return javac.run(standardStreams.in, standardStreams.out, standardStreams.err, arguments.toArray(new String[0]));
+    int code = javac.run(standardStreams.in, standardStreams.out, standardStreams.err, arguments.toArray(new String[0]));
+    log.info("[compile] %d java files processed%n", count[0]);
+    return code;
   }
 
   class Log {
     Level current;
+
     Log level(Level level) {
       this.current = level;
       return this;
     }
+
     void log(Level level, String format, Object... args) {
       if (level.intValue() < current.intValue()) {
         return;
       }
       standardStreams.out.printf(format, args);
     }
+
     void info(String format, Object... args) {
       log(Level.INFO, format, args);
     }
@@ -205,14 +216,14 @@ public class Bach {
                 }
                 return FileVisitResult.CONTINUE;
               }
+
               @Override
               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.copy(file, target.resolve(source.relativize(file)));
                 return FileVisitResult.CONTINUE;
               }
             });
-      }
-      catch(IOException e) {
+      } catch (IOException e) {
         throw new Error("Copying " + source + " to " + target + " failed: " + e, e);
       }
     }
