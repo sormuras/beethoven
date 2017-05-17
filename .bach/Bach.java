@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -43,7 +44,7 @@ import static java.util.Objects.requireNonNull;
 public class Bach {
 
   public static void main(String... args) throws Exception {
-    Bach bach = new Bach(Level.CONFIG);
+    Bach bach = new Bach(Level.FINE);
     bach.set(Bach.Folder.DEPENDENCIES, Paths.get("dependencies"));
     bach.clean();
     bach.prepare(Paths.get("modules"));
@@ -69,7 +70,7 @@ public class Bach {
     log.info("%s initialized%n", getClass());
     log.log(Level.CONFIG, "level=%s%n", initialLevel);
     log.log(Level.CONFIG, "pwd=`%s`%n", Paths.get(".").toAbsolutePath().normalize());
-    log.log(Level.CONFIG, "folders=%s%n", folders);
+    log.log(Level.CONFIG, "folder %s%n", folders.entrySet());
   }
 
   public void set(Folder folder, Path path) {
@@ -107,15 +108,15 @@ public class Bach {
         .map(path -> modules.relativize(path).toString())
         .peek(names::add)
         .forEach(module -> prepare(modules, module));
-    log.info("prepared = %s%n", names);
+    log.info("prepared module %s%n", names);
   }
 
   public int compile() throws IOException {
-    log.tag("compile").log(Level.CONFIG, "folders=%s%n", folders);
+    log.tag("compile").log(Level.CONFIG, "folder %s%n", folders.entrySet());
     Path compiled = folders.get(Folder.TARGET).resolve("compiled");
     util.cleanTree(compiled, true);
     compile(folders.get(Folder.SOURCE_MAIN_JAVA), compiled.resolve("main/exploded"));
-    // TODO merge! compile(folders.get(Folder.SOURCE_TEST_JAVA), compiled.resolve("test/exploded"));
+    // TODO compile(folders.get(Folder.SOURCE_TEST_JAVA), compiled.resolve("test/exploded"));
     return 0;
   }
 
@@ -165,14 +166,25 @@ public class Bach {
       return this;
     }
 
-    void log(Level level, String format, Object... args) {
-      if (level.intValue() < threshold) {
-        return;
-      }
+    private void printContext(Level level) {
       standardStreams.out.printf("%7s ", tag);
       if (threshold < Level.INFO.intValue()) {
         standardStreams.out.printf("%6s| ", level.getName().toLowerCase());
       }
+    }
+
+    void log(Level level, String format, Object... args) {
+      if (level.intValue() < threshold) {
+        return;
+      }
+      if (args.length == 1 && args[0] instanceof Collection) {
+        for (Object arg : (Iterable<?>) args[0]) {
+          printContext(level);
+          standardStreams.out.printf(format, arg);
+        }
+        return;
+      }
+      printContext(level);
       standardStreams.out.printf(format, args);
     }
 
@@ -223,13 +235,14 @@ public class Bach {
           .filter(p -> !(keepRoot && root.equals(p)))
           .sorted((p, q) -> -p.compareTo(q))
           .forEach(this::deleteIfExists);
+      log.log(Level.FINE, "deleted tree `%s`%n", root);
     }
 
     void copyTree(Path source, Path target) {
       if (!Files.exists(source)) {
         return;
       }
-      log.log(Level.CONFIG, "copy `%s` to `%s`%n", source, target);
+      log.log(Level.FINE, "copy `%s` to `%s`%n", source, target);
       try {
         Files.createDirectories(target);
         Files.walkFileTree(source, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
