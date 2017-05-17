@@ -13,6 +13,12 @@
  */
 
 open module de.sormuras.beethoven.type {
+  // main
+  requires java.compiler;
+  requires de.sormuras.beethoven;
+  exports de.sormuras.beethoven.type;
+
+  // test
   requires jdk.scripting.nashorn;
   requires org.junit.jupiter.api;
 }

@@ -95,7 +95,7 @@ public class Bach {
     util.copyTree(modules.resolve(module + "/main/resources"), target.resolve("main/resources/" + module));
     util.copyTree(modules.resolve(module + "/test/java"), preparedTest.resolve(module));
     util.copyTree(modules.resolve(module + "/test/resources"), target.resolve("test/resources/" + module));
-    // TODO Util.moveModuleInfo(module);
+    util.moveModuleInfo(preparedTest.resolve(module));
     folders.put(Folder.SOURCE_MAIN_JAVA, preparedMain);
     folders.put(Folder.SOURCE_TEST_JAVA, preparedTest);
   }
@@ -115,8 +115,11 @@ public class Bach {
     log.tag("compile").log(Level.CONFIG, "folder %s%n", folders.entrySet());
     Path compiled = folders.get(Folder.TARGET).resolve("compiled");
     util.cleanTree(compiled, true);
+    log.info("main%n");
     compile(folders.get(Folder.SOURCE_MAIN_JAVA), compiled.resolve("main/exploded"));
-    // TODO compile(folders.get(Folder.SOURCE_TEST_JAVA), compiled.resolve("test/exploded"));
+    log.info("test%n");
+    util.copyTree(folders.get(Folder.SOURCE_MAIN_JAVA), folders.get(Folder.SOURCE_TEST_JAVA), true);
+    compile(folders.get(Folder.SOURCE_TEST_JAVA), compiled.resolve("test/exploded"));
     return 0;
   }
 
@@ -138,6 +141,7 @@ public class Bach {
     // specify where to find input source files for multiple modules
     arguments.add("--module-source-path");
     arguments.add(moduleSourcePath.toString());
+    log.log(Level.FINE, "javac %s%n", arguments);
     // collect .java source files
     int[] count = {0};
     Files.walk(moduleSourcePath)
@@ -239,6 +243,10 @@ public class Bach {
     }
 
     void copyTree(Path source, Path target) {
+      copyTree(source, target, false);
+    }
+
+    void copyTree(Path source, Path target, boolean ignoreExistingFiles) {
       if (!Files.exists(source)) {
         return;
       }
@@ -262,12 +270,35 @@ public class Bach {
 
               @Override
               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.copy(file, target.resolve(source.relativize(file)));
+                try {
+                  Files.copy(file, target.resolve(source.relativize(file)));
+                } catch (FileAlreadyExistsException e) {
+                  if (!ignoreExistingFiles) {
+                    throw e;
+                  }
+                }
                 return FileVisitResult.CONTINUE;
               }
             });
       } catch (IOException e) {
         throw new Error("Copying " + source + " to " + target + " failed: " + e, e);
+      }
+    }
+
+    void moveModuleInfo(Path path) {
+      if (!Files.exists(path)) {
+        return;
+      }
+      Path pathSource = path.resolve("module-info.test");
+      if (!Files.exists(pathSource)) {
+        return;
+      }
+      try {
+        Files.move(pathSource, path.resolve("module-info.java"));
+        log.log(Level.FINE, "moved `%s` to `%s`%n", pathSource, "module-info.java");
+      }
+      catch(IOException e) {
+        throw new Error("Moving module-info failed: " + path, e);
       }
     }
   }

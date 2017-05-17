@@ -13,5 +13,12 @@
  */
 
 open module de.sormuras.beethoven.unit {
+  // main
+  requires java.compiler;
+  requires de.sormuras.beethoven;
+  requires de.sormuras.beethoven.type;
+  exports de.sormuras.beethoven.unit;
+
+  // test
   requires org.junit.jupiter.api;
 }

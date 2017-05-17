@@ -13,6 +13,11 @@
  */
 
 open module de.sormuras.beethoven {
+  // main
+  requires java.compiler;
+  exports de.sormuras.beethoven;
+
+  // test
   requires jdk.scripting.nashorn;
   requires org.junit.jupiter.api;
   requires com.github.jlink.jqwik;
