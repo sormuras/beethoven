@@ -11,8 +11,10 @@ if (Files.notExists(bachJava)) {
 /open target/Bach.java
 
 // use it
-Bach bach = new Bach(Level.FINE, Layout.IDEA)
-bach.set(Folder.SOURCE, Paths.get("modules"))
+Bach.Builder builder = Bach.builder()
+builder.override(Folder.SOURCE, Paths.get("modules"))
+builder.override(Folder.DEPENDENCIES, Paths.get("dependencies"))
+Bach bach = builder.bach()
 bach.compile()
 bach.run("de.sormuras.beethoven", "de.sormuras.beethoven.Beethoven")
 
