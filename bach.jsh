@@ -13,7 +13,7 @@ if (Files.notExists(bachJava)) {
 Bach.builder()
     .override(Folder.SOURCE, Paths.get("modules"))
     .override(Folder.DEPENDENCIES, Paths.get("dependencies"))
-  .bach()
+  .build()
     .compile()
     .run("de.sormuras.beethoven", "de.sormuras.beethoven.Beethoven");
 }
