@@ -17,8 +17,8 @@ package de.sormuras.beethoven.composer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Helper;
+import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.unit.ClassDeclaration;
 import de.sormuras.beethoven.unit.CompilationUnit;

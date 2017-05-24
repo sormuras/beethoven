@@ -48,7 +48,8 @@ class AnnotatableTests {
   @TestFactory
   Stream<DynamicTest> annotatables() {
     Function<Annotatable, String> name = a -> "annotatable(" + a.getClass().getSimpleName() + ")";
-    List<Annotatable> annotatables = List.of( //
+    List<Annotatable> annotatables =
+        List.of(
             new AnnotationDeclaration(),
             new AnnotationElement(),
             new ConstantDeclaration(),
@@ -61,9 +62,7 @@ class AnnotatableTests {
             new ModuleDeclaration(),
             new NormalClassDeclaration(),
             new PackageDeclaration(),
-            new TypeParameter()
-            //
-       );
+            new TypeParameter());
     return DynamicTest.stream(annotatables.iterator(), name, this::annotatable);
   }
 }

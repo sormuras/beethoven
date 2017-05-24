@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.Annotation;
+import de.sormuras.beethoven.Helper;
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Name;
-import de.sormuras.beethoven.Helper;
 import java.lang.annotation.ElementType;
 import java.net.URI;
 import org.junit.jupiter.api.Test;

@@ -24,5 +24,4 @@ class AnnotatedTests {
   void annotatedExtendsListable() {
     assertTrue(Listable.class.isAssignableFrom(Annotated.class));
   }
-
 }

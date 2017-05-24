@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Helper;
+import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.WildcardType;

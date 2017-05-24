@@ -14,9 +14,6 @@
 
 package de.sormuras.beethoven;
 
-import de.sormuras.beethoven.Listable;
-import de.sormuras.beethoven.Listing;
-import de.sormuras.beethoven.Style;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInput;

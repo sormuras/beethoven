@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Helper;
+import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.TypeVariable;

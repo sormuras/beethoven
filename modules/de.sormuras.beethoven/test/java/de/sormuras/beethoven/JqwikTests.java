@@ -18,14 +18,12 @@ import net.jqwik.api.Example;
 import net.jqwik.api.Group;
 
 class JqwikTests {
-    @Example
-    void example() {
-    }
+  @Example
+  void example() {}
 
-    @Group
-    class Nested {
-        @Example
-        void another() {
-        }
-    }
+  @Group
+  class Nested {
+    @Example
+    void another() {}
+  }
 }

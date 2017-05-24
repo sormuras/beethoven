@@ -95,10 +95,8 @@ class ClassTypeTests {
 
   @Test
   void handcrafted() throws Exception {
-    List<Annotation> annotations = List.of( //
-      Annotation.annotation(Name.name("UUU")),
-      Annotation.annotation(V.class)
-    );
+    List<Annotation> annotations =
+        List.of(Annotation.annotation(Name.name("UUU")), Annotation.annotation(V.class));
     ClassType.Simple name = new ClassType.Simple(annotations, "Name", emptyList());
     assertEquals("@UUU " + V.USE + " Name", name.list());
 

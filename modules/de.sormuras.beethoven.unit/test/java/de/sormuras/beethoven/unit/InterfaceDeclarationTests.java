@@ -16,8 +16,8 @@ package de.sormuras.beethoven.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Helper;
+import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.type.Type;
 import java.lang.annotation.ElementType;
 import java.math.BigInteger;

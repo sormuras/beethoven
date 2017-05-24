@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.Helper;
+import de.sormuras.beethoven.Listing;
 import de.sormuras.beethoven.U;
 import de.sormuras.beethoven.V;
 import java.lang.reflect.AnnotatedType;
@@ -98,7 +98,7 @@ class TypeTests<T> {
     assertEquals(
         "?",
         Type.type(
-            Helper.proxy(
+                Helper.proxy(
                     java.lang.reflect.WildcardType.class,
                     (p, m, a) -> {
                       if (m.getName().equals("getLowerBounds")) {
@@ -197,7 +197,6 @@ class TypeTests<T> {
         Type.type(TypeTests.class.getDeclaredField("parametrizedFieldType").getGenericType())
             .list());
   }
-
 
   @Test
   void unknownNoTypeFails() {

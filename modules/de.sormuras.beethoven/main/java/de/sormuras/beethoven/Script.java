@@ -106,7 +106,6 @@ public class Script {
     }
   }
 
-
   private final String source;
   private final List<Command> commands;
 
@@ -300,5 +299,4 @@ public class Script {
       return false;
     }
   }
-
 }

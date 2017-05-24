@@ -20,8 +20,8 @@ import static de.sormuras.beethoven.unit.ModuleDeclaration.RequiresModifier.TRAN
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.sormuras.beethoven.Name;
 import de.sormuras.beethoven.Helper;
+import de.sormuras.beethoven.Name;
 import org.junit.jupiter.api.Test;
 
 class ModuleDeclarationTests {

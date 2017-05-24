@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.sormuras.beethoven.Annotation;
 import de.sormuras.beethoven.Generated;
+import de.sormuras.beethoven.Helper;
 import de.sormuras.beethoven.Listable;
 import de.sormuras.beethoven.Name;
-import de.sormuras.beethoven.Helper;
 import de.sormuras.beethoven.type.ClassType;
 import de.sormuras.beethoven.type.Type;
 import de.sormuras.beethoven.type.TypeVariable;
