@@ -1,4 +1,4 @@
-Path bachJava = Paths.get("target/Bach.java")
+Path bachJava = Paths.get(".bach/Bach.java")
 if (Files.notExists(bachJava)) {
   URL bachURL = new URL("https://raw.githubusercontent.com/sormuras/bach/master/bach/Bach.java");
   Files.createDirectories(bachJava.getParent());
@@ -7,15 +7,9 @@ if (Files.notExists(bachJava)) {
   }
   System.out.printf("created %s [url=%s]%n", bachJava, bachURL);
 }
-/open target/Bach.java
+/open .bach/Bach.java
+/open .bach/Build.java
 
-{
-Bach.builder()
-    .override(Folder.SOURCE, Paths.get("modules"))
-    .override(Folder.DEPENDENCIES, Paths.get("dependencies"))
-  .build()
-    .compile()
-    .run("de.sormuras.beethoven", "de.sormuras.beethoven.Beethoven");
-}
+Build.main()
 
 /exit
