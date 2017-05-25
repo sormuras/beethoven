@@ -45,7 +45,8 @@ public interface Units {
     a.addTypeParameter(TypeParameter.of("U"));
     // TODO Counter
     // a.declareField(ClassType.type("", "A", "B", "C"), "raw").addAnnotation(Counter.Mark.class);
-    // a.declareField(ClassType.type("", "A", "B", "C").parameterized(Units::nTimesI), "parametered")
+    // a.declareField(ClassType.type("", "A", "B", "C").parameterized(Units::nTimesI),
+    // "parametered")
     //    .addAnnotation(Counter.Mark.class);
     NormalClassDeclaration b = a.declareClass("B");
     b.addTypeParameter(TypeParameter.of("V"));

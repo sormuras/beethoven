@@ -206,7 +206,8 @@ class TypeTests<T> {
     //    AssertionError e =
     //        expectThrows(
     //            AssertionError.class,
-    //            () -> JavaMirrors.of(Tests.proxy(PrimitiveType.class, (p, m, a) -> TypeKind.ERROR)));
+    //            () -> JavaMirrors.of(Tests.proxy(PrimitiveType.class, (p, m, a) ->
+    // TypeKind.ERROR)));
     //    assertTrue(e.toString().contains("Unsupported primitive type"));
   }
 

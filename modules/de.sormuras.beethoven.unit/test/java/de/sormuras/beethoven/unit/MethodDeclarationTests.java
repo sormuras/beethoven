@@ -41,8 +41,8 @@ class MethodDeclarationTests {
     Exception expected = assertThrows(IllegalStateException.class, () -> m.setVarArgs(true));
     assertEquals(true, expected.toString().contains("no parameter"));
     // put into context
-    //m.setEnclosingDeclaration(NormalClassDeclaration.of("Abc"));
-    //assertEquals("Abc();\n", m.list());
+    // m.setEnclosingDeclaration(NormalClassDeclaration.of("Abc"));
+    // assertEquals("Abc();\n", m.list());
   }
 
   @Test
