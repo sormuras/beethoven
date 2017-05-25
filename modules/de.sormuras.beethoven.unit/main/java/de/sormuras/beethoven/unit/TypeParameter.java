@@ -42,7 +42,9 @@ import javax.lang.model.SourceVersion;
 public class TypeParameter extends Annotatable {
 
   public static TypeParameter of(String name, Type... bounds) {
-    assert SourceVersion.isIdentifier(name) : "Expected legal identifier, but got: " + name;
+    if (!SourceVersion.isIdentifier(name)) {
+      throw new IllegalArgumentException("Expected legal identifier as name, but got: " + name);
+    }
     TypeParameter parameter = new TypeParameter();
     parameter.setName(name);
     parameter.addBounds(bounds);

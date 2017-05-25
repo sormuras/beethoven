@@ -94,10 +94,10 @@ public class ClassType extends ReferenceType {
 
   /** Create {@code ClassType} using raw type and attach type arguments to last simple name. */
   public static ClassType parameterized(Class<?> raw, java.lang.reflect.Type... arguments) {
-    //if (raw.getTypeParameters().length != arguments.length) {
-    //  throw new AssertionError("Expected same length: raw.getTypeParameters().length != arguments.length");
-    //}
-    assert raw.getTypeParameters().length == arguments.length;
+    if (raw.getTypeParameters().length != arguments.length) {
+      throw new AssertionError(
+          "Expected same length: raw.getTypeParameters().length != arguments.length");
+    }
     ClassType rawClassType = type(raw);
     int last = rawClassType.getSimples().size() - 1;
     IntFunction<List<Type>> function = i -> i == last ? types(arguments) : emptyList();

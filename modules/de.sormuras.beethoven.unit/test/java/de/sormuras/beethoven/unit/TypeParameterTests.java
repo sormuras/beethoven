@@ -64,6 +64,6 @@ class TypeParameterTests {
 
   @Test
   void constructorFailsWithIllegalName() {
-    assertThrows(AssertionError.class, () -> TypeParameter.of("123"));
+    assertThrows(IllegalArgumentException.class, () -> TypeParameter.of("123"));
   }
 }
