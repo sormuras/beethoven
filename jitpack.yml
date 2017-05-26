@@ -9,10 +9,4 @@ install:
 - jshell --show-version bach.jsh
 - find target/bach/main/archives
 # target/bach/main/archives/de.sormuras.beethoven.jar
-- mvn install:install-file \
-    -Dfile=target/bach/main/archives/de.sormuras.beethoven.jar \
-    -DgroupId=$GROUP \
-    -DartifactId=$ARTIFACT \
-    -Dversion=$VERSION \
-    -Dpackaging=jar \
-    -DgeneratePom=true
+- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.jar -DgroupId=$GROUP -DartifactId=$ARTIFACT -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
