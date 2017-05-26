@@ -23,7 +23,8 @@ public class Build {
         .format()
         .compile()
         .run("de.sormuras.beethoven", "de.sormuras.beethoven.Beethoven")
-        .test("--classpath", "dependencies/com.github.jlink.jqwik.jar");
+        .test("--classpath", "dependencies/com.github.jlink.jqwik.jar")
+        .jar();
   }
 
 }
