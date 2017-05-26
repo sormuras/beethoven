@@ -10,6 +10,6 @@ install:
 - find target/bach/main/archives
 # target/bach/main/archives/de.sormuras.beethoven[.composer|.type|.unit].jar
 - mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.jar -DgroupId=$GROUP -DartifactId=beethoven -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
-- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.composer.jar -DgroupId=$GROUP -DartifactId=beethoven.composer -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
-- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.type.jar -DgroupId=$GROUP -DartifactId=beethoven.type -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
-- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.unit.jar -DgroupId=$GROUP -DartifactId=beethoven.unit -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
+- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.composer.jar -DgroupId=$GROUP -DartifactId=beethoven-composer -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
+- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.type.jar -DgroupId=$GROUP -DartifactId=beethoven-type -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
+- mvn install:install-file -Dfile=target/bach/main/archives/de.sormuras.beethoven.unit.jar -DgroupId=$GROUP -DartifactId=beethoven-unit -Dversion=$VERSION -Dpackaging=jar -DgeneratePom=true
