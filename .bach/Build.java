@@ -1,4 +1,5 @@
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
@@ -7,6 +8,7 @@ public class Build {
   public static void main(String... args) throws Exception {
     Bach.builder()
         .log(Level.FINE)
+        .charset(StandardCharsets.UTF_8)
         .override(Folder.SOURCE, Paths.get("modules"))
         .override(Folder.DEPENDENCIES, Paths.get("dependencies"))
       .build()
