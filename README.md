@@ -3,8 +3,6 @@ Java source created with Java
 
 ## badges
 [![jdk8](https://img.shields.io/badge/jdk-8-blue.svg)](https://shields.io)
-[![travis](https://travis-ci.org/sormuras/beethoven.svg?branch=master)](https://travis-ci.org/sormuras/beethoven)
-[![snapshots](https://img.shields.io/badge/sonatype-snapshots-green.svg)](https://oss.sonatype.org/content/repositories/snapshots/de/sormuras/beethoven/)
 
 ## features
  - [x] JDK 8
@@ -13,7 +11,7 @@ Java source created with Java
  - [x] JavaBeans style API
 
 ## hello world
-Here's a simple [HelloWorld](https://github.com/sormuras/beethoven/blob/master/src/test/java/readme/HelloWorld.java)
+Here's a simple [HelloWorld](https://github.com/sormuras/beethoven/blob/main/test.integration/test/java/readme/HelloWorld.java)
 program. It demonstrates basic usage of the main features.
 
 ```java
@@ -78,8 +76,8 @@ The `println`-statement from above, can be scripted as:
         main.declareParameter(String[].class, "arguments").setVariable(true));
 ```
 
-See [Tag](https://github.com/sormuras/beethoven/blob/master/src/main/java/de/sormuras/beethoven/script/Tag.java)
-enum for available accelerator tags and [script tests](https://github.com/sormuras/beethoven/tree/master/src/test/java/de/sormuras/beethoven/script)
+See [Tag](https://github.com/sormuras/beethoven/blob/main/com.github.sormuras.beethoven/main/java/com/github/sormuras/beethoven/script/Tag.java)
+enum for available accelerator tags and [script tests](https://github.com/sormuras/beethoven/tree/main/test.integration/test/java/test/integration/script)
 supported syntax features.
 
 ## composers
@@ -196,21 +194,4 @@ public class Car {
     return builder.toString();
   }
 }
-```
-
-## license
-```text
-Copyright 2017 Christian Stein
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not
-use this file except in compliance with the License. You may obtain a copy of
-the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-License for the specific language governing permissions and limitations under
-the License.
 ```
