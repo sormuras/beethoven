@@ -19,6 +19,8 @@ jobs:
           java-version: 16
       - name: 'Build with Bach'
         uses: sormuras/bach-build@v1
+        with:
+          bach-arguments: --project-version 1-ea+${{ github.sha }} build
       - name: 'Upload artifact ${{ github.event.repository.name }}-build-${{ github.sha }}'
         if: always()
         uses: actions/upload-artifact@v2
@@ -28,3 +30,13 @@ jobs:
             .bach/workspace/logbook.md
             .bach/workspace/modules
             .bach/workspace/reports
+      - name: 'Release Beethoven 1-ea+${{ github.sha }}'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          automatic_release_tag: 1-ea
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          title: "Beethoven 1-ea+${{ github.sha }}"
+
+          files: |
+            .bach/workspace/modules/*.jar
